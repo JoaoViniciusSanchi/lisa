@@ -20,6 +20,54 @@ supabase functions deploy submit-cadastro
 
 ---
 
+## 💾 Checkpoints — Versão Local
+
+Para **rastrear e reverter mudanças com facilidade**, o projeto usa git local.
+
+### Criar um Checkpoint
+
+Sempre que você faz mudanças importantes:
+
+```powershell
+.\checkpoint.ps1 "descrição do que foi feito"
+```
+
+**Exemplo:**
+```powershell
+.\checkpoint.ps1 "implementei filtro de busca no catálogo"
+.\checkpoint.ps1 "corrigir bug de navegação mobile"
+.\checkpoint.ps1 "atualizar cores do design system"
+```
+
+### Ver Histórico de Checkpoints
+
+```bash
+git log --oneline
+```
+
+Retorna algo como:
+```
+a1b2c3d checkpoint: implementei filtro de busca no catálogo
+d4e5f6g checkpoint: corrigir bug de navegação mobile
+8h9i0jk chore: inicializar repositório git — snapshot inicial
+```
+
+### Voltar para um Checkpoint
+
+**Para apenas inspecionar** (modo somente leitura):
+```bash
+git checkout a1b2c3d
+```
+
+**Para voltar permanentemente** (descarta mudanças atuais):
+```bash
+git reset --hard a1b2c3d
+```
+
+⚠️ **Aviso:** `git reset --hard` é **destrutivo**. Só use quando tiver certeza que quer descartar tudo depois do checkpoint.
+
+---
+
 ## 📁 O que mudou?
 
 ### Removido
