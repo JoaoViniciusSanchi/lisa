@@ -1,6 +1,0 @@
-# Deno edge functions — não fazem parte do build Next.js
-supabase/
-
-# Arquivos de desenvolvimento
-build.log
-*.orig

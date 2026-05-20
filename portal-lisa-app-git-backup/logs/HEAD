@@ -1,0 +1,8 @@
+0000000000000000000000000000000000000000 8d391b7f65924ec4571d74b7079262d71427e884 Joao Vinicius Sanchi <vrsantos@id.uff.br> 1776176229 -0300	commit (initial): Initial commit from Create Next App
+8d391b7f65924ec4571d74b7079262d71427e884 7c41692386a6e7408bae07ce36c3ef257f94cdb9 Joao Vinicius Sanchi <vrsantos@id.uff.br> 1779305526 -0300	commit: fix: corrigir MIDDLEWARE_INVOCATION_FAILED no Vercel
+7c41692386a6e7408bae07ce36c3ef257f94cdb9 bfd5d19cd8f1ac667207f0e071deeaf666457b0a Joao Vinicius Sanchi <vrsantos@id.uff.br> 1779305656 -0300	commit: fix: simplificar middleware para eliminar MIDDLEWARE_INVOCATION_FAILED
+bfd5d19cd8f1ac667207f0e071deeaf666457b0a e35da09e71e4d19de24c0c78d888da1c6b15e965 Joao Vinicius Sanchi <vrsantos@id.uff.br> 1779306076 -0300	commit: test: desabilitar middleware para diagnosticar erro
+e35da09e71e4d19de24c0c78d888da1c6b15e965 2b458af5e404059e7eb55ec40b1cd2401936ff15 Joao Vinicius Sanchi <vrsantos@id.uff.br> 1779306467 -0300	commit: chore: remover backup do middleware
+2b458af5e404059e7eb55ec40b1cd2401936ff15 2d05cbe073c11047ed97be90ecb9b4a4faf869d6 Joao Vinicius Sanchi <vrsantos@id.uff.br> 1779307152 -0300	commit: feat: adicionar página raiz que redireciona para locale padrão
+2d05cbe073c11047ed97be90ecb9b4a4faf869d6 4f56bfea44d66ec3a65e531bd2b22e39a7374117 Joao Vinicius Sanchi <vrsantos@id.uff.br> 1779307344 -0300	commit: fix: adicionar root layout para a página raiz
+4f56bfea44d66ec3a65e531bd2b22e39a7374117 f724a60fb41b159150b54afe6e44255723df5665 Joao Vinicius Sanchi <vrsantos@id.uff.br> 1779307541 -0300	commit: fix: adicionar html e body ao root layout
