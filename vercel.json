@@ -1,0 +1,5 @@
+{
+  "buildCommand": "cd portal-lisa-app && npm run build",
+  "outputDirectory": "portal-lisa-app/.next",
+  "framework": "nextjs"
+}
