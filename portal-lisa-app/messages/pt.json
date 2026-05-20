@@ -1,0 +1,140 @@
+{
+  "header": {
+    "subtitle": "Inovação Social Aberta",
+    "cta": "Conectar",
+    "nav": {
+      "catalog": "Catálogo",
+      "about": "Sobre",
+      "contact": "Contato"
+    }
+  },
+  "footer": {
+    "subtitle": "Inovação Social Aberta",
+    "description": "Portal de tecnologias sociais da Universidade Federal Fluminense. Uma iniciativa da Agência de Inovação (AGIR/PROPPI/UFF).",
+    "navigation": {
+      "label": "Navegação",
+      "connect": "Conectar uma Demanda",
+      "catalog": "Catálogo",
+      "edital": "Edital Atual",
+      "about": "Sobre o LISA",
+      "contact": "Contato"
+    },
+    "social": {
+      "label": "Redes"
+    },
+    "language": {
+      "label": "Idioma"
+    },
+    "copyright": "© 2026 Portal LISA · UFF · AGIR · Todos os direitos reservados",
+    "version": "Versão MVP 1.0 · Desenvolvido em Niterói, RJ"
+  },
+  "home": {
+    "hero": {
+      "eyebrow": "Portal LISA · UFF · AGIR",
+      "titleLine1": "Tecnologias",
+      "titleLine2a": "sociais",
+      "titleLine2b": "que",
+      "titleLine3": "transformam",
+      "titleLine4": "o real.",
+      "description": "O Laboratório de Inovação Social Aberto reúne, documenta e conecta as iniciativas de inovação social desenvolvidas dentro e fora da Universidade Federal Fluminense.",
+      "ctaPrimary": "Conectar uma Demanda",
+      "ctaSecondary": "Explorar o Catálogo",
+      "caption": "Conecte sua demanda real com tecnologias sociais já desenvolvidas pela comunidade universitária da UFF.",
+      "scrollHint": "Role para descobrir",
+      "meta": {
+        "editalLabel": "Edital Atual",
+        "editalStatus": "Aberto",
+        "editalName": "Chamamento 2026",
+        "editalDeadline": "Submissões abertas até 30 de junho",
+        "editalCta": "Cadastrar experiência",
+        "updateLabel": "Última atualização",
+        "updateDate": "12 de abril, 2026",
+        "updateDescription": "3 novas experiências aprovadas",
+        "statusLabel": "Status do Portal",
+        "statusValue": "Operacional"
+      }
+    },
+    "apresentacao": {
+      "label": "Apresentação",
+      "titlePart1": "Conhecimento que",
+      "titleAccent1": "nasce",
+      "titlePart2": "da prática",
+      "titlePart3": "e",
+      "titleAccent2": "retorna",
+      "titlePart4": "à comunidade.",
+      "paragraph1": "Tecnologias sociais são produtos, métodos e processos desenvolvidos em interação com a comunidade, que respondem a demandas concretas e podem ser reaplicados em diferentes contextos.",
+      "paragraph2": "O Portal LISA é o ponto de encontro entre quem desenvolve essas iniciativas e quem busca soluções inovadoras para problemas reais — fortalecendo a função social da universidade pública.",
+      "concepts": {
+        "demanda": {
+          "title": "Demanda concreta",
+          "description": "A iniciativa nasce de um problema real, identificado junto à comunidade beneficiada."
+        },
+        "construcao": {
+          "title": "Construção coletiva",
+          "description": "A comunidade é coautora, não apenas usuária. O conhecimento se constrói junto."
+        },
+        "reaplicabilidade": {
+          "title": "Reaplicabilidade",
+          "description": "A solução pode ser adaptada — não copiada — para novos contextos e realidades."
+        }
+      }
+    },
+    "estatisticas": {
+      "label": "O Portal em Números",
+      "items": {
+        "experiencias": "Experiências mapeadas",
+        "cnpq": "Grandes áreas CNPq",
+        "ods": "ODS contemplados",
+        "campi": "Campi envolvidos"
+      }
+    },
+    "timeline": {
+      "label": "Trajetória",
+      "titlePart1": "Da fundação à",
+      "titleAccent": "inovação aberta.",
+      "description": "Seis décadas de história, do nascimento da UFF ao lançamento do Portal LISA. Continue rolando para navegar pela linha do tempo."
+    },
+    "catalogo": {
+      "label": "Catálogo · Em destaque",
+      "titlePart1": "Experiências que",
+      "titleAccent": "já transformam",
+      "titlePart2": "realidades.",
+      "cta": "Ver catálogo completo"
+    },
+    "sobre": {
+      "label": "Quem Somos",
+      "titlePart1": "A universidade",
+      "titleAccent": "a serviço",
+      "titlePart2": "da transformação social.",
+      "block1": {
+        "label": "Coordenação",
+        "title": "AGIR / PROPPI",
+        "description": "A Agência de Inovação da UFF, vinculada à Pró-Reitoria de Pesquisa, Pós-Graduação e Inovação, coordena o Portal LISA como parte de sua missão de promover a função social da universidade."
+      },
+      "block2": {
+        "label": "Missão do LISA",
+        "title": "Inovação Aberta",
+        "description": "Conectar quem desenvolve tecnologias sociais com quem busca soluções, fortalecendo redes de conhecimento e ampliando o impacto das iniciativas universitárias."
+      },
+      "contact": {
+        "coordLabel": "Coordenadora",
+        "coordName": "Profa. Dra. Elaine Sigette",
+        "coordRole": "AGIR / PROPPI / UFF",
+        "addressLabel": "Endereço",
+        "address": "Rua Miguel de Frias, 9\nIcaraí, Niterói — RJ\nCEP 24220-900",
+        "emailLabel": "Contato",
+        "email": "lisa@id.uff.br"
+      },
+      "partners": {
+        "label": "Instituições parceiras"
+      }
+    }
+  },
+  "dev": {
+    "components": {
+      "eyebrow": "Design system · LISA",
+      "title": "Componentes atômicos",
+      "subtitle": "Galeria de componentes da Fase 1 — base para a home (Fase 2) e o cadastro (Fase 3)."
+    }
+  }
+}

@@ -1,0 +1,140 @@
+{
+  "header": {
+    "subtitle": "Open Social Innovation",
+    "cta": "Connect",
+    "nav": {
+      "catalog": "Catalog",
+      "about": "About",
+      "contact": "Contact"
+    }
+  },
+  "footer": {
+    "subtitle": "Open Social Innovation",
+    "description": "Social technologies portal of the Universidade Federal Fluminense. An initiative of the Innovation Agency (AGIR/PROPPI/UFF).",
+    "navigation": {
+      "label": "Navigation",
+      "connect": "Connect a Demand",
+      "catalog": "Catalog",
+      "edital": "Current Call",
+      "about": "About LISA",
+      "contact": "Contact"
+    },
+    "social": {
+      "label": "Social"
+    },
+    "language": {
+      "label": "Language"
+    },
+    "copyright": "© 2026 LISA Portal · UFF · AGIR · All rights reserved",
+    "version": "MVP Version 1.0 · Built in Niterói, RJ"
+  },
+  "home": {
+    "hero": {
+      "eyebrow": "LISA Portal · UFF · AGIR",
+      "titleLine1": "Social",
+      "titleLine2a": "technologies",
+      "titleLine2b": "that",
+      "titleLine3": "transform",
+      "titleLine4": "the real.",
+      "description": "The Open Social Innovation Laboratory gathers, documents and connects social innovation initiatives developed within and beyond the Universidade Federal Fluminense.",
+      "ctaPrimary": "Connect a Demand",
+      "ctaSecondary": "Explore the Catalog",
+      "caption": "Match your real demand with social technologies already developed by UFF's university community.",
+      "scrollHint": "Scroll to discover",
+      "meta": {
+        "editalLabel": "Current Call",
+        "editalStatus": "Open",
+        "editalName": "2026 Call",
+        "editalDeadline": "Submissions open until June 30",
+        "editalCta": "Submit experience",
+        "updateLabel": "Last update",
+        "updateDate": "April 12, 2026",
+        "updateDescription": "3 new experiences approved",
+        "statusLabel": "Portal Status",
+        "statusValue": "Operational"
+      }
+    },
+    "apresentacao": {
+      "label": "About",
+      "titlePart1": "Knowledge that",
+      "titleAccent1": "is born",
+      "titlePart2": "of practice",
+      "titlePart3": "and",
+      "titleAccent2": "returns",
+      "titlePart4": "to the community.",
+      "paragraph1": "Social technologies are products, methods and processes developed in interaction with the community, responding to concrete demands and reapplicable in different contexts.",
+      "paragraph2": "LISA Portal is the meeting point between those who develop these initiatives and those seeking innovative solutions to real problems — strengthening the social function of the public university.",
+      "concepts": {
+        "demanda": {
+          "title": "Concrete demand",
+          "description": "The initiative is born from a real problem, identified together with the benefited community."
+        },
+        "construcao": {
+          "title": "Collective construction",
+          "description": "The community is co-author, not just user. Knowledge is built together."
+        },
+        "reaplicabilidade": {
+          "title": "Reapplicability",
+          "description": "The solution can be adapted — not copied — to new contexts and realities."
+        }
+      }
+    },
+    "estatisticas": {
+      "label": "The Portal in Numbers",
+      "items": {
+        "experiencias": "Experiences mapped",
+        "cnpq": "Major CNPq areas",
+        "ods": "SDGs covered",
+        "campi": "Campi involved"
+      }
+    },
+    "timeline": {
+      "label": "Trajectory",
+      "titlePart1": "From founding to",
+      "titleAccent": "open innovation.",
+      "description": "Six decades of history, from the birth of UFF to the launch of LISA Portal. Keep scrolling to navigate the timeline."
+    },
+    "catalogo": {
+      "label": "Catalog · Featured",
+      "titlePart1": "Experiences that",
+      "titleAccent": "already transform",
+      "titlePart2": "realities.",
+      "cta": "View full catalog"
+    },
+    "sobre": {
+      "label": "Who We Are",
+      "titlePart1": "The university",
+      "titleAccent": "in service",
+      "titlePart2": "of social transformation.",
+      "block1": {
+        "label": "Coordination",
+        "title": "AGIR / PROPPI",
+        "description": "UFF's Innovation Agency, linked to the Pro-Rectorate of Research, Graduate Studies and Innovation, coordinates LISA Portal as part of its mission to promote the social function of the university."
+      },
+      "block2": {
+        "label": "LISA's Mission",
+        "title": "Open Innovation",
+        "description": "Connect those who develop social technologies with those seeking solutions, strengthening knowledge networks and amplifying the impact of university initiatives."
+      },
+      "contact": {
+        "coordLabel": "Coordinator",
+        "coordName": "Profa. Dra. Elaine Sigette",
+        "coordRole": "AGIR / PROPPI / UFF",
+        "addressLabel": "Address",
+        "address": "Rua Miguel de Frias, 9\nIcaraí, Niterói — RJ\nCEP 24220-900",
+        "emailLabel": "Contact",
+        "email": "lisa@id.uff.br"
+      },
+      "partners": {
+        "label": "Partner institutions"
+      }
+    }
+  },
+  "dev": {
+    "components": {
+      "eyebrow": "Design system · LISA",
+      "title": "Atomic components",
+      "subtitle": "Phase 1 components gallery — foundation for the home (Phase 2) and the form (Phase 3)."
+    }
+  }
+}

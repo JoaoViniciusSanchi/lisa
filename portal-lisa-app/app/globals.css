@@ -1,0 +1,196 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Fundos - cinza escuro neutro */
+  --bg-base: #0E0E10;
+  --bg-elevated: #16161A;
+  --bg-card: #1A1A1F;
+
+  /* Accent - paleta petrol oficial LISA (detalhe, não fundo) */
+  --petrol-deep: #0B2A33;
+  --petrol-mid: #143B47;
+  --petrol-light: #1F5160;
+
+  /* Texto */
+  --warm-white: #F4EFE6;
+  --pure-white: #FFFFFF;
+
+  /* Highlights */
+  --accent: #2EA39B;
+  --accent-glow: #3FBDB4;
+
+  /* Faixas fuzzy (vermelho/amarelo/verde) */
+  --fuzzy-red: #E55542;
+  --fuzzy-yellow: #E5B842;
+  --fuzzy-green: #3FBDB4;
+
+  /* Danger / validação */
+  --danger: #E55542;
+
+  /* Linhas */
+  --line: rgba(244, 239, 230, 0.07);
+  --line-strong: rgba(244, 239, 230, 0.16);
+  --line-brighter: rgba(244, 239, 230, 0.3);
+}
+
+/* Cantos retos absolutos — identidade visual LISA */
+*,
+*::before,
+*::after {
+  border-radius: 0 !important;
+}
+
+/* === Marca LISA — quadrado com "L" desenhado em borda === */
+.logo-mark {
+  width: 36px;
+  height: 36px;
+  border: 1.5px solid var(--warm-white);
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+  padding: 6px;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.logo-mark::before {
+  content: '';
+  display: block;
+  width: 11px;
+  height: 18px;
+  border-left: 1.5px solid var(--warm-white);
+  border-bottom: 1.5px solid var(--warm-white);
+}
+
+.logo-mark-sm {
+  width: 32px;
+  height: 32px;
+  padding: 5px;
+}
+
+.logo-mark-sm::before {
+  width: 10px;
+  height: 16px;
+}
+
+/* === Glassmorphism — gradiente petrol sobre fundo escuro === */
+.glass {
+  background: linear-gradient(
+    135deg,
+    rgba(31, 81, 96, 0.12) 0%,
+    rgba(22, 22, 26, 0.85) 100%
+  );
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  border: 1px solid var(--line);
+  box-shadow:
+    inset 0 1px 0 rgba(244, 239, 230, 0.04),
+    0 30px 60px -20px rgba(0, 0, 0, 0.5);
+}
+
+.glass-strong {
+  background: linear-gradient(
+    135deg,
+    rgba(31, 81, 96, 0.18) 0%,
+    rgba(26, 26, 31, 0.92) 100%
+  );
+  backdrop-filter: blur(28px) saturate(150%);
+  -webkit-backdrop-filter: blur(28px) saturate(150%);
+  border: 1px solid var(--line-strong);
+}
+
+/* === Fuzzy slider — gradiente cromático tri-color e thumb custom === */
+.fuzzy-slider {
+  background: linear-gradient(
+    to right,
+    var(--fuzzy-red) 0%,
+    var(--fuzzy-red) 30%,
+    var(--fuzzy-yellow) 30%,
+    var(--fuzzy-yellow) 70%,
+    var(--fuzzy-green) 70%,
+    var(--fuzzy-green) 100%
+  );
+}
+
+.fuzzy-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  background: var(--warm-white);
+  border: 3px solid var(--accent);
+  cursor: grab;
+  box-shadow:
+    0 0 0 6px rgba(46, 163, 155, 0.15),
+    0 4px 20px rgba(0, 0, 0, 0.4);
+  transition: transform 0.2s;
+}
+
+.fuzzy-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+}
+
+.fuzzy-slider::-webkit-slider-thumb:active {
+  cursor: grabbing;
+}
+
+.fuzzy-slider::-moz-range-thumb {
+  width: 24px;
+  height: 24px;
+  background: var(--warm-white);
+  border: 3px solid var(--accent);
+  cursor: grab;
+  box-shadow:
+    0 0 0 6px rgba(46, 163, 155, 0.15),
+    0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+/* Step transition usado pelo CadastroController */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--bg-base);
+  color: var(--warm-white);
+  font-family: var(--font-inter), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* Scrollbar discreta */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-base);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--bg-elevated);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
