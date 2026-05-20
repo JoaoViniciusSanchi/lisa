@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UPES — Painel Administrativo</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;800;900&family=Inter+Tight:wght@200;300;400;500;700;900&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg-base:      #0E0E10;
+    --bg-elevated:  #16161A;
+    --bg-card:      #1A1A1F;
+    --petrol-deep:  #0B2A33;
+    --petrol-mid:   #143B47;
+    --petrol-light: #1F5160;
+    --warm-white:   #F4EFE6;
+    --pure-white:   #FFFFFF;
+    --accent:       #2EA39B;
+    --accent-glow:  #3FBDB4;
+    --line:         rgba(244,239,230,0.07);
+    --line-strong:  rgba(244,239,230,0.16);
+    --danger:       #E05050;
+    --success:      #4DE89A;
+    --warning:      #F0C84D;
+    --sidebar-w:    252px;
+    --header-h:     56px;
+  }
+
+  *, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0; padding: 0;
+    border-radius: 0 !important;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  html, body {
+    height: 100%; overflow: hidden;
+    font-family: 'Inter', system-ui, sans-serif;
+    background: var(--bg-base);
+    color: var(--warm-white);
+  }
+
+  .layout { display: flex; height: 100vh; }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: var(--sidebar-w);
+    background: var(--bg-elevated);
+    border-right: 1px solid var(--line-strong);
+    display: flex; flex-direction: column;
+    flex-shrink: 0; position: relative; overflow: hidden;
+  }
+  .sidebar::after {
+    content:''; position:absolute; top:0; left:0; right:0; height:2px;
+    background: linear-gradient(90deg, var(--accent), transparent);
+  }
+
+  .sidebar-logo {
+    padding: 22px 20px 18px;
+    border-bottom: 1px solid var(--line);
+    display: flex; align-items: center; gap: 12px;
+  }
+  .logo-mark {
+    width: 32px; height: 32px;
+    border: 1.5px solid var(--warm-white);
+    display: flex; align-items: flex-end; justify-content: flex-start;
+    padding: 5px; flex-shrink: 0;
+  }
+  .logo-mark::before {
+    content:'';
+    width: 10px; height: 16px;
+    border-left: 1.5px solid var(--warm-white);
+    border-bottom: 1.5px solid var(--warm-white);
+  }
+  .logo-wordmark {
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 15px; font-weight: 700;
+    letter-spacing: -0.02em; color: var(--warm-white); line-height: 1;
+  }
+  .logo-sub {
+    font-size: 9px; font-weight: 500; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--accent-glow); margin-top: 2px;
+  }
+
+  .nav-section { padding: 18px 0 4px; }
+  .nav-section-label {
+    font-size: 9px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase;
+    color: rgba(244,239,230,0.3); padding: 0 20px 8px;
+  }
+  .nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 20px; cursor: pointer;
+    border-left: 2px solid transparent;
+    font-size: 12px; font-weight: 500; color: rgba(244,239,230,0.5);
+    transition: all .15s ease; user-select: none;
+  }
+  .nav-item:hover { color: var(--warm-white); background: rgba(244,239,230,0.03); }
+  .nav-item.active {
+    color: var(--accent-glow); border-left-color: var(--accent);
+    background: linear-gradient(90deg, rgba(46,163,155,0.08), transparent);
+  }
+  .nav-item.disabled { opacity: 0.3; cursor: not-allowed; }
+  .nav-icon { width: 14px; text-align: center; font-size: 12px; opacity: 0.7; }
+  .nav-badge {
+    margin-left: auto; background: var(--petrol-mid); color: var(--accent-glow);
+    font-size: 9px; font-weight: 700; padding: 2px 7px; letter-spacing: 0.05em;
+    border: 1px solid rgba(46,163,155,0.3);
+  }
+  .nav-soon {
+    margin-left: auto; font-size: 8px; font-weight: 600;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: rgba(244,239,230,0.25); background: var(--bg-card);
+    padding: 2px 6px; border: 1px solid var(--line);
+  }
+  .hairline { height: 1px; background: var(--line); width: 100%; }
+
+  .sidebar-bottom {
+    margin-top: auto; border-top: 1px solid var(--line); padding: 14px 20px;
+  }
+  .admin-row { display: flex; align-items: center; gap: 10px; }
+  .admin-avatar {
+    width: 30px; height: 30px; flex-shrink: 0;
+    background: linear-gradient(135deg, var(--petrol-mid), var(--accent));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; color: var(--bg-base);
+    border: 1px solid rgba(46,163,155,0.4);
+  }
+  .admin-name { font-size: 11px; font-weight: 600; color: var(--warm-white); }
+  .admin-role { font-size: 9px; color: rgba(244,239,230,0.4); letter-spacing: 0.05em; }
+
+  /* ── MAIN ── */
+  .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
+
+  .topbar {
+    height: var(--header-h); background: var(--bg-elevated);
+    border-bottom: 1px solid var(--line-strong);
+    display: flex; align-items: center; padding: 0 28px; gap: 16px; flex-shrink: 0;
+  }
+  .topbar-eyebrow {
+    font-size: 9px; font-weight: 700; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--accent-glow); margin-bottom: 2px;
+  }
+  .topbar-title {
+    font-family: 'Inter Tight', sans-serif; font-size: 16px; font-weight: 700;
+    letter-spacing: -0.03em; color: var(--warm-white); flex: 1;
+  }
+  .topbar-actions { display: flex; gap: 8px; }
+
+  /* ── BUTTONS ── */
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 9px 18px; cursor: pointer;
+    font-family: 'Inter', sans-serif; font-size: 11px;
+    font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+    border: 1px solid transparent; transition: all .2s;
+  }
+  .btn-primary { background: var(--accent); color: var(--bg-base); border-color: var(--accent); }
+  .btn-primary:hover { background: var(--accent-glow); box-shadow: 0 0 24px rgba(46,163,155,0.35); }
+  .btn-ghost { background: transparent; color: rgba(244,239,230,0.6); border-color: var(--line-strong); }
+  .btn-ghost:hover { color: var(--warm-white); border-color: rgba(244,239,230,0.3); }
+  .btn-sm { padding: 6px 14px; font-size: 10px; }
+
+  /* ── CONTENT ── */
+  .content { flex: 1; overflow-y: auto; padding: 28px; }
+  .content::-webkit-scrollbar { width: 3px; }
+  .content::-webkit-scrollbar-track { background: var(--bg-base); }
+  .content::-webkit-scrollbar-thumb { background: var(--petrol-mid); }
+  .content::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+  /* ── PANELS ── */
+  .panel { display: none; }
+  .panel.active { display: block; animation: fadeIn .2s ease; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+  /* ── STATS ── */
+  .stats-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 1px; background: var(--line-strong); margin-bottom: 24px; }
+  .stat-card { background: var(--bg-elevated); padding: 22px 24px; position: relative; overflow: hidden; }
+  .stat-card::before { content:''; position:absolute; top:0; left:0; right:0; height:1px; }
+  .stat-card.c1::before { background: var(--accent); }
+  .stat-card.c2::before { background: rgba(244,239,230,0.3); }
+  .stat-card.c3::before { background: var(--warning); }
+  .stat-card.c4::before { background: var(--success); }
+  .stat-eyebrow { font-size: 9px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(244,239,230,0.4); margin-bottom: 10px; }
+  .stat-num { font-family: 'Inter Tight', sans-serif; font-size: 48px; font-weight: 200; letter-spacing: -0.05em; line-height: 1; }
+  .stat-num.c1 { color: var(--accent-glow); }
+  .stat-num.c2 { color: rgba(244,239,230,0.7); }
+  .stat-num.c3 { color: var(--warning); }
+  .stat-num.c4 { color: var(--success); }
+  .stat-sub { font-size: 10px; color: rgba(244,239,230,0.3); margin-top: 8px; }
+
+  /* ── CHARTS ── */
+  .chart-row { display: grid; grid-template-columns: 2fr 1fr; gap: 1px; background: var(--line-strong); margin-bottom: 24px; }
+  .chart-card { background: var(--bg-elevated); padding: 22px 24px; }
+  .chart-title { font-size: 9px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(244,239,230,0.4); margin-bottom: 18px; }
+  .bar-chart { display: flex; flex-direction: column; gap: 12px; }
+  .bar-row { display: flex; align-items: center; gap: 10px; }
+  .bar-label { font-size: 10px; color: rgba(244,239,230,0.4); width: 160px; flex-shrink: 0; }
+  .bar-track { flex: 1; height: 3px; background: rgba(244,239,230,0.05); }
+  .bar-fill { height: 100%; transition: width .8s cubic-bezier(0.4,0,0.2,1); }
+  .bar-val { font-size: 10px; color: rgba(244,239,230,0.35); width: 22px; text-align: right; font-variant-numeric: tabular-nums; }
+  .legend-list { display: flex; flex-direction: column; gap: 14px; }
+  .legend-item { display: flex; align-items: center; justify-content: space-between; }
+  .legend-label-row { display: flex; align-items: center; gap: 8px; font-size: 11px; color: rgba(244,239,230,0.5); }
+  .legend-dot { width: 5px; height: 5px; flex-shrink: 0; }
+  .legend-val { font-family: 'Inter Tight', sans-serif; font-size: 20px; font-weight: 200; letter-spacing: -0.03em; }
+
+  /* ── TABLE ── */
+  .table-wrap-card { background: var(--bg-elevated); border: 1px solid var(--line-strong); margin-bottom: 24px; overflow: hidden; }
+  .table-scroll { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 11px; }
+  thead tr { background: var(--bg-card); }
+  th { padding: 10px 16px; text-align: left; font-size: 9px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(244,239,230,0.35); white-space: nowrap; border-bottom: 1px solid var(--line-strong); }
+  td { padding: 12px 16px; border-top: 1px solid var(--line); vertical-align: middle; color: rgba(244,239,230,0.7); }
+  tbody tr:hover td { background: rgba(46,163,155,0.04); }
+
+  /* ── BADGES ── */
+  .badge { display: inline-block; padding: 3px 9px; font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; border: 1px solid; }
+  .badge-active { color: var(--success); border-color: rgba(77,232,154,0.3); background: rgba(77,232,154,0.06); }
+  .badge-closed { color: var(--danger); border-color: rgba(224,80,80,0.3); background: rgba(224,80,80,0.06); }
+  .badge-catalog { color: var(--accent-glow); border-color: rgba(46,163,155,0.3); background: rgba(46,163,155,0.06); }
+
+  /* ── TAGS ── */
+  .tag-area { display: inline-block; padding: 2px 8px; font-size: 9px; font-weight: 500; background: rgba(31,81,96,0.4); color: var(--accent-glow); border: 1px solid rgba(46,163,155,0.2); margin: 1px; }
+  .tag-ods { display: inline-block; padding: 2px 7px; font-size: 9px; font-weight: 700; background: rgba(240,200,77,0.07); color: var(--warning); border: 1px solid rgba(240,200,77,0.2); margin: 1px; }
+  .tag-campi { display: inline-block; padding: 2px 7px; font-size: 9px; font-weight: 500; background: rgba(77,232,154,0.05); color: var(--success); border: 1px solid rgba(77,232,154,0.2); }
+
+  /* ── ICON BTNS ── */
+  .icon-btn { width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--line-strong); background: transparent; color: rgba(244,239,230,0.35); cursor: pointer; font-size: 11px; transition: all .15s; font-family: inherit; }
+  .icon-btn:hover { background: var(--bg-card); color: var(--warm-white); }
+  .icon-btn.edit:hover { border-color: var(--accent); color: var(--accent-glow); }
+  .icon-btn.del:hover { border-color: var(--danger); color: var(--danger); }
+
+  /* ── FILTERS ── */
+  .filters-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 16px; }
+  .filter-label { font-size: 9px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(244,239,230,0.3); margin-right: 4px; }
+  .filter-chip { padding: 5px 12px; border: 1px solid var(--line-strong); background: var(--bg-card); color: rgba(244,239,230,0.4); font-size: 10px; font-weight: 500; cursor: pointer; font-family: 'Inter', sans-serif; transition: all .12s; }
+  .filter-chip:hover { color: var(--warm-white); }
+  .filter-chip.active { border-color: var(--accent); color: var(--accent-glow); background: rgba(46,163,155,0.08); }
+  .filter-select { background: var(--bg-card); border: 1px solid var(--line-strong); color: rgba(244,239,230,0.5); font-family: 'Inter', sans-serif; font-size: 10px; padding: 5px 10px; cursor: pointer; outline: none; }
+  .filter-select:focus { border-color: var(--accent); }
+  option { background: var(--bg-card); }
+
+  /* ── EXPERTS GRID ── */
+  .experts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--line-strong); margin-bottom: 24px; }
+  .expert-card { background: var(--bg-elevated); padding: 20px; display: flex; gap: 14px; align-items: flex-start; transition: background .15s; }
+  .expert-card:hover { background: var(--bg-card); }
+  .expert-avatar { width: 38px; height: 38px; flex-shrink: 0; background: linear-gradient(135deg, var(--petrol-mid), var(--petrol-light)); display: flex; align-items: center; justify-content: center; font-family: 'Inter Tight', sans-serif; font-weight: 700; font-size: 13px; color: var(--accent-glow); border: 1px solid rgba(46,163,155,0.3); }
+  .expert-name { font-size: 13px; font-weight: 600; color: var(--warm-white); margin-bottom: 3px; letter-spacing: -0.01em; }
+  .expert-meta { font-size: 10px; color: rgba(244,239,230,0.35); margin-bottom: 8px; }
+  .expert-tags { display: flex; flex-wrap: wrap; gap: 3px; }
+  .expert-actions { display: flex; flex-direction: column; gap: 4px; margin-left: auto; }
+
+  /* ── EMAIL SECTION ── */
+  .email-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--line-strong); margin-bottom: 24px; }
+  .email-card { background: var(--bg-elevated); padding: 22px; }
+  .email-trigger { font-size: 8px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent-glow); background: rgba(46,163,155,0.1); border: 1px solid rgba(46,163,155,0.25); padding: 3px 8px; display: inline-block; margin-bottom: 10px; }
+  .email-trigger.manual { color: var(--warning); background: rgba(240,200,77,0.08); border-color: rgba(240,200,77,0.2); }
+  .email-trigger.sched { color: rgba(244,239,230,0.4); background: rgba(244,239,230,0.04); border-color: var(--line-strong); }
+  .email-card-title { font-size: 13px; font-weight: 600; color: var(--warm-white); margin-bottom: 6px; }
+  .email-card-desc { font-size: 11px; color: rgba(244,239,230,0.4); line-height: 1.6; margin-bottom: 14px; }
+  .email-recipients { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 14px; }
+  .recipient-chip { padding: 3px 8px; border: 1px solid var(--line-strong); font-size: 9px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(244,239,230,0.4); }
+
+  /* ── FORM ── */
+  .form-card { background: var(--bg-elevated); border: 1px solid var(--line-strong); padding: 24px; margin-bottom: 24px; }
+  .form-card-title { font-family: 'Inter Tight', sans-serif; font-size: 14px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 18px; color: var(--warm-white); }
+  .form-group { margin-bottom: 14px; }
+  .form-label { font-size: 9px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(244,239,230,0.4); display: block; margin-bottom: 6px; }
+  .form-control { width: 100%; background: var(--bg-card); border: 1px solid var(--line-strong); color: var(--warm-white); font-family: 'Inter', sans-serif; font-size: 12px; padding: 10px 12px; outline: none; transition: border-color .15s; }
+  .form-control:focus { border-color: var(--accent); }
+  .form-control::placeholder { color: rgba(244,239,230,0.2); }
+  textarea.form-control { resize: vertical; min-height: 100px; line-height: 1.6; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .checkboxes { display: flex; gap: 8px; flex-wrap: wrap; }
+  .check-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: rgba(244,239,230,0.6); cursor: pointer; padding: 5px 10px; border: 1px solid var(--line-strong); background: var(--bg-card); transition: border-color .12s; }
+  .check-item:hover { border-color: rgba(244,239,230,0.25); color: var(--warm-white); }
+  .check-item input[type=checkbox] { accent-color: var(--accent); width: 12px; height: 12px; }
+
+  /* ── MODAL ── */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 1000; opacity: 0; pointer-events: none; transition: opacity .2s; }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+  .modal { background: var(--bg-elevated); border: 1px solid var(--line-strong); width: 700px; max-width: 95vw; max-height: 90vh; overflow-y: auto; transform: translateY(16px); transition: transform .2s; box-shadow: 0 40px 80px rgba(0,0,0,0.6); }
+  .modal-overlay.open .modal { transform: translateY(0); }
+  .modal-top { padding: 22px 26px; border-bottom: 1px solid var(--line-strong); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; background: var(--bg-elevated); z-index: 2; }
+  .modal-eyebrow { font-size: 9px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent-glow); margin-bottom: 3px; }
+  .modal-title { font-family: 'Inter Tight', sans-serif; font-size: 18px; font-weight: 700; letter-spacing: -0.03em; color: var(--warm-white); }
+  .modal-close { background: none; border: 1px solid var(--line-strong); color: rgba(244,239,230,0.4); font-size: 18px; cursor: pointer; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; transition: all .15s; }
+  .modal-close:hover { border-color: var(--danger); color: var(--danger); }
+  .modal-body { padding: 26px; }
+  .modal-footer { padding: 18px 26px; border-top: 1px solid var(--line); display: flex; gap: 10px; justify-content: flex-end; background: var(--bg-card); }
+  .modal::-webkit-scrollbar { width: 3px; }
+  .modal::-webkit-scrollbar-thumb { background: var(--petrol-mid); }
+
+  .section-sep { border: none; border-top: 1px solid var(--line); margin: 22px 0 18px; position: relative; }
+  .sep-label { position: absolute; top: -9px; left: 0; background: var(--bg-elevated); padding-right: 10px; font-size: 9px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(244,239,230,0.3); }
+  .field-note { font-size: 9px; color: rgba(244,239,230,0.25); margin-top: 5px; line-height: 1.4; }
+  .auto-field { background: rgba(46,163,155,0.05); border: 1px solid rgba(46,163,155,0.2); padding: 10px 12px; font-size: 11px; color: rgba(244,239,230,0.3); font-family: 'Inter', sans-serif; }
+  .auto-field-label { font-size: 9px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(46,163,155,0.7); display: block; margin-bottom: 6px; }
+
+  /* ── PAGE HEADER ── */
+  .page-hrow { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 22px; }
+  .page-eyebrow { font-size: 9px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent-glow); margin-bottom: 6px; }
+  .page-title { font-family: 'Inter Tight', sans-serif; font-size: 22px; font-weight: 700; letter-spacing: -0.04em; color: var(--warm-white); }
+  .page-desc { font-size: 12px; color: rgba(244,239,230,0.35); margin-top: 4px; }
+
+  /* ── TOAST ── */
+  .toast { position: fixed; bottom: 28px; right: 28px; z-index: 9999; background: var(--bg-elevated); border: 1px solid var(--accent); border-left: 3px solid var(--accent); padding: 14px 20px; font-size: 12px; font-weight: 500; color: var(--warm-white); transform: translateY(20px); opacity: 0; transition: all .25s; pointer-events: none; letter-spacing: 0.02em; box-shadow: 0 8px 30px rgba(0,0,0,0.4); }
+  .toast.show { transform: translateY(0); opacity: 1; }
+</style>
+</head>
+<body>
+
+<div class="layout">
+
+  <!-- ══ SIDEBAR ══ -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-mark"></div>
+      <div>
+        <div class="logo-wordmark">LISA</div>
+        <div class="logo-sub">Admin · AGIR/UFF</div>
+      </div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-label">Visão Geral</div>
+      <div class="nav-item active" onclick="navigate('dashboard')">
+        <span class="nav-icon">◈</span> Dashboard
+      </div>
+    </div>
+    <div class="hairline"></div>
+    <div class="nav-section">
+      <div class="nav-section-label">Experiências</div>
+      <div class="nav-item" onclick="navigate('exp-internas')">
+        <span class="nav-icon">◉</span> Exp. Internas (UFF)
+        <span class="nav-badge">47</span>
+      </div>
+      <div class="nav-item disabled" title="Em breve — formulário em desenvolvimento">
+        <span class="nav-icon">◎</span> Exp. Externas
+        <span class="nav-soon">Em breve</span>
+      </div>
+    </div>
+    <div class="hairline"></div>
+    <div class="nav-section">
+      <div class="nav-section-label">Pessoas</div>
+      <div class="nav-item" onclick="navigate('experts')">
+        <span class="nav-icon">◈</span> Experts
+        <span class="nav-badge">12</span>
+      </div>
+      <div class="nav-item" onclick="navigate('proponentes')">
+        <span class="nav-icon">◆</span> Proponentes
+        <span class="nav-badge">8</span>
+      </div>
+    </div>
+    <div class="hairline"></div>
+    <div class="nav-section">
+      <div class="nav-section-label">Comunicação</div>
+      <div class="nav-item" onclick="navigate('emails')">
+        <span class="nav-icon">✉</span> Disparo de E-mails
+      </div>
+    </div>
+    <div class="hairline"></div>
+    <div class="nav-section">
+      <div class="nav-section-label">Análise</div>
+      <div class="nav-item" onclick="navigate('analytics')">
+        <span class="nav-icon">◫</span> Analytics
+      </div>
+    </div>
+
+    <div class="sidebar-bottom">
+      <div class="admin-row">
+        <div class="admin-avatar">AG</div>
+        <div>
+          <div class="admin-name">Admin AGIR</div>
+          <div class="admin-role">agir@uff.br</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ══ MAIN ══ -->
+  <div class="main">
+    <div class="topbar">
+      <div style="flex:1">
+        <div class="topbar-eyebrow" id="topbar-eyebrow">Visão Geral</div>
+        <div class="topbar-title" id="topbar-title">Dashboard</div>
+      </div>
+      <div class="topbar-actions" id="topbar-actions">
+        <button class="btn btn-ghost btn-sm">↓ Exportar</button>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- DASHBOARD -->
+      <div id="panel-dashboard" class="panel active">
+        <div class="stats-grid">
+          <div class="stat-card c1"><div class="stat-eyebrow">Experiências Internas</div><div class="stat-num c1">47</div><div class="stat-sub">↑ 3 cadastradas este mês</div></div>
+          <div class="stat-card c2"><div class="stat-eyebrow">Experts Cadastrados</div><div class="stat-num c2">12</div><div class="stat-sub">Pesquisadores UFF / AGIR</div></div>
+          <div class="stat-card c3"><div class="stat-eyebrow">Proponentes</div><div class="stat-num c3">8</div><div class="stat-sub">Demandas abertas</div></div>
+          <div class="stat-card c4"><div class="stat-eyebrow">No Catálogo</div><div class="stat-num c4">31</div><div class="stat-sub">Última edição: 2025</div></div>
+        </div>
+        <div class="chart-row">
+          <div class="chart-card">
+            <div class="chart-title">Experiências por Grande Área CNPq</div>
+            <div class="bar-chart">
+              <div class="bar-row"><div class="bar-label">Ciências da Saúde</div><div class="bar-track"><div class="bar-fill" style="width:72%;background:var(--accent)"></div></div><div class="bar-val">14</div></div>
+              <div class="bar-row"><div class="bar-label">Ciências Humanas</div><div class="bar-track"><div class="bar-fill" style="width:55%;background:var(--accent-glow)"></div></div><div class="bar-val">11</div></div>
+              <div class="bar-row"><div class="bar-label">Ciências Sociais Aplicadas</div><div class="bar-track"><div class="bar-fill" style="width:44%;background:var(--warning)"></div></div><div class="bar-val">9</div></div>
+              <div class="bar-row"><div class="bar-label">Engenharias</div><div class="bar-track"><div class="bar-fill" style="width:30%;background:var(--success)"></div></div><div class="bar-val">6</div></div>
+              <div class="bar-row"><div class="bar-label">Multidisciplinar</div><div class="bar-track"><div class="bar-fill" style="width:18%;background:rgba(244,239,230,0.3)"></div></div><div class="bar-val">4</div></div>
+              <div class="bar-row"><div class="bar-label">Outros</div><div class="bar-track"><div class="bar-fill" style="width:13%;background:rgba(244,239,230,0.15)"></div></div><div class="bar-val">3</div></div>
+            </div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">Status</div>
+            <div class="legend-list">
+              <div class="legend-item"><div class="legend-label-row"><div class="legend-dot" style="background:var(--success)"></div>Em andamento</div><div class="legend-val" style="color:var(--success)">28</div></div>
+              <div class="legend-item"><div class="legend-label-row"><div class="legend-dot" style="background:var(--danger)"></div>Encerradas</div><div class="legend-val" style="color:var(--danger)">11</div></div>
+              <div class="legend-item"><div class="legend-label-row"><div class="legend-dot" style="background:var(--accent)"></div>Publicadas</div><div class="legend-val" style="color:var(--accent-glow)">31</div></div>
+              <div class="legend-item"><div class="legend-label-row"><div class="legend-dot" style="background:var(--warning)"></div>Pendentes</div><div class="legend-val" style="color:var(--warning)">8</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="chart-row">
+          <div class="chart-card">
+            <div class="chart-title">Experiências por Campi UFF</div>
+            <div class="bar-chart">
+              <div class="bar-row"><div class="bar-label">Niterói — Gragoatá</div><div class="bar-track"><div class="bar-fill" style="width:80%;background:var(--accent)"></div></div><div class="bar-val">18</div></div>
+              <div class="bar-row"><div class="bar-label">Niterói — Valonguinho</div><div class="bar-track"><div class="bar-fill" style="width:50%;background:var(--accent-glow)"></div></div><div class="bar-val">9</div></div>
+              <div class="bar-row"><div class="bar-label">Campos dos Goytacazes</div><div class="bar-track"><div class="bar-fill" style="width:38%;background:var(--warning)"></div></div><div class="bar-val">8</div></div>
+              <div class="bar-row"><div class="bar-label">Rio das Ostras</div><div class="bar-track"><div class="bar-fill" style="width:30%;background:var(--success)"></div></div><div class="bar-val">7</div></div>
+              <div class="bar-row"><div class="bar-label">Macaé</div><div class="bar-track"><div class="bar-fill" style="width:20%;background:rgba(244,239,230,0.2)"></div></div><div class="bar-val">5</div></div>
+            </div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">Top ODS</div>
+            <div class="legend-list">
+              <div class="legend-item"><div class="legend-label-row"><div class="legend-dot" style="background:#e5243b"></div>ODS 3 — Saúde</div><div class="legend-val" style="color:#e5243b">15</div></div>
+              <div class="legend-item"><div class="legend-label-row"><div class="legend-dot" style="background:#c5192d"></div>ODS 4 — Educação</div><div class="legend-val" style="color:#c5192d">12</div></div>
+              <div class="legend-item"><div class="legend-label-row"><div class="legend-dot" style="background:#fd9d24"></div>ODS 11 — Cidades</div><div class="legend-val" style="color:#fd9d24">10</div></div>
+              <div class="legend-item"><div class="legend-label-row"><div class="legend-dot" style="background:#3f7e44"></div>ODS 8 — Trabalho</div><div class="legend-val" style="color:#3f7e44">8</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- EXPERIÊNCIAS INTERNAS -->
+      <div id="panel-exp-internas" class="panel">
+        <div class="page-hrow">
+          <div>
+            <div class="page-eyebrow">Catálogo</div>
+            <div class="page-title">Experiências Internas UFF</div>
+            <div class="page-desc">47 experiências · gerenciamento completo</div>
+          </div>
+          <button class="btn btn-primary" onclick="openModal('modal-exp')">+ Adicionar Experiência</button>
+        </div>
+        <div class="filters-row">
+          <span class="filter-label">Filtrar:</span>
+          <span class="filter-chip active" onclick="setFilter(this)">Todas</span>
+          <span class="filter-chip" onclick="setFilter(this)">Em andamento</span>
+          <span class="filter-chip" onclick="setFilter(this)">Encerradas</span>
+          <span class="filter-chip" onclick="setFilter(this)">Publicadas</span>
+          <select class="filter-select"><option value="">Área CNPq</option><option>Ciências da Saúde</option><option>Ciências Humanas</option><option>Engenharias</option><option>Multidisciplinar</option></select>
+          <select class="filter-select"><option value="">ODS</option><option>ODS 1</option><option>ODS 2</option><option>ODS 3</option><option>ODS 4</option></select>
+          <select class="filter-select"><option value="">Campi</option><option>Niterói</option><option>Campos</option><option>Macaé</option></select>
+          <select class="filter-select"><option value="">Catálogo</option><option>2017</option><option>2018</option><option>2019</option><option>2020</option><option>2021</option><option>2022</option><option>2023</option><option>2024</option><option>2025</option><option>2026</option></select>
+        </div>
+        <div class="table-wrap-card">
+          <div class="table-scroll">
+            <table>
+              <thead><tr>
+                <th>Título</th><th>Coordenador(a)</th><th>Área CNPq</th><th>ODS</th><th>Campi</th><th>Catálogo</th><th>Status</th><th>Atualizado em</th><th>Ações</th>
+              </tr></thead>
+              <tbody>
+                <tr>
+                  <td style="font-weight:500;color:var(--warm-white);max-width:180px">Horta Comunitária Valonguinho</td>
+                  <td style="font-size:10px;color:rgba(244,239,230,0.4)">Prof.ª Maria Silva</td>
+                  <td><span class="tag-area">Ciências Agrárias</span></td>
+                  <td><span class="tag-ods">ODS 2</span><span class="tag-ods">ODS 11</span></td>
+                  <td><span class="tag-campi">Niterói</span></td>
+                  <td><span class="badge badge-catalog">2025</span></td>
+                  <td><span class="badge badge-active">Ativo</span></td>
+                  <td style="font-size:10px;color:rgba(244,239,230,0.3)">12/03/2025</td>
+                  <td><div style="display:flex;gap:4px"><button class="icon-btn" title="Ver">👁</button><button class="icon-btn edit" title="Editar" onclick="openModal('modal-exp')">✏</button><button class="icon-btn del" title="Excluir">🗑</button></div></td>
+                </tr>
+                <tr>
+                  <td style="font-weight:500;color:var(--warm-white);max-width:180px">App de Triagem Comunitária</td>
+                  <td style="font-size:10px;color:rgba(244,239,230,0.4)">Prof. João Pereira</td>
+                  <td><span class="tag-area">Ciências da Saúde</span></td>
+                  <td><span class="tag-ods">ODS 3</span></td>
+                  <td><span class="tag-campi">Campos</span></td>
+                  <td><span class="badge badge-catalog">2024</span></td>
+                  <td><span class="badge badge-closed">Encerrado</span></td>
+                  <td style="font-size:10px;color:rgba(244,239,230,0.3)">05/11/2024</td>
+                  <td><div style="display:flex;gap:4px"><button class="icon-btn" title="Ver">👁</button><button class="icon-btn edit" title="Editar" onclick="openModal('modal-exp')">✏</button><button class="icon-btn del" title="Excluir">🗑</button></div></td>
+                </tr>
+                <tr>
+                  <td style="font-weight:500;color:var(--warm-white);max-width:180px">Metodologia Ativa no Ensino Básico</td>
+                  <td style="font-size:10px;color:rgba(244,239,230,0.4)">Prof.ª Ana Lima</td>
+                  <td><span class="tag-area">Ciências Humanas</span></td>
+                  <td><span class="tag-ods">ODS 4</span><span class="tag-ods">ODS 10</span></td>
+                  <td><span class="tag-campi">Niterói</span></td>
+                  <td style="color:rgba(244,239,230,0.2);font-size:10px">—</td>
+                  <td><span class="badge badge-active">Ativo</span></td>
+                  <td style="font-size:10px;color:rgba(244,239,230,0.3)">—</td>
+                  <td><div style="display:flex;gap:4px"><button class="icon-btn" title="Ver">👁</button><button class="icon-btn edit" title="Editar" onclick="openModal('modal-exp')">✏</button><button class="icon-btn del" title="Excluir">🗑</button></div></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- EXPERTS -->
+      <div id="panel-experts" class="panel">
+        <div class="page-hrow">
+          <div>
+            <div class="page-eyebrow">Pesquisadores</div>
+            <div class="page-title">Experts</div>
+            <div class="page-desc">Disponíveis para matchmaking de demandas externas</div>
+          </div>
+          <button class="btn btn-primary" onclick="openModal('modal-expert')">+ Adicionar Expert</button>
+        </div>
+        <div class="experts-grid">
+          <div class="expert-card"><div class="expert-avatar">RM</div><div style="flex:1"><div class="expert-name">Prof.ª Rita Moreira</div><div class="expert-meta">Dep. de Engenharia Social · AGIR/UFF</div><div class="expert-tags"><span class="tag-area">Saneamento</span><span class="tag-area">Habitação</span><span class="tag-ods">ODS 6</span><span class="tag-ods">ODS 11</span></div></div><div class="expert-actions"><button class="icon-btn">👁</button><button class="icon-btn edit" onclick="openModal('modal-expert')">✏</button><button class="icon-btn del">🗑</button></div></div>
+          <div class="expert-card"><div class="expert-avatar">CF</div><div style="flex:1"><div class="expert-name">Prof. Carlos Ferreira</div><div class="expert-meta">Dep. de Saúde Coletiva · UFF Niterói</div><div class="expert-tags"><span class="tag-area">Saúde Pública</span><span class="tag-area">Epidemiologia</span><span class="tag-ods">ODS 3</span></div></div><div class="expert-actions"><button class="icon-btn">👁</button><button class="icon-btn edit" onclick="openModal('modal-expert')">✏</button><button class="icon-btn del">🗑</button></div></div>
+          <div class="expert-card"><div class="expert-avatar">SA</div><div style="flex:1"><div class="expert-name">Prof.ª Sofia Albuquerque</div><div class="expert-meta">Dep. de Educação · UFF Campos</div><div class="expert-tags"><span class="tag-area">Educação Popular</span><span class="tag-ods">ODS 4</span><span class="tag-ods">ODS 10</span></div></div><div class="expert-actions"><button class="icon-btn">👁</button><button class="icon-btn edit" onclick="openModal('modal-expert')">✏</button><button class="icon-btn del">🗑</button></div></div>
+          <div class="expert-card"><div class="expert-avatar">LB</div><div style="flex:1"><div class="expert-name">Prof. Lucas Barros</div><div class="expert-meta">Dep. de Computação · UFF Niterói</div><div class="expert-tags"><span class="tag-area">IA Aplicada</span><span class="tag-area">Dados Abertos</span><span class="tag-ods">ODS 9</span></div></div><div class="expert-actions"><button class="icon-btn">👁</button><button class="icon-btn edit" onclick="openModal('modal-expert')">✏</button><button class="icon-btn del">🗑</button></div></div>
+        </div>
+      </div>
+
+      <!-- PROPONENTES -->
+      <div id="panel-proponentes" class="panel">
+        <div class="page-hrow">
+          <div>
+            <div class="page-eyebrow">Demandas</div>
+            <div class="page-title">Proponentes</div>
+            <div class="page-desc">Stakeholders que chegam com desafios e demandas sociais</div>
+          </div>
+          <button class="btn btn-primary">+ Adicionar Proponente</button>
+        </div>
+        <div class="table-wrap-card">
+          <div class="table-scroll">
+            <table>
+              <thead><tr><th>Nome / Organização</th><th>Tipo</th><th>Área da Demanda</th><th>Status</th><th>Cadastro</th><th>Ações</th></tr></thead>
+              <tbody>
+                <tr><td style="font-weight:500;color:var(--warm-white)">Sec. Municipal de Saúde — Niterói</td><td><span class="badge" style="color:rgba(244,239,230,0.4);border-color:var(--line-strong)">Poder Público</span></td><td style="font-size:10px;color:rgba(244,239,230,0.4)">Triagem comunitária em UBSs</td><td><span class="badge badge-active">Aberta</span></td><td style="font-size:10px;color:rgba(244,239,230,0.3)">02/04/2025</td><td><div style="display:flex;gap:4px"><button class="icon-btn">👁</button><button class="icon-btn edit">✏</button><button class="icon-btn del">🗑</button></div></td></tr>
+                <tr><td style="font-weight:500;color:var(--warm-white)">ONG Favela Tech</td><td><span class="badge" style="color:rgba(244,239,230,0.4);border-color:var(--line-strong)">Soc. Civil</span></td><td style="font-size:10px;color:rgba(244,239,230,0.4)">Conectividade em comunidades</td><td><span class="badge badge-active">Aberta</span></td><td style="font-size:10px;color:rgba(244,239,230,0.3)">15/03/2025</td><td><div style="display:flex;gap:4px"><button class="icon-btn">👁</button><button class="icon-btn edit">✏</button><button class="icon-btn del">🗑</button></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- E-MAILS -->
+      <div id="panel-emails" class="panel">
+        <div class="page-hrow">
+          <div>
+            <div class="page-eyebrow">Comunicação</div>
+            <div class="page-title">Disparo de E-mails</div>
+            <div class="page-desc">Automáticos por gatilho · manuais personalizados · 4 grupos</div>
+          </div>
+        </div>
+        <div class="email-grid">
+          <div class="email-card">
+            <div class="email-trigger">Automático</div>
+            <div class="email-card-title">Nova experiência cadastrada</div>
+            <div class="email-card-desc">Disparado ao criar nova experiência interna. Confirma recebimento ao coordenador e alerta o admin.</div>
+            <div class="email-recipients"><span class="recipient-chip">Admin AGIR</span><span class="recipient-chip">Coordenador</span></div>
+            <button class="btn btn-ghost btn-sm" style="width:100%">Editar template ✏</button>
+          </div>
+          <div class="email-card">
+            <div class="email-trigger manual">Manual (Admin)</div>
+            <div class="email-card-title">Experiência aprovada no catálogo</div>
+            <div class="email-card-desc">Enviado pelo admin ao publicar oficialmente uma experiência. Notifica o coordenador sobre a aprovação.</div>
+            <div class="email-recipients"><span class="recipient-chip">Coordenador</span></div>
+            <button class="btn btn-ghost btn-sm" style="width:100%">Editar template ✏</button>
+          </div>
+          <div class="email-card">
+            <div class="email-trigger sched">Agendado</div>
+            <div class="email-card-title">Verificação de validade</div>
+            <div class="email-card-desc">Enviado X dias antes do vencimento. Inclui link com botão ✏ para o coordenador atualizar os dados diretamente — "Atualizado em" é preenchido via timestamp ao salvar.</div>
+            <div class="email-recipients"><span class="recipient-chip">Coordenador</span></div>
+            <div style="margin:10px 0 12px"><label class="form-label">Antecipar em (dias)</label><input type="number" class="form-control" value="30" style="width:90px"></div>
+            <button class="btn btn-ghost btn-sm" style="width:100%">Editar template ✏</button>
+          </div>
+          <div class="email-card">
+            <div class="email-trigger">Automático</div>
+            <div class="email-card-title">Novo proponente cadastrado</div>
+            <div class="email-card-desc">Disparado ao submeter nova demanda. Alerta o admin e pode notificar experts relevantes conforme a área da demanda.</div>
+            <div class="email-recipients"><span class="recipient-chip">Admin AGIR</span><span class="recipient-chip">Experts (área)</span></div>
+            <button class="btn btn-ghost btn-sm" style="width:100%">Editar template ✏</button>
+          </div>
+        </div>
+        <div class="form-card">
+          <div class="form-card-title">E-mail Personalizado</div>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">Assunto</label><input type="text" class="form-control" placeholder="Assunto do e-mail..."></div>
+            <div class="form-group"><label class="form-label">Grupos destinatários</label><div class="checkboxes"><label class="check-item"><input type="checkbox" checked> Experts</label><label class="check-item"><input type="checkbox"> Proponentes</label><label class="check-item"><input type="checkbox"> Coordenadores</label><label class="check-item"><input type="checkbox"> Admin</label></div></div>
+          </div>
+          <div class="form-group"><label class="form-label">Mensagem</label><textarea class="form-control" placeholder="Texto do e-mail..."></textarea></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:16px">
+            <div style="font-size:10px;color:rgba(244,239,230,0.22)">Enviado a todos os registros dos grupos selecionados. Usuários não possuem login — apenas cadastro no sistema.</div>
+            <button class="btn btn-primary" onclick="showToast('E-mail enviado com sucesso!')">Enviar agora →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ANALYTICS -->
+      <div id="panel-analytics" class="panel">
+        <div class="page-hrow">
+          <div>
+            <div class="page-eyebrow">Análise</div>
+            <div class="page-title">Analytics</div>
+            <div class="page-desc">Visão histórica · filtros combinados do acervo</div>
+          </div>
+          <button class="btn btn-ghost btn-sm">↓ Exportar CSV</button>
+        </div>
+        <div class="filters-row" style="margin-bottom:20px">
+          <span class="filter-label">Filtrar:</span>
+          <span class="filter-chip active" onclick="setFilter(this)">Todos os anos</span>
+          <span class="filter-chip" onclick="setFilter(this)">2025</span>
+          <span class="filter-chip" onclick="setFilter(this)">2024</span>
+          <span class="filter-chip" onclick="setFilter(this)">2023</span>
+          <select class="filter-select"><option>Área CNPq</option></select>
+          <select class="filter-select"><option>ODS</option></select>
+          <select class="filter-select"><option>Campi</option></select>
+          <select class="filter-select"><option>Status</option></select>
+          <select class="filter-select"><option>Catálogo</option></select>
+        </div>
+        <div class="stats-grid" style="margin-bottom:24px">
+          <div class="stat-card c1"><div class="stat-eyebrow">Total experiências</div><div class="stat-num c1">47</div><div class="stat-sub">Todas as edições</div></div>
+          <div class="stat-card c2"><div class="stat-eyebrow">Catálogos cobertos</div><div class="stat-num c2">10</div><div class="stat-sub">2017 – 2026</div></div>
+          <div class="stat-card c3"><div class="stat-eyebrow">ODS distintas</div><div class="stat-num c3">13</div><div class="stat-sub">de 17 globais</div></div>
+          <div class="stat-card c4"><div class="stat-eyebrow">Campi representados</div><div class="stat-num c4">7</div><div class="stat-sub">de 9 da UFF</div></div>
+        </div>
+        <div class="chart-row">
+          <div class="chart-card">
+            <div class="chart-title">Experiências por edição de catálogo (histórico)</div>
+            <div class="bar-chart">
+              <div class="bar-row"><div class="bar-label">Catálogo 2017</div><div class="bar-track"><div class="bar-fill" style="width:20%;background:rgba(244,239,230,0.15)"></div></div><div class="bar-val">4</div></div>
+              <div class="bar-row"><div class="bar-label">Catálogo 2019</div><div class="bar-track"><div class="bar-fill" style="width:33%;background:rgba(244,239,230,0.2)"></div></div><div class="bar-val">6</div></div>
+              <div class="bar-row"><div class="bar-label">Catálogo 2021</div><div class="bar-track"><div class="bar-fill" style="width:45%;background:var(--accent);opacity:.6"></div></div><div class="bar-val">9</div></div>
+              <div class="bar-row"><div class="bar-label">Catálogo 2023</div><div class="bar-track"><div class="bar-fill" style="width:62%;background:var(--accent)"></div></div><div class="bar-val">12</div></div>
+              <div class="bar-row"><div class="bar-label">Catálogo 2024</div><div class="bar-track"><div class="bar-fill" style="width:75%;background:var(--accent)"></div></div><div class="bar-val">14</div></div>
+              <div class="bar-row"><div class="bar-label">Catálogo 2025</div><div class="bar-track"><div class="bar-fill" style="width:85%;background:var(--accent-glow)"></div></div><div class="bar-val">16</div></div>
+            </div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">Status geral</div>
+            <div class="legend-list">
+              <div class="legend-item"><div class="legend-label-row"><div class="legend-dot" style="background:var(--success)"></div>Em andamento</div><div class="legend-val" style="color:var(--success)">28</div></div>
+              <div class="legend-item"><div class="legend-label-row"><div class="legend-dot" style="background:var(--danger)"></div>Encerradas</div><div class="legend-val" style="color:var(--danger)">11</div></div>
+              <div class="legend-item"><div class="legend-label-row"><div class="legend-dot" style="background:var(--warning)"></div>Pendentes</div><div class="legend-val" style="color:var(--warning)">8</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /layout -->
+
+<!-- MODAL: EXPERIÊNCIA -->
+<div class="modal-overlay" id="modal-exp">
+  <div class="modal">
+    <div class="modal-top">
+      <div><div class="modal-eyebrow">Experiência Interna UFF</div><div class="modal-title">Cadastrar / Editar Experiência</div></div>
+      <button class="modal-close" onclick="closeModal('modal-exp')">×</button>
+    </div>
+    <div class="modal-body">
+      <hr class="section-sep"><span class="sep-label">Identificação</span>
+      <div class="form-group"><label class="form-label">Título da Experiência *</label><input type="text" class="form-control" placeholder="Nome completo da experiência"></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Nome do(a) Coordenador(a) *</label><input type="text" class="form-control" placeholder="Nome completo"></div>
+        <div class="form-group"><label class="form-label">E-mail do(a) Coordenador(a) *</label><input type="email" class="form-control" placeholder="email@uff.br"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Campus UFF</label>
+          <select class="form-control"><option value="">Selecionar...</option><option>Niterói — Gragoatá</option><option>Niterói — Valonguinho</option><option>Niterói — Praia Vermelha</option><option>Campos dos Goytacazes</option><option>Rio das Ostras</option><option>Macaé</option><option>Angra dos Reis</option><option>Petrópolis</option><option>Volta Redonda</option></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Grande Área CNPq</label>
+          <select class="form-control"><option value="">Selecionar...</option><option>Ciências Exatas e da Terra</option><option>Ciências Biológicas</option><option>Engenharias</option><option>Ciências da Saúde</option><option>Ciências Agrárias</option><option>Ciências Sociais Aplicadas</option><option>Ciências Humanas</option><option>Linguística, Letras e Artes</option><option>Multidisciplinar</option></select>
+        </div>
+      </div>
+
+      <hr class="section-sep"><span class="sep-label">Catálogo & Publicação</span>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Publicado no Catálogo</label>
+          <select class="form-control"><option value="">— Não publicado —</option><option>2017</option><option>2018</option><option>2019</option><option>2020</option><option>2021</option><option>2022</option><option>2023</option><option>2024</option><option>2025</option><option>2026</option></select>
+          <div class="field-note">Ano de publicação no Catálogo de Tecnologias Sociais UFF.</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Status atual</label>
+          <select class="form-control"><option>Em andamento</option><option>Encerrado</option><option>Pausado</option></select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Data de Início</label><input type="date" class="form-control"></div>
+        <div class="form-group"><label class="form-label">Validade / Previsão de Término</label><input type="date" class="form-control"><div class="field-note">Usada pelo e-mail automático de verificação.</div></div>
+      </div>
+      <div class="form-group">
+        <span class="auto-field-label">⟳ Atualizado em — preenchido automaticamente</span>
+        <div class="auto-field">— timestamp registrado a cada edição (admin ou coordenador via link de atualização) —</div>
+        <div class="field-note">Campo atualizado tanto por admins quanto por coordenadores ao responderem o e-mail de verificação e salvarem alterações.</div>
+      </div>
+
+      <hr class="section-sep"><span class="sep-label">ODS Relacionadas</span>
+      <div class="checkboxes" style="flex-wrap:wrap;gap:6px">
+        <label class="check-item"><input type="checkbox"> ODS 1 — Pobreza</label>
+        <label class="check-item"><input type="checkbox"> ODS 2 — Fome Zero</label>
+        <label class="check-item"><input type="checkbox" checked> ODS 3 — Saúde</label>
+        <label class="check-item"><input type="checkbox" checked> ODS 4 — Educação</label>
+        <label class="check-item"><input type="checkbox"> ODS 5 — Gênero</label>
+        <label class="check-item"><input type="checkbox"> ODS 6 — Água</label>
+        <label class="check-item"><input type="checkbox"> ODS 7 — Energia</label>
+        <label class="check-item"><input type="checkbox"> ODS 8 — Trabalho</label>
+        <label class="check-item"><input type="checkbox"> ODS 9 — Inovação</label>
+        <label class="check-item"><input type="checkbox"> ODS 10 — Desigualdades</label>
+        <label class="check-item"><input type="checkbox"> ODS 11 — Cidades</label>
+        <label class="check-item"><input type="checkbox"> ODS 12 — Consumo</label>
+        <label class="check-item"><input type="checkbox"> ODS 13 — Clima</label>
+        <label class="check-item"><input type="checkbox"> ODS 17 — Parcerias</label>
+      </div>
+
+      <hr class="section-sep"><span class="sep-label">Descrição</span>
+      <div class="form-group"><label class="form-label">Resumo da Experiência</label><textarea class="form-control" style="min-height:80px" placeholder="Descrição breve, objetivo e público-alvo..."></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-exp')">Cancelar</button>
+      <button class="btn btn-primary" onclick="closeModal('modal-exp');showToast('Experiência salva · Atualizado em: ' + new Date().toLocaleDateString('pt-BR'))">Salvar Experiência</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: EXPERT -->
+<div class="modal-overlay" id="modal-expert">
+  <div class="modal">
+    <div class="modal-top">
+      <div><div class="modal-eyebrow">Pesquisadores</div><div class="modal-title">Cadastrar / Editar Expert</div></div>
+      <button class="modal-close" onclick="closeModal('modal-expert')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Nome Completo *</label><input type="text" class="form-control" placeholder="Prof.ª / Prof. ..."></div>
+        <div class="form-group"><label class="form-label">E-mail Institucional *</label><input type="email" class="form-control" placeholder="email@uff.br"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Departamento</label><input type="text" class="form-control" placeholder="Dep. de ..."></div>
+        <div class="form-group"><label class="form-label">Campus</label><select class="form-control"><option>Niterói</option><option>Campos</option><option>Macaé</option><option>Outro</option></select></div>
+      </div>
+      <div class="form-group"><label class="form-label">Áreas de Atuação</label><input type="text" class="form-control" placeholder="Ex: Saúde Pública, Epidemiologia (separadas por vírgula)"></div>
+      <div class="form-group"><label class="form-label">ODS de Atuação</label><div class="checkboxes" style="flex-wrap:wrap"><label class="check-item"><input type="checkbox"> ODS 3</label><label class="check-item"><input type="checkbox"> ODS 4</label><label class="check-item"><input type="checkbox"> ODS 6</label><label class="check-item"><input type="checkbox"> ODS 9</label><label class="check-item"><input type="checkbox"> ODS 11</label></div></div>
+      <div class="form-group"><label class="form-label">Mini-Bio</label><textarea class="form-control" placeholder="Breve apresentação e linhas de pesquisa..."></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-expert')">Cancelar</button>
+      <button class="btn btn-primary" onclick="closeModal('modal-expert');showToast('Expert salvo com sucesso!')">Salvar Expert</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const navConfig = {
+  'dashboard':    { eyebrow:'Visão Geral',    title:'Dashboard',             action:'<button class="btn btn-ghost btn-sm">↓ Exportar</button>' },
+  'exp-internas': { eyebrow:'Catálogo',       title:'Experiências Internas', action:'<button class="btn btn-primary btn-sm" onclick="openModal(\'modal-exp\')">+ Adicionar</button>' },
+  'experts':      { eyebrow:'Pesquisadores',  title:'Experts',               action:'<button class="btn btn-primary btn-sm" onclick="openModal(\'modal-expert\')">+ Adicionar</button>' },
+  'proponentes':  { eyebrow:'Demandas',       title:'Proponentes',           action:'' },
+  'emails':       { eyebrow:'Comunicação',    title:'Disparo de E-mails',    action:'' },
+  'analytics':    { eyebrow:'Análise',        title:'Analytics',             action:'<button class="btn btn-ghost btn-sm">↓ Exportar CSV</button>' },
+};
+
+function navigate(key) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  const panel = document.getElementById('panel-' + key);
+  if (panel) panel.classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => {
+    n.classList.remove('active');
+    const oc = n.getAttribute('onclick') || '';
+    if (oc.includes("'"+key+"'")) n.classList.add('active');
+  });
+  const cfg = navConfig[key] || {};
+  document.getElementById('topbar-eyebrow').textContent = cfg.eyebrow || '';
+  document.getElementById('topbar-title').textContent = cfg.title || '';
+  document.getElementById('topbar-actions').innerHTML = cfg.action || '';
+}
+
+function openModal(id) { document.getElementById(id).classList.add('open'); document.body.style.overflow='hidden'; }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); document.body.style.overflow=''; }
+
+document.querySelectorAll('.modal-overlay').forEach(o => {
+  o.addEventListener('click', function(e) { if (e.target===this) closeModal(this.id); });
+});
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = '✓ ' + msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+function setFilter(el) {
+  el.closest('.filters-row').querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key==='Escape') document.querySelectorAll('.modal-overlay.open').forEach(o => closeModal(o.id));
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,792 @@
+// =============================================================
+// PORTAL LISA — SCHEMA DBML (regenerado a partir do SQL)
+// =============================================================
+// Reflete o estado pós lisa_setup.sql + 0002_taxonomias_complementares.sql
+// Última atualização: abril/2026
+// Para visualizar: cole em https://dbdiagram.io
+// Total: 35 tabelas, 4 views, 16 enums
+// =============================================================
+
+Project lisa {
+  database_type: 'PostgreSQL'
+  Note: '''
+    Portal LISA — UFF/AGIR
+    Catálogo de Tecnologias Sociais com matchmaking
+    Stack: Next.js 14 + Supabase (Postgres)
+    Coordenadora: Profa. Dra. Elaine Sigette
+  '''
+}
+
+// =============================================================
+// ENUMS
+// =============================================================
+
+Enum experiencia_status {
+  rascunho
+  em_moderacao
+  aprovada_ativa_em_andamento
+  aprovada_ativa_perene
+  aprovada_encerrada
+  aguardando_confirmacao_coordenador
+  inativa_nao_confirmada
+  rejeitada
+}
+
+Enum pessoa_vinculo {
+  docente
+  tecnico_administrativo
+  estudante_graduacao
+  estudante_pos
+  pesquisador_externo
+  membro_comunidade
+  representante_organizacao
+  outro
+}
+
+Enum papel_na_experiencia {
+  coordenador
+  vice_coordenador
+  membro_equipe
+  representante_comunidade
+  parceiro_externo
+}
+
+Enum versao_conteudo {
+  bruto
+  em_revisao_editorial
+  pt_pronto
+  em_traducao
+  publicavel
+  publicado
+}
+
+Enum traducao_status {
+  pendente
+  rascunho_api_gerado
+  em_primeira_revisao
+  primeira_revisao_concluida
+  em_segunda_revisao
+  publicavel
+  publicada
+  nao_aplicavel
+}
+
+Enum dimensao_fuzzy {
+  participacao_comunitaria
+  impacto_social
+  apropriacao_tecnologica
+  sustentabilidade
+  replicabilidade
+}
+
+Enum faixa_fuzzy {
+  vermelho      // 0.0 - 0.3 — não é tecnologia social
+  amarelo       // 0.3 - 0.7 — em transição
+  verde         // 0.7 - 1.0 — tecnologia social consolidada
+}
+
+Enum nivel_linguistico {
+  baixo
+  medio
+  alto
+}
+
+Enum anexo_tipo {
+  foto_capa
+  foto_secundaria_1
+  foto_secundaria_2
+  foto_galeria_extra
+  logo
+  video
+  documento_pdf
+  publicacao_academica
+  material_didatico
+  reportagem_midia
+  link_externo_outro
+}
+
+Enum anexo_origem {
+  supabase_storage
+  link_externo
+}
+
+Enum email_tipo {
+  confirmacao_submissao
+  notificacao_admin
+  aprovacao
+  rejeicao
+  solicitacao_atualizacao
+  lembrete_atualizacao
+  notificacao_inativacao
+}
+
+Enum email_status {
+  pendente
+  enviado
+  entregue
+  falhou
+  bounced
+}
+
+Enum convite_resposta {
+  ainda_ativa_sem_alteracoes
+  ainda_ativa_com_atualizacoes
+  encerrada
+  nao_respondido
+}
+
+Enum admin_nivel {
+  super_admin
+  moderador
+  revisor_traducao
+  visualizador
+}
+
+Enum log_acao {
+  visualizou_experiencia
+  abriu_para_moderacao
+  aprovou_experiencia
+  rejeitou_experiencia
+  editou_conteudo_pt
+  editou_conteudo_en
+  regenerou_traducao_api
+  aprovou_traducao_primeira_revisao
+  aprovou_traducao_segunda_revisao
+  publicou_no_catalogo
+  despublicou_do_catalogo
+  enviou_solicitacao_atualizacao
+  marcou_como_inativa
+  reativou_experiencia
+  adicionou_nota_editorial
+  alterou_categorizacao
+  recalculou_score
+  ajustou_pesos_pergunta
+  exportou_dados
+  acessou_painel
+}
+
+Enum config_categoria {
+  conteudo_publico
+  templates_email
+  edital
+  scoring
+  integracao
+  feature_flag
+  legal
+}
+
+// =============================================================
+// NÚCLEO
+// =============================================================
+
+Table experiencia {
+  id uuid [pk, default: `gen_random_uuid()`]
+  titulo varchar(300) [not null]
+  slug varchar(350) [unique, note: 'URL amigável']
+  resumo text [note: 'Card do catálogo, ~280 chars']
+
+  data_inicio date
+  data_fim date
+  is_perene boolean [default: false]
+
+  status experiencia_status [not null, default: 'em_moderacao']
+
+  campus_uff varchar(100)
+  municipio varchar(100)
+  uf char(2)
+
+  categoria_editorial_id uuid [ref: > categoria_editorial.id]
+
+  // Denormalizações: atualizadas quando uma nova avaliacao_fuzzy é gravada.
+  indice_fuzzy decimal(4,3) [default: 0]
+  faixa_fuzzy_atual faixa_fuzzy
+  score_calculado_em timestamp
+
+  submetida_em timestamp [default: `now()`]
+  aprovada_em timestamp
+  ultima_atualizacao timestamp [default: `now()`]
+
+  email_contato varchar(255) [not null]
+
+  Indexes {
+    status
+    categoria_editorial_id
+    (campus_uff, status)
+    submetida_em
+  }
+
+  Note: 'Tabela central. Texto editorial por idioma fica em experiencia_traducao.'
+}
+
+Table pessoa {
+  id uuid [pk, default: `gen_random_uuid()`]
+  nome_completo varchar(200) [not null]
+  email varchar(255) [unique, not null]
+
+  vinculo pessoa_vinculo
+  instituicao varchar(200)
+  departamento varchar(200)
+
+  lattes_url varchar(500)
+  orcid varchar(50)
+  telefone varchar(30)
+
+  is_especialista boolean [default: false, note: 'reservado para v2']
+
+  criada_em timestamp [default: `now()`]
+  atualizada_em timestamp [default: `now()`]
+
+  Indexes {
+    email
+    vinculo
+  }
+}
+
+Table experiencia_pessoa {
+  id uuid [pk, default: `gen_random_uuid()`]
+  experiencia_id uuid [ref: > experiencia.id, not null]
+  pessoa_id uuid [ref: > pessoa.id, not null]
+  papel papel_na_experiencia [not null]
+  ordem integer [default: 0]
+
+  Indexes {
+    (experiencia_id, papel)
+    pessoa_id
+  }
+}
+
+// =============================================================
+// TAXONOMIAS — CNPq (pesquisa)
+// =============================================================
+
+Table grande_area_cnpq {
+  id uuid [pk, default: `gen_random_uuid()`]
+  codigo varchar(20) [unique, not null]
+  nome varchar(200) [not null]
+  ordem integer
+}
+
+Table subarea_cnpq {
+  id uuid [pk, default: `gen_random_uuid()`]
+  grande_area_id uuid [ref: > grande_area_cnpq.id, not null]
+  codigo varchar(20) [unique, not null]
+  nome varchar(300) [not null]
+  nivel integer [note: '1=área, 2=subárea, 3=especialidade']
+  parent_id uuid [ref: > subarea_cnpq.id, note: 'auto-referência hierárquica']
+
+  Indexes {
+    grande_area_id
+    parent_id
+  }
+}
+
+Table experiencia_cnpq {
+  experiencia_id uuid [ref: > experiencia.id]
+  subarea_id uuid [ref: > subarea_cnpq.id]
+  is_principal boolean [default: false]
+
+  Indexes {
+    (experiencia_id, subarea_id) [pk]
+  }
+}
+
+// =============================================================
+// TAXONOMIAS — Editorial e ODS
+// =============================================================
+
+Table categoria_editorial {
+  id uuid [pk, default: `gen_random_uuid()`]
+  nome varchar(200) [unique, not null]
+  descricao text
+  ordem integer
+  ativa boolean [default: true]
+
+  Note: '9 grupos da Parte IV do formulário 2025'
+}
+
+Table ods {
+  id integer [pk, note: '1 a 17, número oficial ONU']
+  nome varchar(200) [not null]
+  descricao text
+  cor_hex varchar(7)
+  icone_url varchar(500)
+}
+
+Table experiencia_ods {
+  experiencia_id uuid [ref: > experiencia.id]
+  ods_id integer [ref: > ods.id]
+  is_principal boolean [default: false]
+
+  Indexes {
+    (experiencia_id, ods_id) [pk]
+  }
+}
+
+// =============================================================
+// TAXONOMIAS — FORPROEX (extensão)
+// =============================================================
+
+Table area_tematica_forproex {
+  id uuid [pk, default: `gen_random_uuid()`]
+  codigo varchar(10) [unique, not null]
+  nome varchar(100) [not null]
+  descricao text [not null]
+  ordem integer [default: 0]
+  ativa boolean [default: true]
+
+  Note: '8 áreas oficiais FORPROEX para classificar projetos de extensão'
+}
+
+Table experiencia_forproex {
+  experiencia_id uuid [ref: > experiencia.id]
+  forproex_id uuid [ref: > area_tematica_forproex.id]
+  principal boolean [default: false]
+
+  Indexes {
+    (experiencia_id, forproex_id) [pk]
+    experiencia_id
+  }
+}
+
+// =============================================================
+// TAXONOMIAS COMPLEMENTARES (migration 0002)
+// Eixos paralelos, NÃO hierárquicos com categoria_editorial.
+// =============================================================
+
+Table finalidade_social {
+  id uuid [pk, default: `gen_random_uuid()`]
+  codigo varchar(20) [unique, not null]
+  nome varchar(100) [not null]
+  descricao text
+  ordem integer [default: 0]
+  ativa boolean [default: true]
+  criada_em timestamp [default: `now()`]
+
+  Note: '7 categorias do mockup etapa 04. Paralela a categoria_editorial.'
+}
+
+Table experiencia_finalidade_social {
+  experiencia_id uuid [ref: > experiencia.id]
+  finalidade_id uuid [ref: > finalidade_social.id]
+  principal boolean [default: false]
+
+  Indexes {
+    (experiencia_id, finalidade_id) [pk]
+    experiencia_id
+  }
+}
+
+Table publico_alvo {
+  id uuid [pk, default: `gen_random_uuid()`]
+  codigo varchar(20) [unique, not null]
+  nome varchar(100) [not null]
+  descricao text
+  ordem integer [default: 0]
+  ativo boolean [default: true]
+  criado_em timestamp [default: `now()`]
+}
+
+Table experiencia_publico_alvo {
+  experiencia_id uuid [ref: > experiencia.id]
+  publico_alvo_id uuid [ref: > publico_alvo.id]
+
+  Indexes {
+    (experiencia_id, publico_alvo_id) [pk]
+    experiencia_id
+  }
+}
+
+Table tipo_solucao {
+  id uuid [pk, default: `gen_random_uuid()`]
+  codigo varchar(20) [unique, not null]
+  nome varchar(150) [not null]
+  descricao text
+  ordem integer [default: 0]
+  ativo boolean [default: true]
+  criado_em timestamp [default: `now()`]
+}
+
+Table experiencia_tipo_solucao {
+  experiencia_id uuid [ref: > experiencia.id]
+  tipo_solucao_id uuid [ref: > tipo_solucao.id]
+
+  Indexes {
+    (experiencia_id, tipo_solucao_id) [pk]
+    experiencia_id
+  }
+}
+
+Table arranjo_institucional {
+  id uuid [pk, default: `gen_random_uuid()`]
+  codigo varchar(20) [unique, not null]
+  nome varchar(150) [not null]
+  descricao text
+  ordem integer [default: 0]
+  ativo boolean [default: true]
+  criado_em timestamp [default: `now()`]
+}
+
+Table experiencia_arranjo {
+  experiencia_id uuid [ref: > experiencia.id]
+  arranjo_id uuid [ref: > arranjo_institucional.id]
+
+  Indexes {
+    (experiencia_id, arranjo_id) [pk]
+    experiencia_id
+  }
+}
+
+Table base_teorica {
+  id uuid [pk, default: `gen_random_uuid()`]
+  codigo varchar(20) [unique, not null]
+  nome varchar(150) [not null]
+  descricao text
+  ordem integer [default: 0]
+  ativa boolean [default: true]
+  criada_em timestamp [default: `now()`]
+
+  Note: 'Opcional no formulário (não-obrigatória).'
+}
+
+Table experiencia_base_teorica {
+  experiencia_id uuid [ref: > experiencia.id]
+  base_id uuid [ref: > base_teorica.id]
+
+  Indexes {
+    (experiencia_id, base_id) [pk]
+    experiencia_id
+  }
+}
+
+// =============================================================
+// CONTEÚDO E TRADUÇÃO
+// =============================================================
+
+Table experiencia_conteudo {
+  id uuid [pk, default: `gen_random_uuid()`]
+  experiencia_id uuid [ref: - experiencia.id, unique, not null]
+
+  email_contato_publico varchar(255)
+  instagram varchar(100)
+  facebook varchar(200)
+  youtube varchar(200)
+  site_externo varchar(500)
+  outras_redes jsonb [default: `'[]'`]
+
+  versao_atual versao_conteudo [not null, default: 'bruto']
+  texto_bruto_snapshot jsonb [note: 'cópia imutável do texto submetido']
+
+  editado_por_admin_em timestamp
+  editado_por_admin_id uuid [ref: > admin_perfil.id]
+  notas_editoriais text
+
+  criado_em timestamp [default: `now()`]
+  atualizado_em timestamp [default: `now()`]
+
+  Note: 'Conteúdo neutro (não-textual): contatos, redes, versionamento.'
+}
+
+Table experiencia_traducao {
+  id uuid [pk, default: `gen_random_uuid()`]
+  experiencia_id uuid [ref: > experiencia.id, not null]
+  idioma char(2) [not null, note: 'ISO 639-1: pt, en, es...']
+
+  titulo varchar(300) [not null]
+  historico text
+  metodologia text
+  resultados_impactos text
+  desafios_perspectivas text
+
+  is_original boolean [default: false]
+
+  rascunho_api jsonb
+  status_por_campo jsonb [default: `'{"historico":"pendente","metodologia":"pendente","resultados_impactos":"pendente","desafios_perspectivas":"pendente"}'`]
+  status_global traducao_status [default: 'pendente']
+
+  provedor_api varchar(50)
+  api_chamada_em timestamp
+  primeira_revisao_em timestamp
+  primeira_revisao_por_id uuid [ref: > admin_perfil.id]
+  segunda_revisao_em timestamp
+  segunda_revisao_por_id uuid [ref: > admin_perfil.id]
+  publicada_em timestamp
+
+  criada_em timestamp [default: `now()`]
+  atualizada_em timestamp [default: `now()`]
+
+  Indexes {
+    (experiencia_id, idioma) [unique]
+    experiencia_id
+    status_global
+  }
+
+  Note: 'Uma linha por idioma por experiência. Texto editorial completo.'
+}
+
+// =============================================================
+// SCORE FUZZY (EFITS v2.0)
+// =============================================================
+
+Table pergunta_fuzzy {
+  id uuid [pk, default: `gen_random_uuid()`]
+  codigo varchar(10) [unique, not null, note: 'P1, P2, I1, A1...']
+  dimensao dimensao_fuzzy [not null]
+  texto_pergunta text [not null]
+  texto_explicativo text
+  ordem integer [not null, note: 'ordem dentro da dimensão (1-4)']
+  ativa boolean [default: true]
+  criada_em timestamp [default: `now()`]
+}
+
+Table resposta_fuzzy {
+  id uuid [pk, default: `gen_random_uuid()`]
+  experiencia_id uuid [ref: > experiencia.id, not null]
+  pergunta_id uuid [ref: > pergunta_fuzzy.id, not null]
+  valor decimal(3,1) [not null, note: 'escala 0-10, passo 0.5']
+  respondida_em timestamp [default: `now()`]
+
+  Indexes {
+    (experiencia_id, pergunta_id) [unique]
+    experiencia_id
+    pergunta_id
+  }
+}
+
+Table justificativa_dimensao {
+  id uuid [pk, default: `gen_random_uuid()`]
+  experiencia_id uuid [ref: > experiencia.id, not null]
+  dimensao dimensao_fuzzy [not null]
+  texto text [note: 'até 1000 chars (CHECK constraint)']
+  criada_em timestamp [default: `now()`]
+
+  Indexes {
+    (experiencia_id, dimensao) [unique]
+    experiencia_id
+  }
+}
+
+Table avaliacao_fuzzy {
+  id uuid [pk, default: `gen_random_uuid()`]
+  experiencia_id uuid [ref: > experiencia.id, not null]
+
+  // Médias por dimensão (4 perguntas cada)
+  media_participacao decimal(4,2)
+  media_impacto decimal(4,2)
+  media_apropriacao decimal(4,2)
+  media_sustentabilidade decimal(4,2)
+  media_replicabilidade decimal(4,2)
+
+  // Pertinências por dimensão (baixo/medio/alto) — JSONB
+  pertinencias jsonb [note: '{"P":{"baixo":0,"medio":0,"alto":0.5},...}']
+
+  // Ativações agregadas das regras fuzzy
+  ativacoes_fuzzy jsonb [note: '{"baixo_score":0,"medio_score":0.5,"alto_score":0.25}']
+
+  indice_fuzzy decimal(4,3) [not null, note: '0.0 a 1.0']
+  indice_linear decimal(4,3) [note: 'referência cruzada usando pesos fixos']
+  faixa faixa_fuzzy [not null]
+
+  calculada_em timestamp [default: `now()`]
+  versao_motor varchar(20) [default: '2.0-fuzzy']
+
+  Indexes {
+    (experiencia_id, calculada_em)
+    faixa
+  }
+}
+
+// =============================================================
+// SUBMISSÃO COMPLETA (snapshot JSONB do formulário inteiro)
+// =============================================================
+
+Table submissao_formulario {
+  id uuid [pk, default: `gen_random_uuid()`]
+  experiencia_id uuid [ref: - experiencia.id, unique, not null]
+
+  protocolo varchar(20) [unique, not null, note: 'ex: LISA-2026-0128']
+
+  respostas_brutas jsonb [not null, note: 'payload integral do formulário']
+  triagem_resultado jsonb [not null, note: 'índices, pertinências, ativações']
+
+  versao_motor_fuzzy varchar(20) [default: '2.0-fuzzy']
+  ip_origem varchar(45)
+  user_agent varchar(500)
+  submetido_em timestamp [default: `now()`]
+
+  Indexes {
+    protocolo
+    experiencia_id
+    submetido_em
+  }
+
+  Note: 'Imutável após inserção. Audita o que o coordenador de fato submeteu.'
+}
+
+// =============================================================
+// ANEXOS, STATUS E COMUNICAÇÃO
+// =============================================================
+
+Table anexo {
+  id uuid [pk, default: `gen_random_uuid()`]
+  experiencia_id uuid [ref: > experiencia.id, not null]
+
+  tipo anexo_tipo [not null]
+  origem anexo_origem [not null]
+
+  bucket varchar(100)
+  caminho_storage varchar(500)
+  url_externa varchar(1000)
+
+  titulo varchar(300)
+  descricao text
+  tamanho_bytes bigint
+  mime_type varchar(100)
+
+  ordem integer [default: 0]
+  is_capa boolean [default: false]
+
+  criado_em timestamp [default: `now()`]
+
+  Indexes {
+    experiencia_id
+    (experiencia_id, tipo)
+  }
+}
+
+Table historico_status {
+  id uuid [pk, default: `gen_random_uuid()`]
+  experiencia_id uuid [ref: > experiencia.id, not null]
+  status_anterior experiencia_status
+  status_novo experiencia_status [not null]
+  motivo text
+  alterado_por varchar(200) [note: 'admin ou "sistema"']
+  alterado_em timestamp [default: `now()`]
+
+  Indexes {
+    experiencia_id
+    alterado_em
+  }
+}
+
+Table disparo_email {
+  id uuid [pk, default: `gen_random_uuid()`]
+  experiencia_id uuid [ref: > experiencia.id]
+  pessoa_id uuid [ref: > pessoa.id]
+
+  tipo email_tipo [not null]
+  destinatario varchar(255) [not null]
+  assunto varchar(500)
+  corpo_html text
+
+  status email_status [not null, default: 'pendente']
+  enviado_em timestamp
+  erro_mensagem text
+  resend_id varchar(100)
+
+  criado_em timestamp [default: `now()`]
+
+  Indexes {
+    experiencia_id
+    pessoa_id
+    status
+    tipo
+  }
+}
+
+Table convite_atualizacao {
+  id uuid [pk, default: `gen_random_uuid()`]
+  experiencia_id uuid [ref: > experiencia.id, not null]
+  pessoa_id uuid [ref: > pessoa.id, not null]
+
+  token varchar(64) [unique, not null]
+
+  enviado_em timestamp [default: `now()`]
+  expira_em timestamp [not null]
+  respondido_em timestamp
+
+  resposta convite_resposta
+  observacoes_coordenador text
+
+  Indexes {
+    token
+    experiencia_id
+    expira_em
+  }
+}
+
+// =============================================================
+// ADMIN, LOGS E CONFIGURAÇÕES
+// =============================================================
+
+Table admin_perfil {
+  id uuid [pk, note: 'mesmo UUID do auth.users do Supabase']
+
+  nome_completo varchar(200) [not null]
+  cargo varchar(200)
+  email_institucional varchar(255) [unique, not null]
+
+  nivel_acesso admin_nivel [not null, default: 'moderador']
+
+  ultimo_acesso_em timestamp
+  ativo boolean [default: true]
+
+  criado_em timestamp [default: `now()`]
+  atualizado_em timestamp [default: `now()`]
+}
+
+Table log_moderacao {
+  id uuid [pk, default: `gen_random_uuid()`]
+  experiencia_id uuid [ref: > experiencia.id]
+  admin_id uuid [ref: > admin_perfil.id, not null]
+
+  acao log_acao [not null]
+  detalhes jsonb [note: '{"campo_alterado":"...","valor_anterior":"...","valor_novo":"..."}']
+
+  ip_origem varchar(45)
+  user_agent varchar(500)
+
+  ocorrido_em timestamp [default: `now()`]
+
+  Indexes {
+    experiencia_id
+    admin_id
+    ocorrido_em
+    acao
+  }
+}
+
+Table configuracao_sistema {
+  chave varchar(100) [pk]
+  valor jsonb [not null]
+  descricao text
+  categoria config_categoria [not null]
+
+  editavel_pelo_painel boolean [default: true]
+
+  atualizado_em timestamp [default: `now()`]
+  atualizado_por_id uuid [ref: > admin_perfil.id]
+
+  Note: 'Pesos fuzzy, templates de e-mail, edital ativo, etc.'
+}
+
+// =============================================================
+// VIEWS (definidas no SQL, documentadas aqui)
+// =============================================================
+//
+// view_fila_moderacao
+//   Experiências com status='em_moderacao' ordenadas por indice_fuzzy DESC.
+//   JOIN com avaliacao_fuzzy mais recente.
+//
+// view_traducoes_pendentes
+//   experiencia_traducao com status_global em (rascunho_api_gerado,
+//   em_primeira_revisao, primeira_revisao_concluida, em_segunda_revisao)
+//   ordenadas por criada_em ASC.
+//
+// view_estatisticas_dashboard
+//   Contagens agregadas: total_aprovadas, fila_moderacao,
+//   aguardando_resposta, índice_medio, distribuição por faixa cromática,
+//   campi_envolvidos.
+//
+// view_catalogo_publico
+//   experiencia + experiencia_conteudo + experiencia_traducao filtradas
+//   por status aprovado E versao_atual='publicado'.

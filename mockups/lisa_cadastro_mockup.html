@@ -1,0 +1,2372 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cadastrar Experiência · LISA</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;800;900&family=Inter+Tight:wght@200;300;400;500;700;900&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg-base: #0E0E10;
+    --bg-elevated: #16161A;
+    --bg-card: #1A1A1F;
+    --petrol-deep: #0B2A33;
+    --petrol-mid: #143B47;
+    --petrol-light: #1F5160;
+    --warm-white: #F4EFE6;
+    --pure-white: #FFFFFF;
+    --accent: #2EA39B;
+    --accent-glow: #3FBDB4;
+    --danger: #E55542;
+    --fuzzy-red: #E55542;
+    --fuzzy-yellow: #E5B842;
+    --fuzzy-green: #3FBDB4;
+    --line: rgba(244, 239, 230, 0.07);
+    --line-strong: rgba(244, 239, 230, 0.16);
+    --line-brighter: rgba(244, 239, 230, 0.3);
+  }
+
+  * { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+  *, *::before, *::after { border-radius: 0 !important; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: var(--bg-base);
+    color: var(--warm-white);
+    min-height: 100vh;
+  }
+
+  .font-display { font-family: 'Inter Tight', 'Inter', sans-serif; letter-spacing: -0.04em; }
+
+  .eyebrow {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.18em; color: var(--accent-glow);
+  }
+
+  .hairline { height: 1px; background: var(--line); width: 100%; }
+
+  body::before {
+    content: ''; position: fixed; inset: 0;
+    background-image:
+      radial-gradient(circle at 20% 20%, rgba(31, 81, 96, 0.08) 0%, transparent 40%),
+      radial-gradient(circle at 80% 80%, rgba(46, 163, 155, 0.05) 0%, transparent 40%);
+    pointer-events: none; z-index: 0;
+  }
+
+  /* === HEADER === */
+  header {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+    background: rgba(14, 14, 16, 0.85);
+    backdrop-filter: blur(20px) saturate(120%);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .logo-mark {
+    width: 32px; height: 32px;
+    border: 1.5px solid var(--warm-white);
+    display: flex; align-items: flex-end; justify-content: flex-start;
+    padding: 5px; position: relative;
+  }
+  .logo-mark::before {
+    content: ''; width: 10px; height: 16px;
+    border-left: 1.5px solid var(--warm-white);
+    border-bottom: 1.5px solid var(--warm-white);
+  }
+
+  /* === PROGRESS BAR === */
+  .progress-container {
+    position: fixed; top: 72px; left: 0; right: 0; z-index: 40;
+    background: rgba(14, 14, 16, 0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--line);
+    padding: 20px 0;
+  }
+
+  .progress-phase {
+    display: flex; justify-content: center;
+    font-size: 10px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.18em; color: var(--accent-glow);
+    margin-bottom: 16px;
+  }
+
+  .progress-track {
+    display: flex; align-items: center; gap: 12px;
+    max-width: 1100px; margin: 0 auto; padding: 0 32px;
+  }
+
+  .step-node {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 8px; flex-shrink: 0; position: relative;
+  }
+
+  .step-dot {
+    width: 36px; height: 36px;
+    border: 1px solid var(--line-strong);
+    background: var(--bg-base);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 14px; font-weight: 500; color: var(--warm-white);
+    transition: all 0.3s ease; position: relative;
+  }
+
+  .step-dot.active {
+    border-color: var(--accent-glow); background: var(--accent);
+    color: var(--bg-base);
+    box-shadow: 0 0 0 4px rgba(46, 163, 155, 0.15), 0 0 30px rgba(46, 163, 155, 0.3);
+  }
+
+  .step-dot.completed {
+    border-color: var(--accent); background: transparent; color: var(--accent-glow);
+  }
+
+  .step-dot.completed::after {
+    content: ''; position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%233FBDB4' stroke-width='3' stroke-linecap='square'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
+    background-position: center; background-repeat: no-repeat;
+  }
+  .step-dot.completed span { display: none; }
+
+  .step-label {
+    font-size: 9px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.12em; color: rgba(244, 239, 230, 0.4);
+    white-space: nowrap; transition: color 0.3s;
+  }
+  .step-node.active .step-label { color: var(--accent-glow); }
+  .step-node.completed .step-label { color: rgba(244, 239, 230, 0.6); }
+
+  .step-connector {
+    flex: 1; height: 1px; background: var(--line);
+    min-width: 20px; position: relative; margin-bottom: 26px;
+  }
+  .step-connector.completed { background: var(--accent); }
+
+  /* === MAIN CONTAINER === */
+  .form-container {
+    position: relative; z-index: 1;
+    padding-top: 120px; padding-bottom: 120px;
+    min-height: 100vh;
+    transition: padding-top 0.3s ease;
+  }
+  .form-container.with-progress { padding-top: 220px; }
+
+  .form-wrapper {
+    max-width: 900px; margin: 0 auto; padding: 0 32px;
+  }
+
+  .step-panel {
+    display: none;
+    animation: fadeInUp 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .step-panel.active { display: block; }
+
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .step-header { margin-bottom: 48px; }
+
+  .step-number {
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 11px; font-weight: 600;
+    letter-spacing: 0.15em;
+    color: rgba(244, 239, 230, 0.4);
+    margin-bottom: 16px;
+  }
+
+  /* === FORM FIELDS === */
+  .field-group { margin-bottom: 32px; }
+
+  .field-label {
+    display: block; font-size: 11px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.15em;
+    color: var(--warm-white); opacity: 0.85;
+    margin-bottom: 12px;
+  }
+
+  .field-label .required { color: var(--accent-glow); margin-left: 4px; }
+
+  .field-hint {
+    font-size: 12px; opacity: 0.5;
+    margin-top: 8px; line-height: 1.5;
+  }
+
+  .field-input, .field-select, .field-textarea {
+    width: 100%; padding: 18px 20px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--line-strong);
+    color: var(--warm-white);
+    font-family: 'Inter', sans-serif;
+    font-size: 15px; font-weight: 400;
+    transition: all 0.2s ease;
+  }
+
+  .field-input::placeholder, .field-textarea::placeholder {
+    color: rgba(244, 239, 230, 0.3);
+  }
+
+  .field-input:focus, .field-select:focus, .field-textarea:focus {
+    outline: none; border-color: var(--accent);
+    background: var(--bg-card);
+    box-shadow: 0 0 0 3px rgba(46, 163, 155, 0.1);
+  }
+
+  .field-textarea {
+    resize: vertical; min-height: 120px;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .char-counter {
+    display: flex; justify-content: flex-end;
+    font-size: 11px; font-weight: 500;
+    letter-spacing: 0.05em;
+    color: rgba(244, 239, 230, 0.4);
+    margin-top: 6px;
+    font-variant-numeric: tabular-nums;
+    transition: color 0.2s;
+  }
+  .char-counter.warning { color: rgba(244, 239, 230, 0.7); }
+  .char-counter.danger { color: var(--danger); }
+
+  .field-select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23F4EFE6' stroke-width='1.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 20px center;
+    padding-right: 50px; cursor: pointer;
+  }
+
+  .field-select option {
+    background: var(--bg-elevated); color: var(--warm-white);
+  }
+
+  /* === PILLS === */
+  .pill-group { display: flex; flex-wrap: wrap; gap: 10px; }
+  .pill {
+    padding: 12px 22px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--line-strong);
+    color: var(--warm-white);
+    font-size: 13px; font-weight: 500;
+    cursor: pointer; transition: all 0.2s ease;
+    user-select: none;
+  }
+  .pill:hover { border-color: var(--accent); color: var(--accent-glow); }
+  .pill.selected {
+    background: var(--accent); color: var(--bg-base); border-color: var(--accent);
+  }
+
+  /* === ODS GRID === */
+  .ods-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 8px;
+  }
+
+  .ods-card {
+    padding: 16px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--line-strong);
+    cursor: pointer; transition: all 0.2s ease;
+    position: relative; overflow: hidden;
+  }
+
+  .ods-card::before {
+    content: ''; position: absolute; top: 0; left: 0;
+    width: 4px; height: 100%;
+    background: var(--ods-color, var(--accent));
+    opacity: 0.4; transition: opacity 0.2s;
+  }
+
+  .ods-card:hover { border-color: var(--accent); }
+  .ods-card:hover::before { opacity: 1; }
+
+  .ods-card.selected {
+    border-color: var(--accent);
+    background: linear-gradient(135deg, rgba(46, 163, 155, 0.12) 0%, var(--bg-card) 100%);
+  }
+  .ods-card.selected::before { opacity: 1; }
+
+  .ods-number {
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 24px; font-weight: 300;
+    color: var(--ods-color, var(--accent-glow));
+    line-height: 1; margin-bottom: 8px;
+  }
+
+  .ods-name {
+    font-size: 11px; font-weight: 500;
+    line-height: 1.3; opacity: 0.85;
+  }
+
+  /* === FORPROEX CARDS === */
+  .forproex-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1px;
+    background: var(--line);
+  }
+
+  .forproex-card {
+    padding: 24px;
+    background: var(--bg-elevated);
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    position: relative;
+  }
+
+  .forproex-card:hover {
+    background: var(--bg-card);
+  }
+
+  .forproex-card.selected {
+    background: linear-gradient(135deg, rgba(46, 163, 155, 0.12) 0%, var(--bg-card) 100%);
+    border-color: var(--accent);
+    box-shadow: inset 0 0 0 1px var(--accent);
+  }
+
+  .forproex-title {
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 20px;
+    font-weight: 400;
+    color: var(--warm-white);
+    margin-bottom: 8px;
+  }
+
+  .forproex-card.selected .forproex-title {
+    color: var(--accent-glow);
+  }
+
+  .forproex-desc {
+    font-size: 12px;
+    line-height: 1.5;
+    opacity: 0.6;
+  }
+
+  /* === FUZZY SLIDERS === */
+  .fuzzy-intro {
+    padding: 24px 28px;
+    background: linear-gradient(135deg, rgba(46, 163, 155, 0.06) 0%, var(--bg-elevated) 100%);
+    border-left: 2px solid var(--accent-glow);
+    margin-bottom: 40px;
+  }
+
+  .fuzzy-intro-eyebrow {
+    font-size: 10px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.18em;
+    color: var(--accent-glow); margin-bottom: 8px;
+  }
+
+  .fuzzy-intro-text {
+    font-size: 14px; line-height: 1.6; opacity: 0.85;
+  }
+
+  .slider-question {
+    padding: 32px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .slider-question:last-of-type { border-bottom: none; }
+
+  .slider-label {
+    display: flex; align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px; margin-bottom: 28px;
+  }
+
+  .slider-code {
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 11px; font-weight: 600;
+    letter-spacing: 0.15em;
+    color: var(--accent-glow);
+    opacity: 0.6; margin-bottom: 6px;
+  }
+
+  .slider-text {
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 20px; font-weight: 300;
+    line-height: 1.35;
+    color: var(--warm-white);
+    max-width: 600px;
+  }
+
+  .slider-value {
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 48px; font-weight: 200;
+    color: var(--accent-glow);
+    line-height: 1; letter-spacing: -0.04em;
+    font-variant-numeric: tabular-nums;
+    min-width: 80px;
+    text-align: right;
+    display: none;
+  }
+
+  .slider-wrapper {
+    position: relative;
+    padding: 12px 0 28px;
+  }
+
+  .slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(to right,
+      var(--fuzzy-red) 0%,
+      var(--fuzzy-red) 30%,
+      var(--fuzzy-yellow) 30%,
+      var(--fuzzy-yellow) 70%,
+      var(--fuzzy-green) 70%,
+      var(--fuzzy-green) 100%);
+    outline: none;
+    cursor: pointer;
+  }
+
+  .slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 24px; height: 24px;
+    background: var(--warm-white);
+    border: 3px solid var(--accent);
+    cursor: grab;
+    box-shadow: 0 0 0 6px rgba(46, 163, 155, 0.15), 0 4px 20px rgba(0,0,0,0.4);
+    transition: transform 0.2s;
+  }
+
+  .slider::-webkit-slider-thumb:hover { transform: scale(1.15); }
+  .slider::-webkit-slider-thumb:active { cursor: grabbing; }
+
+  .slider::-moz-range-thumb {
+    width: 24px; height: 24px;
+    background: var(--warm-white);
+    border: 3px solid var(--accent);
+    cursor: grab;
+    box-shadow: 0 0 0 6px rgba(46, 163, 155, 0.15), 0 4px 20px rgba(0,0,0,0.4);
+  }
+
+  .slider-anchors {
+    display: flex; justify-content: space-between;
+    margin-top: 16px;
+    font-size: 10px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.12em;
+    opacity: 0.5;
+  }
+
+  .slider-scale-numbers {
+    display: flex; justify-content: space-between;
+    margin-top: 4px;
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 10px;
+    opacity: 0.3;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* === BUTTONS === */
+  .btn {
+    display: inline-flex; align-items: center; gap: 12px;
+    padding: 18px 32px;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px; font-weight: 600;
+    letter-spacing: 0.05em; text-transform: uppercase;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer; border: 1px solid transparent;
+    background: none;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: var(--bg-base);
+  }
+  .btn-primary:hover {
+    background: var(--accent-glow);
+    box-shadow: 0 0 40px rgba(46, 163, 155, 0.35);
+    transform: translateY(-2px);
+  }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--warm-white);
+    border-color: var(--line-strong);
+  }
+  .btn-secondary:hover {
+    border-color: var(--accent-glow);
+    color: var(--accent-glow);
+  }
+
+  .btn:disabled {
+    opacity: 0.35; cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none !important;
+  }
+
+  /* === NAVIGATION === */
+  .form-navigation {
+    display: flex; justify-content: space-between;
+    align-items: center; margin-top: 60px;
+    padding-top: 40px; border-top: 1px solid var(--line);
+  }
+
+  .form-nav-meta {
+    font-size: 11px; letter-spacing: 0.1em;
+    text-transform: uppercase; opacity: 0.4;
+  }
+
+  /* === WELCOME SCREEN === */
+  .welcome-screen { text-align: left; max-width: 800px; margin: 0 auto; }
+
+  .welcome-description {
+    font-size: 18px; font-weight: 300;
+    line-height: 1.7; opacity: 0.7;
+    max-width: 680px; margin-bottom: 48px;
+  }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1px; margin-bottom: 48px; background: var(--line);
+  }
+
+  .info-tile { padding: 28px 24px; background: var(--bg-elevated); }
+
+  .info-tile-label {
+    font-size: 10px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.15em;
+    color: var(--accent-glow); margin-bottom: 12px;
+  }
+
+  .info-tile-value {
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 28px; font-weight: 300; line-height: 1;
+  }
+
+  .info-tile-unit {
+    font-size: 12px; opacity: 0.5; margin-left: 4px;
+  }
+
+  /* === FUZZY RESULT SCREEN === */
+  .fuzzy-result {
+    max-width: 780px; margin: 0 auto;
+    text-align: center;
+  }
+
+  .fuzzy-gauge {
+    position: relative;
+    width: 280px; height: 280px;
+    margin: 0 auto 48px;
+  }
+
+  .fuzzy-gauge-svg {
+    width: 100%; height: 100%;
+    transform: rotate(-90deg);
+  }
+
+  .fuzzy-gauge-bg {
+    fill: none;
+    stroke: var(--bg-elevated);
+    stroke-width: 8;
+  }
+
+  .fuzzy-gauge-fg {
+    fill: none;
+    stroke-width: 8;
+    stroke-linecap: square;
+    transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1),
+                stroke 0.6s ease;
+  }
+
+  .fuzzy-gauge-center {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+  }
+
+  .fuzzy-gauge-number {
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 72px; font-weight: 200;
+    letter-spacing: -0.04em;
+    line-height: 1;
+  }
+
+  .fuzzy-gauge-label {
+    font-size: 10px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.18em;
+    opacity: 0.6; margin-top: 12px;
+  }
+
+  .fuzzy-result-title {
+    font-family: 'Inter Tight', sans-serif;
+    font-size: clamp(36px, 5vw, 64px);
+    font-weight: 200;
+    line-height: 1.05;
+    letter-spacing: -0.04em;
+    margin-bottom: 24px;
+  }
+
+  .fuzzy-result-title .accent {
+    font-style: italic;
+    font-weight: 300;
+  }
+
+  .fuzzy-result-message {
+    font-size: 16px;
+    line-height: 1.65;
+    opacity: 0.7;
+    margin-bottom: 48px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .dimension-breakdown {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1px;
+    background: var(--line);
+    margin-bottom: 48px;
+  }
+
+  .dimension-card {
+    padding: 24px 16px;
+    background: var(--bg-elevated);
+    text-align: center;
+  }
+
+  .dimension-label {
+    font-size: 9px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.12em;
+    opacity: 0.55; margin-bottom: 12px;
+  }
+
+  .dimension-bar {
+    height: 4px; width: 100%;
+    background: var(--bg-base);
+    position: relative;
+    margin-bottom: 12px;
+  }
+
+  .dimension-bar-fill {
+    position: absolute; left: 0; top: 0; bottom: 0;
+    background: var(--accent);
+    transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .dimension-value {
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 20px; font-weight: 300;
+    color: var(--warm-white);
+    font-variant-numeric: tabular-nums;
+    display: none;
+  }
+
+  /* === SUCCESS === */
+  .success-screen { text-align: center; max-width: 700px; margin: 60px auto 0; }
+
+  .success-icon {
+    width: 80px; height: 80px;
+    border: 1px solid var(--accent);
+    background: rgba(46, 163, 155, 0.08);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 40px;
+  }
+
+  .success-title {
+    font-family: 'Inter Tight', sans-serif;
+    font-size: clamp(40px, 5vw, 72px);
+    font-weight: 200; line-height: 1.05;
+    letter-spacing: -0.04em; margin-bottom: 24px;
+  }
+
+  .success-description {
+    font-size: 16px; opacity: 0.65; line-height: 1.6;
+    margin-bottom: 40px;
+  }
+
+  .protocol-box {
+    display: inline-block; padding: 24px 40px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--line-strong);
+    margin-bottom: 40px;
+  }
+
+  .protocol-label {
+    font-size: 10px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.15em;
+    color: var(--accent-glow); margin-bottom: 8px;
+  }
+
+  .protocol-value {
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 24px; font-weight: 300; letter-spacing: 0.05em;
+  }
+
+  /* === UPLOAD === */
+  .upload-zone {
+    padding: 40px; background: var(--bg-elevated);
+    border: 1px dashed var(--line-brighter);
+    text-align: center; cursor: pointer; transition: all 0.2s;
+  }
+  .upload-zone:hover { border-color: var(--accent); background: var(--bg-card); }
+  .upload-icon { display: block; margin: 0 auto 12px; opacity: 0.5; }
+  .upload-title { font-size: 14px; font-weight: 500; margin-bottom: 6px; }
+  .upload-hint { font-size: 11px; opacity: 0.5; }
+
+  /* === DRAFT === */
+  .draft-indicator {
+    position: fixed; bottom: 24px; right: 24px;
+    padding: 12px 20px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--line-strong);
+    font-size: 11px; letter-spacing: 0.1em;
+    text-transform: uppercase;
+    opacity: 0; transition: opacity 0.3s;
+    z-index: 60;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .draft-indicator.visible { opacity: 0.7; }
+  .draft-indicator::before {
+    content: ''; width: 6px; height: 6px;
+    background: var(--accent-glow);
+  }
+
+  /* === SCROLLBAR === */
+  ::-webkit-scrollbar { width: 10px; }
+  ::-webkit-scrollbar-track { background: var(--bg-base); }
+  ::-webkit-scrollbar-thumb { background: var(--bg-elevated); }
+  ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+  /* === RESPONSIVE === */
+  @media (max-width: 768px) {
+    .progress-track { overflow-x: auto; scrollbar-width: none; }
+    .progress-track::-webkit-scrollbar { display: none; }
+    .step-label { display: none; }
+    .step-connector { margin-bottom: 0; }
+    .form-container.with-progress { padding-top: 240px; }
+    .dimension-breakdown { grid-template-columns: repeat(5, 1fr); }
+    .slider-label { flex-direction: column; gap: 12px; }
+    .slider-value { text-align: left; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="max-w-[1600px] mx-auto px-8 py-5 flex items-center justify-between">
+    <a href="#" class="flex items-center gap-3">
+      <div class="logo-mark"></div>
+      <div>
+        <div class="font-display text-xl font-medium tracking-tight">LISA</div>
+        <div class="text-[9px] uppercase tracking-widest opacity-50">Cadastro de Experiência</div>
+      </div>
+    </a>
+    <div class="flex items-center gap-6">
+      <div class="hidden md:block text-xs opacity-50">
+        Edital <span class="text-[var(--accent-glow)]">Chamamento 2026</span>
+      </div>
+      <a href="#" class="text-xs uppercase tracking-widest opacity-60 hover:opacity-100">← Voltar ao portal</a>
+    </div>
+  </div>
+</header>
+
+<!-- PROGRESS BAR -->
+<div class="progress-container" id="progressContainer" style="display: none;">
+  <div class="progress-phase" id="progressPhase">Fase: Triagem de Aderência</div>
+  <div class="progress-track" id="progressTrack"></div>
+</div>
+
+<!-- FORM CONTAINER -->
+<div class="form-container" id="formContainer">
+  <div class="form-wrapper">
+
+    <!-- ============================================ -->
+    <!-- STEP 0 — BOAS-VINDAS                          -->
+    <!-- ============================================ -->
+    <div class="step-panel active" data-step="0">
+      <div class="welcome-screen">
+        <div class="eyebrow mb-6">Edital de Chamamento 2026 · Aberto</div>
+
+        <p class="welcome-description">
+          Este formulário reúne as informações necessárias para registrar sua iniciativa no Catálogo 2026 de Tecnologia Social da AGIR UFF. O cadastro é feito em duas fases: primeiro uma <strong>triagem de aderência</strong> com 20 perguntas rápidas que avaliam em que grau sua experiência se caracteriza como tecnologia social, e depois o <strong>cadastro completo</strong> da experiência.
+        </p>
+
+        <div class="info-grid">
+          <div class="info-tile">
+            <div class="info-tile-label">Duração estimada</div>
+            <div class="info-tile-value">25<span class="info-tile-unit">min</span></div>
+          </div>
+          <div class="info-tile">
+            <div class="info-tile-label">Fases</div>
+            <div class="info-tile-value">2<span class="info-tile-unit">triagem + cadastro</span></div>
+          </div>
+          <div class="info-tile">
+            <div class="info-tile-label">Rascunho</div>
+            <div class="info-tile-value">Auto<span class="info-tile-unit">salvo</span></div>
+          </div>
+          <div class="info-tile">
+            <div class="info-tile-label">Moderação</div>
+            <div class="info-tile-value">7<span class="info-tile-unit">dias</span></div>
+          </div>
+        </div>
+
+        <button class="btn btn-primary" onclick="nextStep()">
+          Começar triagem
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="5" y1="12" x2="19" y2="12"/>
+            <polyline points="12 5 19 12 12 19"/>
+          </svg>
+        </button>
+
+        <p class="text-xs opacity-40 mt-8 max-w-lg leading-relaxed">
+          Ao submeter o formulário, você concorda com o uso dos dados pela Coordenação de Inovação e Tecnologias Sociais (AGIR/PROPPI/UFF) para os fins do Catálogo de Tecnologias Sociais 2026.
+        </p>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- TRIAGEM FUZZY — DIMENSÃO 1: PARTICIPAÇÃO      -->
+    <!-- ============================================ -->
+    <div class="step-panel" data-step="1">
+      <div class="step-header">
+        <div class="step-number">[ Triagem · Dimensão 1 de 5 ]</div>
+        <p class="welcome-description">
+          <strong>Participação Comunitária.</strong> Avalie em que grau a comunidade esteve envolvida nas decisões e no funcionamento do projeto. Arraste cada marcador para indicar sua resposta de 0 (característica inexistente) a 10 (plenamente manifestada).
+        </p>
+      </div>
+
+      <div class="fuzzy-intro">
+        <div class="fuzzy-intro-eyebrow">Dimensão 1 · Peso 30%</div>
+        <div class="fuzzy-intro-text">
+          Esta é a dimensão de maior peso no cálculo de aderência. Ela avalia se a comunidade é coautora do projeto ou apenas recebe seus resultados.
+        </div>
+      </div>
+
+      <div class="slider-question" data-dim="P" data-q="P1">
+        <div class="slider-label">
+          <div>
+            <div class="slider-code">P1</div>
+            <div class="slider-text">A comunidade participa das decisões do projeto</div>
+          </div>
+          <div class="slider-value" data-value-display>5</div>
+        </div>
+        <div class="slider-wrapper">
+          <input type="range" class="slider" min="0" max="10" step="0.5" value="5">
+          <div class="slider-anchors">
+            <span>Inexistente</span>
+            <span>Plenamente manifestada</span>
+          </div>
+          <div class="slider-scale-numbers">
+            <span>0</span><span>2</span><span>4</span><span>6</span><span>8</span><span>10</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="slider-question" data-dim="P" data-q="P2">
+        <div class="slider-label">
+          <div>
+            <div class="slider-code">P2</div>
+            <div class="slider-text">Os beneficiários influenciam diretamente o funcionamento</div>
+          </div>
+          <div class="slider-value" data-value-display>5</div>
+        </div>
+        <div class="slider-wrapper">
+          <input type="range" class="slider" min="0" max="10" step="0.5" value="5">
+          <div class="slider-anchors">
+            <span>Inexistente</span>
+            <span>Plenamente manifestada</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="slider-question" data-dim="P" data-q="P3">
+        <div class="slider-label">
+          <div>
+            <div class="slider-code">P3</div>
+            <div class="slider-text">Há espaços coletivos de deliberação</div>
+          </div>
+          <div class="slider-value" data-value-display>5</div>
+        </div>
+        <div class="slider-wrapper">
+          <input type="range" class="slider" min="0" max="10" step="0.5" value="5">
+          <div class="slider-anchors">
+            <span>Inexistente</span>
+            <span>Plenamente manifestada</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="slider-question" data-dim="P" data-q="P4">
+        <div class="slider-label">
+          <div>
+            <div class="slider-code">P4</div>
+            <div class="slider-text">O projeto é construído com a comunidade, e não para ela</div>
+          </div>
+          <div class="slider-value" data-value-display>5</div>
+        </div>
+        <div class="slider-wrapper">
+          <input type="range" class="slider" min="0" max="10" step="0.5" value="5">
+          <div class="slider-anchors">
+            <span>Inexistente</span>
+            <span>Plenamente manifestada</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- TRIAGEM FUZZY — DIMENSÃO 2: IMPACTO            -->
+    <!-- ============================================ -->
+    <div class="step-panel" data-step="2">
+      <div class="step-header">
+        <div class="step-number">[ Triagem · Dimensão 2 de 5 ]</div>
+        <p class="welcome-description">
+          <strong>Impacto Social.</strong> Avalie em que grau sua experiência gera transformações concretas percebidas pela comunidade beneficiada.
+        </p>
+      </div>
+
+      <div class="fuzzy-intro">
+        <div class="fuzzy-intro-eyebrow">Dimensão 2 · Peso 25%</div>
+        <div class="fuzzy-intro-text">
+          O impacto social mede se a experiência efetivamente melhora as condições de vida das pessoas envolvidas, com evidências concretas.
+        </div>
+      </div>
+
+      <div class="slider-question" data-dim="I" data-q="I1">
+        <div class="slider-label">
+          <div>
+            <div class="slider-code">I1</div>
+            <div class="slider-text">O projeto melhora as condições de vida da comunidade</div>
+          </div>
+          <div class="slider-value" data-value-display>5</div>
+        </div>
+        <div class="slider-wrapper">
+          <input type="range" class="slider" min="0" max="10" step="0.5" value="5">
+          <div class="slider-anchors"><span>Inexistente</span><span>Plenamente manifestada</span></div>
+        </div>
+      </div>
+
+      <div class="slider-question" data-dim="I" data-q="I2">
+        <div class="slider-label">
+          <div>
+            <div class="slider-code">I2</div>
+            <div class="slider-text">Há evidências concretas de transformação social</div>
+          </div>
+          <div class="slider-value" data-value-display>5</div>
+        </div>
+        <div class="slider-wrapper">
+          <input type="range" class="slider" min="0" max="10" step="0.5" value="5">
+          <div class="slider-anchors"><span>Inexistente</span><span>Plenamente manifestada</span></div>
+        </div>
+      </div>
+
+      <div class="slider-question" data-dim="I" data-q="I3">
+        <div class="slider-label">
+          <div>
+            <div class="slider-code">I3</div>
+            <div class="slider-text">O projeto reduz desigualdades locais</div>
+          </div>
+          <div class="slider-value" data-value-display>5</div>
+        </div>
+        <div class="slider-wrapper">
+          <input type="range" class="slider" min="0" max="10" step="0.5" value="5">
+          <div class="slider-anchors"><span>Inexistente</span><span>Plenamente manifestada</span></div>
+        </div>
+      </div>
+
+      <div class="slider-question" data-dim="I" data-q="I4">
+        <div class="slider-label">
+          <div>
+            <div class="slider-code">I4</div>
+            <div class="slider-text">O impacto é percebido pelos beneficiários</div>
+          </div>
+          <div class="slider-value" data-value-display>5</div>
+        </div>
+        <div class="slider-wrapper">
+          <input type="range" class="slider" min="0" max="10" step="0.5" value="5">
+          <div class="slider-anchors"><span>Inexistente</span><span>Plenamente manifestada</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- TRIAGEM FUZZY — DIMENSÃO 3: APROPRIAÇÃO        -->
+    <!-- ============================================ -->
+    <div class="step-panel" data-step="3">
+      <div class="step-header">
+        <div class="step-number">[ Triagem · Dimensão 3 de 5 ]</div>
+        <p class="welcome-description">
+          <strong>Apropriação Tecnológica.</strong> Avalie o grau de autonomia da comunidade sobre a tecnologia ou metodologia usada no projeto.
+        </p>
+      </div>
+
+      <div class="fuzzy-intro">
+        <div class="fuzzy-intro-eyebrow">Dimensão 3 · Peso 20%</div>
+        <div class="fuzzy-intro-text">
+          A apropriação tecnológica mede se a comunidade domina a ferramenta ou depende de especialistas externos para operá-la.
+        </div>
+      </div>
+
+      <div class="slider-question" data-dim="A" data-q="A1">
+        <div class="slider-label">
+          <div>
+            <div class="slider-code">A1</div>
+            <div class="slider-text">A comunidade entende como o projeto funciona</div>
+          </div>
+          <div class="slider-value" data-value-display>5</div>
+        </div>
+        <div class="slider-wrapper">
+          <input type="range" class="slider" min="0" max="10" step="0.5" value="5">
+          <div class="slider-anchors"><span>Inexistente</span><span>Plenamente manifestada</span></div>
+        </div>
+      </div>
+
+      <div class="slider-question" data-dim="A" data-q="A2">
+        <div class="slider-label">
+          <div>
+            <div class="slider-code">A2</div>
+            <div class="slider-text">Os usuários conseguem operar a tecnologia de forma autônoma</div>
+          </div>
+          <div class="slider-value" data-value-display>5</div>
+        </div>
+        <div class="slider-wrapper">
+          <input type="range" class="slider" min="0" max="10" step="0.5" value="5">
+          <div class="slider-anchors"><span>Inexistente</span><span>Plenamente manifestada</span></div>
+        </div>
+      </div>
+
+      <div class="slider-question" data-dim="A" data-q="A3">
+        <div class="slider-label">
+          <div>
+            <div class="slider-code">A3</div>
+            <div class="slider-text">O conhecimento técnico é compartilhado</div>
+          </div>
+          <div class="slider-value" data-value-display>5</div>
+        </div>
+        <div class="slider-wrapper">
+          <input type="range" class="slider" min="0" max="10" step="0.5" value="5">
+          <div class="slider-anchors"><span>Inexistente</span><span>Plenamente manifestada</span></div>
+        </div>
+      </div>
+
+      <div class="slider-question" data-dim="A" data-q="A4">
+        <div class="slider-label">
+          <div>
+            <div class="slider-code">A4</div>
+            <div class="slider-text">Há independência de especialistas externos</div>
+          </div>
+          <div class="slider-value" data-value-display>5</div>
+        </div>
+        <div class="slider-wrapper">
+          <input type="range" class="slider" min="0" max="10" step="0.5" value="5">
+          <div class="slider-anchors"><span>Inexistente</span><span>Plenamente manifestada</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- TRIAGEM FUZZY — DIMENSÃO 4: SUSTENTABILIDADE   -->
+    <!-- ============================================ -->
+    <div class="step-panel" data-step="4">
+      <div class="step-header">
+        <div class="step-number">[ Triagem · Dimensão 4 de 5 ]</div>
+        <p class="welcome-description">
+          <strong>Sustentabilidade.</strong> Avalie a capacidade de manutenção do projeto ao longo do tempo e sua resistência a mudanças externas.
+        </p>
+      </div>
+
+      <div class="fuzzy-intro">
+        <div class="fuzzy-intro-eyebrow">Dimensão 4 · Peso 15%</div>
+        <div class="fuzzy-intro-text">
+          A sustentabilidade avalia se o projeto consegue se manter sem depender de financiamento pontual ou conjunturas específicas.
+        </div>
+      </div>
+
+      <div class="slider-question" data-dim="S" data-q="S1">
+        <div class="slider-label">
+          <div>
+            <div class="slider-code">S1</div>
+            <div class="slider-text">O projeto consegue se manter ao longo do tempo</div>
+          </div>
+          <div class="slider-value" data-value-display>5</div>
+        </div>
+        <div class="slider-wrapper">
+          <input type="range" class="slider" min="0" max="10" step="0.5" value="5">
+          <div class="slider-anchors"><span>Inexistente</span><span>Plenamente manifestada</span></div>
+        </div>
+      </div>
+
+      <div class="slider-question" data-dim="S" data-q="S2">
+        <div class="slider-label">
+          <div>
+            <div class="slider-code">S2</div>
+            <div class="slider-text">Há autonomia financeira ou organizacional</div>
+          </div>
+          <div class="slider-value" data-value-display>5</div>
+        </div>
+        <div class="slider-wrapper">
+          <input type="range" class="slider" min="0" max="10" step="0.5" value="5">
+          <div class="slider-anchors"><span>Inexistente</span><span>Plenamente manifestada</span></div>
+        </div>
+      </div>
+
+      <div class="slider-question" data-dim="S" data-q="S3">
+        <div class="slider-label">
+          <div>
+            <div class="slider-code">S3</div>
+            <div class="slider-text">O projeto resiste a mudanças externas</div>
+          </div>
+          <div class="slider-value" data-value-display>5</div>
+        </div>
+        <div class="slider-wrapper">
+          <input type="range" class="slider" min="0" max="10" step="0.5" value="5">
+          <div class="slider-anchors"><span>Inexistente</span><span>Plenamente manifestada</span></div>
+        </div>
+      </div>
+
+      <div class="slider-question" data-dim="S" data-q="S4">
+        <div class="slider-label">
+          <div>
+            <div class="slider-code">S4</div>
+            <div class="slider-text">Existem estratégias de continuidade</div>
+          </div>
+          <div class="slider-value" data-value-display>5</div>
+        </div>
+        <div class="slider-wrapper">
+          <input type="range" class="slider" min="0" max="10" step="0.5" value="5">
+          <div class="slider-anchors"><span>Inexistente</span><span>Plenamente manifestada</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- TRIAGEM FUZZY — DIMENSÃO 5: REPLICABILIDADE    -->
+    <!-- ============================================ -->
+    <div class="step-panel" data-step="5">
+      <div class="step-header">
+        <div class="step-number">[ Triagem · Dimensão 5 de 5 ]</div>
+        <p class="welcome-description">
+          <strong>Replicabilidade.</strong> Avalie o quanto seu projeto pode ser adaptado e reaplicado em contextos diferentes do original.
+        </p>
+      </div>
+
+      <div class="fuzzy-intro">
+        <div class="fuzzy-intro-eyebrow">Dimensão 5 · Peso 10%</div>
+        <div class="fuzzy-intro-text">
+          A replicabilidade avalia se outros grupos conseguiriam adaptar a iniciativa para suas próprias realidades, preservando os princípios centrais.
+        </div>
+      </div>
+
+      <div class="slider-question" data-dim="R" data-q="R1">
+        <div class="slider-label">
+          <div>
+            <div class="slider-code">R1</div>
+            <div class="slider-text">O projeto pode ser adaptado para outros contextos</div>
+          </div>
+          <div class="slider-value" data-value-display>5</div>
+        </div>
+        <div class="slider-wrapper">
+          <input type="range" class="slider" min="0" max="10" step="0.5" value="5">
+          <div class="slider-anchors"><span>Inexistente</span><span>Plenamente manifestada</span></div>
+        </div>
+      </div>
+
+      <div class="slider-question" data-dim="R" data-q="R2">
+        <div class="slider-label">
+          <div>
+            <div class="slider-code">R2</div>
+            <div class="slider-text">A metodologia é documentada</div>
+          </div>
+          <div class="slider-value" data-value-display>5</div>
+        </div>
+        <div class="slider-wrapper">
+          <input type="range" class="slider" min="0" max="10" step="0.5" value="5">
+          <div class="slider-anchors"><span>Inexistente</span><span>Plenamente manifestada</span></div>
+        </div>
+      </div>
+
+      <div class="slider-question" data-dim="R" data-q="R3">
+        <div class="slider-label">
+          <div>
+            <div class="slider-code">R3</div>
+            <div class="slider-text">Outros grupos conseguem reproduzir a iniciativa</div>
+          </div>
+          <div class="slider-value" data-value-display>5</div>
+        </div>
+        <div class="slider-wrapper">
+          <input type="range" class="slider" min="0" max="10" step="0.5" value="5">
+          <div class="slider-anchors"><span>Inexistente</span><span>Plenamente manifestada</span></div>
+        </div>
+      </div>
+
+      <div class="slider-question" data-dim="R" data-q="R4">
+        <div class="slider-label">
+          <div>
+            <div class="slider-code">R4</div>
+            <div class="slider-text">O modelo é flexível a diferentes realidades</div>
+          </div>
+          <div class="slider-value" data-value-display>5</div>
+        </div>
+        <div class="slider-wrapper">
+          <input type="range" class="slider" min="0" max="10" step="0.5" value="5">
+          <div class="slider-anchors"><span>Inexistente</span><span>Plenamente manifestada</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- STEP 6 — RESULTADO DA TRIAGEM (GATE)          -->
+    <!-- ============================================ -->
+    <div class="step-panel" data-step="6">
+      <div class="fuzzy-result">
+        <div class="eyebrow mb-6" id="resultEyebrow">Resultado da triagem</div>
+
+        <div class="fuzzy-gauge">
+          <svg class="fuzzy-gauge-svg" viewBox="0 0 280 280">
+            <circle class="fuzzy-gauge-bg" cx="140" cy="140" r="120"/>
+            <circle class="fuzzy-gauge-fg" id="gaugeFg" cx="140" cy="140" r="120"
+                    stroke-dasharray="753.98" stroke-dashoffset="753.98"/>
+          </svg>
+          <div class="fuzzy-gauge-center">
+            <div class="fuzzy-gauge-number" id="gaugeNumber" style="font-size: 42px; font-weight: 300;">—</div>
+            <div class="fuzzy-gauge-label" id="gaugeLabel">Grau de aderência</div>
+          </div>
+        </div>
+
+        <h2 class="fuzzy-result-title" id="resultTitle">
+          Sua experiência tem <span class="accent" id="resultWord">alta aderência</span><br>
+          às tecnologias sociais.
+        </h2>
+
+        <p class="fuzzy-result-message" id="resultMessage">
+          Com base nas respostas da triagem, sua iniciativa demonstra forte alinhamento com os parâmetros que caracterizam uma tecnologia social. Você está habilitado a prosseguir com o cadastro completo da experiência.
+        </p>
+
+        <div class="dimension-breakdown" id="dimensionBreakdown">
+          <div class="dimension-card">
+            <div class="dimension-label">Participação</div>
+            <div class="dimension-bar"><div class="dimension-bar-fill" data-dim="P" style="width: 0%"></div></div>
+            <div class="dimension-value" data-dim-value="P">0.0</div>
+          </div>
+          <div class="dimension-card">
+            <div class="dimension-label">Impacto</div>
+            <div class="dimension-bar"><div class="dimension-bar-fill" data-dim="I" style="width: 0%"></div></div>
+            <div class="dimension-value" data-dim-value="I">0.0</div>
+          </div>
+          <div class="dimension-card">
+            <div class="dimension-label">Apropriação</div>
+            <div class="dimension-bar"><div class="dimension-bar-fill" data-dim="A" style="width: 0%"></div></div>
+            <div class="dimension-value" data-dim-value="A">0.0</div>
+          </div>
+          <div class="dimension-card">
+            <div class="dimension-label">Sustentabilidade</div>
+            <div class="dimension-bar"><div class="dimension-bar-fill" data-dim="S" style="width: 0%"></div></div>
+            <div class="dimension-value" data-dim-value="S">0.0</div>
+          </div>
+          <div class="dimension-card">
+            <div class="dimension-label">Replicabilidade</div>
+            <div class="dimension-bar"><div class="dimension-bar-fill" data-dim="R" style="width: 0%"></div></div>
+            <div class="dimension-value" data-dim-value="R">0.0</div>
+          </div>
+        </div>
+
+        <div id="resultActionsProceed" style="display:none;">
+          <button class="btn btn-primary" onclick="proceedToFullForm()">
+            Continuar para o cadastro
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="5" y1="12" x2="19" y2="12"/>
+              <polyline points="12 5 19 12 12 19"/>
+            </svg>
+          </button>
+        </div>
+
+        <div id="resultActionsBlocked" style="display:none;">
+          <p class="text-xs opacity-50 max-w-lg mx-auto mb-8 leading-relaxed">
+            O Laboratório de Inovação Social Aberto adota parâmetros qualitativos e quantitativos para garantir que as experiências do catálogo sejam efetivamente tecnologias sociais. Agradecemos profundamente seu interesse e sua dedicação — você pode retornar em outro momento para tentar novamente ou cadastrar uma nova experiência.
+          </p>
+          <div class="flex flex-wrap gap-4 justify-center">
+            <a href="#" class="btn btn-primary">
+              Voltar ao portal
+            </a>
+            <button class="btn btn-secondary" onclick="restartTriagem()">
+              Refazer triagem
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- STEP 7 — IDENTIFICAÇÃO                        -->
+    <!-- ============================================ -->
+    <div class="step-panel" data-step="7">
+      <div class="step-header">
+        <div class="step-number">[ Cadastro · Etapa 01 de 08 ]</div>
+        <p class="welcome-description">
+          Começamos pelos dados de identificação do coordenador responsável e, se houver, do vice-coordenador.
+        </p>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Nome completo do coordenador(a) <span class="required">*</span></label>
+        <input type="text" class="field-input" placeholder="Ex: Profa. Dra. Maria da Silva">
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="field-group">
+          <label class="field-label">E-mail institucional <span class="required">*</span></label>
+          <input type="email" class="field-input" placeholder="coordenador@id.uff.br">
+          <div class="field-hint">Preferencialmente e-mail institucional da UFF</div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Telefone de contato</label>
+          <input type="tel" class="field-input" placeholder="(21) 99999-9999">
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Link do Currículo Lattes</label>
+        <input type="url" class="field-input" placeholder="http://lattes.cnpq.br/...">
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="field-group">
+          <label class="field-label">Vínculo com a UFF <span class="required">*</span></label>
+          <select class="field-select">
+            <option value="">Selecione</option>
+            <option>Docente</option>
+            <option>Técnico-administrativo</option>
+            <option>Estudante de graduação</option>
+            <option>Estudante de pós-graduação</option>
+            <option>Pesquisador externo</option>
+            <option>Membro da comunidade</option>
+            <option>Representante de organização</option>
+            <option>Outro</option>
+          </select>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Departamento / Unidade</label>
+          <input type="text" class="field-input" placeholder="Ex: Faculdade de Nutrição">
+        </div>
+      </div>
+
+      <div class="hairline my-10"></div>
+      <div class="eyebrow mb-6">Vice-coordenação (opcional)</div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="field-group">
+          <label class="field-label">Nome do vice-coordenador(a)</label>
+          <input type="text" class="field-input" placeholder="Nome completo">
+        </div>
+        <div class="field-group">
+          <label class="field-label">E-mail do vice-coordenador(a)</label>
+          <input type="email" class="field-input" placeholder="vice@id.uff.br">
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- STEP 8 — SOBRE A EXPERIÊNCIA                  -->
+    <!-- ============================================ -->
+    <div class="step-panel" data-step="8">
+      <div class="step-header">
+        <div class="step-number">[ Cadastro · Etapa 02 de 08 ]</div>
+        <p class="welcome-description">
+          Apresente sua iniciativa. Esta descrição vai compor a ficha editorial da experiência no catálogo publicado.
+        </p>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Título da experiência <span class="required">*</span></label>
+        <input type="text" class="field-input" placeholder="Ex: Cozinha CuidAR: oficinas culinárias para saúde renal">
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Histórico / Apresentação <span class="required">*</span></label>
+        <textarea class="field-textarea" rows="6" placeholder="Descreva o contexto, o problema social abordado, os objetivos e a descrição geral da experiência..."></textarea>
+        <div class="field-hint">Este texto aparece como "Histórico" na página da experiência no catálogo.</div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Metodologia <span class="required">*</span></label>
+        <textarea class="field-textarea" rows="5" placeholder="Como a experiência funciona na prática? Descreva a abordagem metodológica e as atividades principais..."></textarea>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="field-group">
+          <label class="field-label">Data de início <span class="required">*</span></label>
+          <input type="month" class="field-input">
+        </div>
+        <div class="field-group">
+          <label class="field-label">Status da experiência <span class="required">*</span></label>
+          <select class="field-select">
+            <option value="">Selecione</option>
+            <option>Em andamento (sem previsão de encerramento)</option>
+            <option>Perene (não tem previsão de fim por desenho)</option>
+            <option>Com data de encerramento prevista</option>
+            <option>Já encerrada</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="field-group">
+          <label class="field-label">Campus</label>
+          <select class="field-select">
+            <option>Niterói</option>
+            <option>Volta Redonda</option>
+            <option>Campos dos Goytacazes</option>
+            <option>Santo Antônio de Pádua</option>
+            <option>Rio das Ostras</option>
+            <option>Externa à UFF</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Município</label>
+          <input type="text" class="field-input" placeholder="Niterói">
+        </div>
+        <div class="field-group">
+          <label class="field-label">UF</label>
+          <input type="text" class="field-input" placeholder="RJ" maxlength="2">
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- STEP 9 — CLASSIFICAÇÃO CNPQ + ODS + CATEGORIA -->
+    <!-- ============================================ -->
+    <div class="step-panel" data-step="9">
+      <div class="step-header">
+        <div class="step-number">[ Cadastro · Etapa 03 de 08 ]</div>
+        <p class="welcome-description">
+          Selecione as áreas de conhecimento do CNPq, os Objetivos de Desenvolvimento Sustentável e a categoria editorial do catálogo.
+        </p>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Grande área do CNPq (principal) <span class="required">*</span></label>
+        <select class="field-select">
+          <option value="">Selecione a grande área</option>
+          <option>Ciências Exatas e da Terra</option>
+          <option>Ciências Biológicas</option>
+          <option>Engenharias</option>
+          <option>Ciências da Saúde</option>
+          <option>Ciências Agrárias</option>
+          <option>Ciências Sociais Aplicadas</option>
+          <option>Ciências Humanas</option>
+          <option>Linguística, Letras e Artes</option>
+          <option>Outros / Interdisciplinar</option>
+        </select>
+        <div class="field-hint">Depois de selecionada a grande área, aparecem as subáreas disponíveis</div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Objetivos de Desenvolvimento Sustentável (ODS) <span class="required">*</span></label>
+        <div class="ods-grid">
+          <div class="ods-card" style="--ods-color: #E5243B"><div class="ods-number">01</div><div class="ods-name">Erradicação da pobreza</div></div>
+          <div class="ods-card" style="--ods-color: #DDA63A"><div class="ods-number">02</div><div class="ods-name">Fome zero</div></div>
+          <div class="ods-card selected" style="--ods-color: #4C9F38"><div class="ods-number">03</div><div class="ods-name">Saúde e bem-estar</div></div>
+          <div class="ods-card selected" style="--ods-color: #C5192D"><div class="ods-number">04</div><div class="ods-name">Educação de qualidade</div></div>
+          <div class="ods-card" style="--ods-color: #FF3A21"><div class="ods-number">05</div><div class="ods-name">Igualdade de gênero</div></div>
+          <div class="ods-card" style="--ods-color: #26BDE2"><div class="ods-number">06</div><div class="ods-name">Água potável</div></div>
+          <div class="ods-card" style="--ods-color: #FCC30B"><div class="ods-number">07</div><div class="ods-name">Energia limpa</div></div>
+          <div class="ods-card" style="--ods-color: #A21942"><div class="ods-number">08</div><div class="ods-name">Trabalho decente</div></div>
+          <div class="ods-card" style="--ods-color: #FD6925"><div class="ods-number">09</div><div class="ods-name">Indústria e inovação</div></div>
+          <div class="ods-card" style="--ods-color: #DD1367"><div class="ods-number">10</div><div class="ods-name">Redução das desigualdades</div></div>
+          <div class="ods-card" style="--ods-color: #FD9D24"><div class="ods-number">11</div><div class="ods-name">Cidades sustentáveis</div></div>
+          <div class="ods-card" style="--ods-color: #BF8B2E"><div class="ods-number">12</div><div class="ods-name">Consumo responsável</div></div>
+          <div class="ods-card" style="--ods-color: #3F7E44"><div class="ods-number">13</div><div class="ods-name">Ação climática</div></div>
+          <div class="ods-card" style="--ods-color: #0A97D9"><div class="ods-number">14</div><div class="ods-name">Vida na água</div></div>
+          <div class="ods-card" style="--ods-color: #56C02B"><div class="ods-number">15</div><div class="ods-name">Vida terrestre</div></div>
+          <div class="ods-card" style="--ods-color: #00689D"><div class="ods-number">16</div><div class="ods-name">Paz e justiça</div></div>
+          <div class="ods-card" style="--ods-color: #19486A"><div class="ods-number">17</div><div class="ods-name">Parcerias</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- STEP 10 — FINALIDADE SOCIAL                    -->
+    <!-- ============================================ -->
+    <div class="step-panel" data-step="10">
+      <div class="step-header">
+        <div class="step-number">[ Cadastro · Etapa 04 de 08 ]</div>
+        <p class="welcome-description">
+          Selecione a <strong>finalidade social principal</strong> da sua experiência. Esta classificação é usada para organizar o catálogo de forma intuitiva para o público externo. Você pode marcar mais de uma.
+        </p>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Finalidade Social <span class="required">*</span></label>
+        <div class="forproex-grid">
+          <div class="forproex-card" data-cat="finalidade">
+            <div class="forproex-title">Inclusão Socioprodutiva</div>
+            <div class="forproex-desc">Geração de renda, cooperativismo, economia solidária</div>
+          </div>
+          <div class="forproex-card" data-cat="finalidade">
+            <div class="forproex-title">Educação e Formação</div>
+            <div class="forproex-desc">Metodologias pedagógicas, inclusão educacional, extensão</div>
+          </div>
+          <div class="forproex-card" data-cat="finalidade">
+            <div class="forproex-title">Saúde e Bem-estar</div>
+            <div class="forproex-desc">Promoção da saúde, prevenção, tecnologias comunitárias</div>
+          </div>
+          <div class="forproex-card" data-cat="finalidade">
+            <div class="forproex-title">Habitação e Infraestrutura</div>
+            <div class="forproex-desc">Moradia, saneamento, urbanismo social</div>
+          </div>
+          <div class="forproex-card" data-cat="finalidade">
+            <div class="forproex-title">Meio Ambiente e Sustentabilidade</div>
+            <div class="forproex-desc">Agroecologia, resíduos, energia social</div>
+          </div>
+          <div class="forproex-card" data-cat="finalidade">
+            <div class="forproex-title">Direitos Humanos e Cidadania</div>
+            <div class="forproex-desc">Acesso à justiça, participação social</div>
+          </div>
+          <div class="forproex-card" data-cat="finalidade">
+            <div class="forproex-title">Cultura e Identidade</div>
+            <div class="forproex-desc">Patrimônio, expressões culturais, memória social</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- STEP 11 — ÁREAS TEMÁTICAS DE EXTENSÃO (FORPROEX) -->
+    <!-- ============================================ -->
+    <div class="step-panel" data-step="11">
+      <div class="step-header">
+        <div class="step-number">[ Cadastro · Etapa 05 de 08 ]</div>
+        <p class="welcome-description">
+          Selecione as <strong>Áreas Temáticas da Extensão (FORPROEX)</strong> que melhor caracterizam sua experiência. Estas áreas são o padrão nacional para classificar projetos, programas e cursos extensionistas. Você pode marcar mais de uma.
+        </p>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Áreas Temáticas FORPROEX <span class="required">*</span></label>
+        <div class="forproex-grid">
+          <div class="forproex-card" data-cat="forproex">
+            <div class="forproex-title">Comunicação</div>
+            <div class="forproex-desc">Comunicação social, mídia comunitária, produção de material educativo, rádio e TV.</div>
+          </div>
+          <div class="forproex-card" data-cat="forproex">
+            <div class="forproex-title">Cultura</div>
+            <div class="forproex-desc">Produção cultural, memória, patrimônio, folclore, artesanato e artes.</div>
+          </div>
+          <div class="forproex-card" data-cat="forproex">
+            <div class="forproex-title">Direitos Humanos e Justiça</div>
+            <div class="forproex-desc">Cidadania, ética, inclusão, assistência jurídica, combate a preconceitos.</div>
+          </div>
+          <div class="forproex-card" data-cat="forproex">
+            <div class="forproex-title">Educação</div>
+            <div class="forproex-desc">Educação básica, superior, profissional, popular, especial e de jovens e adultos.</div>
+          </div>
+          <div class="forproex-card" data-cat="forproex">
+            <div class="forproex-title">Meio Ambiente</div>
+            <div class="forproex-desc">Ecologia, desenvolvimento sustentável, recursos hídricos, gestão ambiental.</div>
+          </div>
+          <div class="forproex-card" data-cat="forproex">
+            <div class="forproex-title">Saúde</div>
+            <div class="forproex-desc">Saúde pública, nutrição, enfermagem, saúde do trabalhador e saúde coletiva.</div>
+          </div>
+          <div class="forproex-card" data-cat="forproex">
+            <div class="forproex-title">Tecnologia e Produção</div>
+            <div class="forproex-desc">Desenvolvimento tecnológico, difusão de tecnologias, desenvolvimento rural e industrial.</div>
+          </div>
+          <div class="forproex-card" data-cat="forproex">
+            <div class="forproex-title">Trabalho</div>
+            <div class="forproex-desc">Economia solidária, qualificação profissional, relações de trabalho.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- STEP 12 — PÚBLICO + TIPO SOLUÇÃO + ARRANJO + BASE -->
+    <!-- ============================================ -->
+    <div class="step-panel" data-step="12">
+      <div class="step-header">
+        <div class="step-number">[ Cadastro · Etapa 06 de 08 ]</div>
+        <p class="welcome-description">
+          Classifique sua experiência por <strong>público-alvo, tipo de solução, arranjo institucional e base teórica</strong>. Estas categorias complementam a classificação e ajudam na descoberta pelo catálogo. Marque todas que se aplicam.
+        </p>
+      </div>
+
+      <!-- Público-Alvo -->
+      <div class="field-group">
+        <label class="field-label">Público-Alvo <span class="required">*</span></label>
+        <div class="pill-group">
+          <div class="pill" data-cat="publico">Comunidades urbanas periféricas</div>
+          <div class="pill" data-cat="publico">População rural</div>
+          <div class="pill" data-cat="publico">Povos tradicionais</div>
+          <div class="pill" data-cat="publico">Mulheres</div>
+          <div class="pill" data-cat="publico">Juventude</div>
+          <div class="pill" data-cat="publico">Idosos</div>
+          <div class="pill" data-cat="publico">Pessoas com deficiência</div>
+        </div>
+      </div>
+
+      <div class="hairline my-10"></div>
+
+      <!-- Tipo de Solução Tecnológica -->
+      <div class="field-group">
+        <label class="field-label">Tipo de Solução Tecnológica <span class="required">*</span></label>
+        <div class="forproex-grid">
+          <div class="forproex-card" data-cat="solucao">
+            <div class="forproex-title">Tecnologias de Processo</div>
+            <div class="forproex-desc">Métodos, metodologias, arranjos organizacionais</div>
+          </div>
+          <div class="forproex-card" data-cat="solucao">
+            <div class="forproex-title">Tecnologias de Produto</div>
+            <div class="forproex-desc">Artefatos físicos (ex.: filtros, equipamentos de baixo custo)</div>
+          </div>
+          <div class="forproex-card" data-cat="solucao">
+            <div class="forproex-title">Tecnologias Digitais</div>
+            <div class="forproex-desc">Apps, plataformas, sistemas de informação</div>
+          </div>
+          <div class="forproex-card" data-cat="solucao">
+            <div class="forproex-title">Tecnologias Sociais Híbridas</div>
+            <div class="forproex-desc">Combinação de digital + comunitário</div>
+          </div>
+          <div class="forproex-card" data-cat="solucao">
+            <div class="forproex-title">Tecnologias Baseadas em Conhecimento Tradicional</div>
+            <div class="forproex-desc">Saberes locais, práticas ancestrais</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hairline my-10"></div>
+
+      <!-- Arranjo Institucional -->
+      <div class="field-group">
+        <label class="field-label">Arranjo Institucional <span class="required">*</span></label>
+        <div class="pill-group">
+          <div class="pill" data-cat="arranjo">Projeto de Extensão</div>
+          <div class="pill" data-cat="arranjo">Pesquisa aplicada</div>
+          <div class="pill" data-cat="arranjo">Ensino (disciplinas/projetos integradores)</div>
+          <div class="pill" data-cat="arranjo">Parcerias com governo</div>
+          <div class="pill" data-cat="arranjo">Parcerias com ONGs/comunidades</div>
+          <div class="pill" data-cat="arranjo">Incubadoras e laboratórios sociais</div>
+        </div>
+      </div>
+
+      <div class="hairline my-10"></div>
+
+      <!-- Base Teórica / Abordagem -->
+      <div class="field-group">
+        <label class="field-label">Base Teórica / Abordagem</label>
+        <div class="pill-group">
+          <div class="pill" data-cat="base">Inovação Social</div>
+          <div class="pill" data-cat="base">Economia Solidária</div>
+          <div class="pill" data-cat="base">Desenvolvimento Territorial</div>
+          <div class="pill" data-cat="base">Tecnologia Apropriada</div>
+          <div class="pill" data-cat="base">Ciência, Tecnologia e Sociedade (CTS)</div>
+          <div class="pill" data-cat="base">Transformação Digital Inclusiva</div>
+        </div>
+        <div class="field-hint">Opcional — selecione as abordagens teóricas que fundamentam sua experiência.</div>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- STEP 11 — RESULTADOS E DESAFIOS               -->
+    <!-- ============================================ -->
+    <div class="step-panel" data-step="13">
+      <div class="step-header">
+        <div class="step-number">[ Cadastro · Etapa 07 de 08 ]</div>
+        <p class="welcome-description">
+          Descreva os resultados, impactos, desafios e perspectivas da experiência. Este conteúdo compõe diretamente a página da experiência no catálogo.
+        </p>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Resultados e impactos <span class="required">*</span></label>
+        <textarea class="field-textarea" rows="6" placeholder="Quais resultados concretos a experiência alcançou? Que impactos foram observados nos beneficiários e na comunidade?"></textarea>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Desafios e perspectivas <span class="required">*</span></label>
+        <textarea class="field-textarea" rows="6" placeholder="Quais os principais desafios enfrentados? Quais as perspectivas futuras da experiência?"></textarea>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Público beneficiado</label>
+        <textarea class="field-textarea" rows="3" placeholder="Descreva o público atendido pela experiência..."></textarea>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Número estimado de pessoas atendidas</label>
+        <input type="number" class="field-input" placeholder="Ex: 150">
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Fontes de financiamento</label>
+        <textarea class="field-textarea" rows="3" placeholder="Editais, bolsas, recursos próprios, parcerias..."></textarea>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Parcerias</label>
+        <textarea class="field-textarea" rows="3" placeholder="Organizações, instituições e comunidades parceiras..."></textarea>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- STEP 12 — MATERIAIS E FINALIZAÇÃO              -->
+    <!-- ============================================ -->
+    <div class="step-panel" data-step="14">
+      <div class="step-header">
+        <div class="step-number">[ Cadastro · Etapa 08 de 08 · Finalização ]</div>
+        <p class="welcome-description">
+          Anexe imagens e informe os canais de divulgação da experiência. A foto de capa e duas imagens secundárias são obrigatórias para publicação no catálogo.
+        </p>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Foto de capa <span class="required">*</span></label>
+        <div class="upload-zone">
+          <svg class="upload-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="17 8 12 3 7 8"/>
+            <line x1="12" y1="3" x2="12" y2="15"/>
+          </svg>
+          <div class="upload-title">Arraste a imagem ou clique para selecionar</div>
+          <div class="upload-hint">JPG, PNG ou WEBP · Mínimo 1200×800px · Máximo 5MB</div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="field-group">
+          <label class="field-label">Imagem secundária 01 <span class="required">*</span></label>
+          <div class="upload-zone">
+            <svg class="upload-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="3" y="3" width="18" height="18"/>
+              <circle cx="8.5" cy="8.5" r="1.5"/>
+              <polyline points="21 15 16 10 5 21"/>
+            </svg>
+            <div class="upload-title">Adicionar imagem</div>
+            <div class="upload-hint">JPG, PNG ou WEBP</div>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Imagem secundária 02 <span class="required">*</span></label>
+          <div class="upload-zone">
+            <svg class="upload-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="3" y="3" width="18" height="18"/>
+              <circle cx="8.5" cy="8.5" r="1.5"/>
+              <polyline points="21 15 16 10 5 21"/>
+            </svg>
+            <div class="upload-title">Adicionar imagem</div>
+            <div class="upload-hint">JPG, PNG ou WEBP</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hairline my-10"></div>
+      <div class="eyebrow mb-6">Redes sociais e divulgação (opcional)</div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="field-group">
+          <label class="field-label">Instagram</label>
+          <input type="text" class="field-input" placeholder="@perfil">
+        </div>
+        <div class="field-group">
+          <label class="field-label">Site externo</label>
+          <input type="url" class="field-input" placeholder="https://">
+        </div>
+        <div class="field-group">
+          <label class="field-label">YouTube</label>
+          <input type="url" class="field-input" placeholder="Link do canal">
+        </div>
+        <div class="field-group">
+          <label class="field-label">Facebook</label>
+          <input type="text" class="field-input" placeholder="Página">
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Links de vídeos, reportagens ou publicações acadêmicas</label>
+        <textarea class="field-textarea" rows="4" placeholder="Cole aqui os links relevantes, um por linha..."></textarea>
+      </div>
+
+      <div class="hairline my-10"></div>
+
+      <div class="glass p-8" style="background: rgba(46, 163, 155, 0.05); border: 1px solid var(--line-strong);">
+        <div class="eyebrow mb-4">Antes de enviar</div>
+        <p class="text-sm opacity-75 leading-relaxed mb-6">
+          Após o envio, sua experiência passará por moderação da equipe AGIR em até 7 dias. Você receberá um e-mail de confirmação no endereço informado no início do cadastro.
+        </p>
+        <label class="flex items-start gap-3 cursor-pointer">
+          <input type="checkbox" class="mt-1">
+          <span class="text-xs opacity-80">
+            Confirmo que li e aceito os termos de participação no Catálogo de Tecnologias Sociais 2026, autorizando o uso das informações fornecidas para os fins do portal LISA.
+          </span>
+        </label>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- STEP 15 — TELA DE SUCESSO                     -->
+    <!-- ============================================ -->
+    <div class="step-panel" data-step="15">
+      <div class="success-screen">
+        <div class="success-icon">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#3FBDB4" stroke-width="1.5" stroke-linecap="square">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </div>
+
+        <div class="eyebrow mb-6">Envio realizado com sucesso</div>
+
+        <h1 class="success-title">
+          Sua experiência foi<br>
+          <span class="italic font-thin text-[var(--accent-glow)]">registrada.</span>
+        </h1>
+
+        <p class="success-description">
+          Recebemos seu cadastro e encaminhamos para análise da equipe AGIR. Você receberá um e-mail de confirmação em instantes e uma atualização sobre o status em até 7 dias úteis.
+        </p>
+
+        <div class="protocol-box">
+          <div class="protocol-label">Protocolo de envio</div>
+          <div class="protocol-value">LISA-2026-0128</div>
+        </div>
+
+        <div class="flex gap-4 justify-center flex-wrap">
+          <a href="#" class="btn btn-primary">
+            Voltar ao portal
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="5" y1="12" x2="19" y2="12"/>
+              <polyline points="12 5 19 12 12 19"/>
+            </svg>
+          </a>
+          <button class="btn btn-secondary" onclick="window.print()">
+            Salvar comprovante
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- NAVIGATION                                    -->
+    <!-- ============================================ -->
+    <div class="form-navigation" id="navContainer" style="display: none;">
+      <button class="btn btn-secondary" id="prevBtn" onclick="prevStep()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+        Anterior
+      </button>
+
+      <div class="form-nav-meta" id="navMeta">Etapa 1 de 5</div>
+
+      <button class="btn btn-primary" id="nextBtn" onclick="nextStep()">
+        Próximo
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="9 18 15 12 9 6"/>
+        </svg>
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<div class="draft-indicator" id="draftIndicator">Rascunho salvo automaticamente</div>
+
+<!-- ============================================ -->
+<!-- SCRIPTS                                       -->
+<!-- ============================================ -->
+<script>
+  const STORAGE_KEY = 'lisa_cadastro_draft_v3';
+  let currentStep = 0;
+
+  // Mapping de steps:
+  // 0   = welcome
+  // 1-5 = triagem fuzzy (5 dimensões)
+  // 6   = resultado da triagem (gate)
+  // 7-14 = cadastro completo (8 etapas)
+  // 15  = sucesso
+  const TRIAGEM_STEPS = [1, 2, 3, 4, 5];
+  const RESULT_STEP = 6;
+  const CADASTRO_STEPS = [7, 8, 9, 10, 11, 12, 13, 14];
+  const SUCCESS_STEP = 15;
+
+  const triagemLabels = ['Participação', 'Impacto', 'Apropriação', 'Sustentabilidade', 'Replicabilidade'];
+  const cadastroLabels = ['Identificação', 'Experiência', 'CNPq e ODS', 'Finalidade', 'Extensão', 'Classificações', 'Resultados', 'Materiais'];
+
+  // Estado das respostas fuzzy
+  const fuzzyAnswers = {
+    P: [5, 5, 5, 5],
+    I: [5, 5, 5, 5],
+    A: [5, 5, 5, 5],
+    S: [5, 5, 5, 5],
+    R: [5, 5, 5, 5]
+  };
+
+  let triagemBlocked = false;
+
+  // ============================================
+  // MOTOR FUZZY — implementação simplificada
+  // ============================================
+  function baixo(x) { return Math.max(0, Math.min(1, (4 - x) / 4)); }
+  function medio(x) { return Math.max(0, Math.min((x - 3) / 2, (7 - x) / 2)); }
+  function alto(x)  { return Math.max(0, Math.min(1, (x - 6) / 4)); }
+
+  function calcFuzzyIndex() {
+    const P = fuzzyAnswers.P.reduce((a,b) => a+b, 0) / 4;
+    const I = fuzzyAnswers.I.reduce((a,b) => a+b, 0) / 4;
+    const A = fuzzyAnswers.A.reduce((a,b) => a+b, 0) / 4;
+    const S = fuzzyAnswers.S.reduce((a,b) => a+b, 0) / 4;
+    const R = fuzzyAnswers.R.reduce((a,b) => a+b, 0) / 4;
+
+    // Pertinências
+    const pB = baixo(P), pM = medio(P), pA = alto(P);
+    const iB = baixo(I), iM = medio(I), iA = alto(I);
+    const aB = baixo(A), aM = medio(A), aA = alto(A);
+    const sB = baixo(S), sM = medio(S), sA = alto(S);
+    const rB = baixo(R), rM = medio(R), rA = alto(R);
+
+    // Regras — baixo
+    const baixo_score = Math.max(
+      Math.min(pB, iB),
+      Math.min(pB, aB),
+      Math.min(iB, sB),
+      Math.min(pB, rB),
+      Math.min(pB, iM),
+      Math.min(iB, pM),
+      Math.min(aB, iM)
+    );
+
+    // Regras — médio
+    const medio_score = Math.max(
+      Math.min(pM, iM),
+      Math.min(pM, iA),
+      Math.min(pA, iM),
+      Math.min(iA, pB),
+      Math.min(pA, aM),
+      Math.min(sA, rB),
+      Math.min(rA, sB),
+      Math.min(aB, pA),
+      Math.min(aB, iA),
+      Math.min(pM, aM, sM),
+      Math.min(iA, aM),
+      Math.min(pA, sM),
+      Math.min(pA, iA, aB)
+    );
+
+    // Regras — alto
+    const alto_score = Math.max(
+      Math.min(pA, iA, aA),
+      Math.min(pA, iA, sA),
+      Math.min(pA, iA, rA),
+      Math.min(pA, iA, aA, sA),
+      Math.min(pA, iA, aA, rA),
+      Math.min(pA, iA, aM, sM),
+      Math.min(pM, iA, aA),
+      Math.min(pA, iM, aA)
+    );
+
+    // Defuzzificação
+    const eps = 1e-6;
+    const indice_fuzzy = (baixo_score * 0.2 + medio_score * 0.5 + alto_score * 0.9) /
+                         (baixo_score + medio_score + alto_score + eps);
+
+    // Índice linear (referência)
+    const indice_linear = (P * 0.30 + I * 0.25 + A * 0.20 + S * 0.15 + R * 0.10) / 10;
+
+    return { P, I, A, S, R, indice_fuzzy, indice_linear };
+  }
+
+  function classifyFuzzy(idx) {
+    if (idx <= 0.3) return { faixa: 'vermelho', label: 'Baixa aderência', color: '#E55542' };
+    if (idx <= 0.7) return { faixa: 'amarelo',  label: 'Média aderência', color: '#E5B842' };
+    return { faixa: 'verde', label: 'Alta aderência', color: '#3FBDB4' };
+  }
+
+  // ============================================
+  // PROGRESS BAR
+  // ============================================
+  function renderProgress() {
+    const track = document.getElementById('progressTrack');
+    const phaseEl = document.getElementById('progressPhase');
+    track.innerHTML = '';
+
+    let labels, currentIdx, phaseText;
+
+    if (TRIAGEM_STEPS.includes(currentStep)) {
+      labels = triagemLabels;
+      currentIdx = TRIAGEM_STEPS.indexOf(currentStep) + 1;
+      phaseText = 'Fase 1 · Triagem de Aderência';
+    } else if (CADASTRO_STEPS.includes(currentStep)) {
+      labels = cadastroLabels;
+      currentIdx = CADASTRO_STEPS.indexOf(currentStep) + 1;
+      phaseText = 'Fase 2 · Cadastro Completo';
+    } else {
+      return;
+    }
+
+    phaseEl.textContent = phaseText;
+
+    labels.forEach((lbl, i) => {
+      const n = i + 1;
+      const node = document.createElement('div');
+      node.className = 'step-node';
+      if (n === currentIdx) node.classList.add('active');
+      if (n < currentIdx) node.classList.add('completed');
+
+      const dot = document.createElement('div');
+      dot.className = 'step-dot';
+      if (n === currentIdx) dot.classList.add('active');
+      if (n < currentIdx) dot.classList.add('completed');
+      dot.innerHTML = `<span>${String(n).padStart(2, '0')}</span>`;
+
+      const label = document.createElement('div');
+      label.className = 'step-label';
+      label.textContent = lbl;
+
+      node.appendChild(dot);
+      node.appendChild(label);
+      track.appendChild(node);
+
+      if (n < labels.length) {
+        const connector = document.createElement('div');
+        connector.className = 'step-connector';
+        if (n < currentIdx) connector.classList.add('completed');
+        track.appendChild(connector);
+      }
+    });
+  }
+
+  // ============================================
+  // STEP NAVIGATION
+  // ============================================
+  function showStep(step) {
+    document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
+    const target = document.querySelector(`[data-step="${step}"]`);
+    if (target) target.classList.add('active');
+
+    const nav = document.getElementById('navContainer');
+    const progressContainer = document.getElementById('progressContainer');
+    const formContainer = document.getElementById('formContainer');
+
+    const isProgressPhase = TRIAGEM_STEPS.includes(step) || CADASTRO_STEPS.includes(step);
+
+    if (isProgressPhase) {
+      progressContainer.style.display = 'block';
+      formContainer.classList.add('with-progress');
+    } else {
+      progressContainer.style.display = 'none';
+      formContainer.classList.remove('with-progress');
+    }
+
+    // Navigation: hidden on welcome, result, success
+    if (step === 0 || step === RESULT_STEP || step === SUCCESS_STEP) {
+      nav.style.display = 'none';
+    } else {
+      nav.style.display = 'flex';
+
+      let meta = '';
+      if (TRIAGEM_STEPS.includes(step)) {
+        meta = `Triagem · ${TRIAGEM_STEPS.indexOf(step) + 1} de 5`;
+      } else if (CADASTRO_STEPS.includes(step)) {
+        meta = `Cadastro · ${CADASTRO_STEPS.indexOf(step) + 1} de 6`;
+      }
+      document.getElementById('navMeta').textContent = meta;
+      document.getElementById('prevBtn').style.visibility = 'visible';
+
+      const nextBtn = document.getElementById('nextBtn');
+      if (step === CADASTRO_STEPS[CADASTRO_STEPS.length - 1]) {
+        nextBtn.innerHTML = `Enviar cadastro
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="22" y1="2" x2="11" y2="13"/>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+          </svg>`;
+      } else if (step === TRIAGEM_STEPS[TRIAGEM_STEPS.length - 1]) {
+        nextBtn.innerHTML = `Ver resultado da triagem
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>`;
+      } else {
+        nextBtn.innerHTML = `Próximo
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>`;
+      }
+    }
+
+    renderProgress();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function nextStep() {
+    // Triagem completa → calcular fuzzy e mostrar resultado
+    if (currentStep === TRIAGEM_STEPS[TRIAGEM_STEPS.length - 1]) {
+      currentStep = RESULT_STEP;
+      showStep(currentStep);
+      animateResultScreen();
+      return;
+    }
+
+    // Cadastro completo → sucesso
+    if (currentStep === CADASTRO_STEPS[CADASTRO_STEPS.length - 1]) {
+      currentStep = SUCCESS_STEP;
+      showStep(currentStep);
+      clearDraft();
+      return;
+    }
+
+    currentStep++;
+    showStep(currentStep);
+    saveDraft();
+  }
+
+  function prevStep() {
+    if (currentStep === RESULT_STEP) {
+      currentStep = TRIAGEM_STEPS[TRIAGEM_STEPS.length - 1];
+      showStep(currentStep);
+      return;
+    }
+    if (currentStep === CADASTRO_STEPS[0]) {
+      // Voltando do cadastro para o resultado da triagem
+      currentStep = RESULT_STEP;
+      showStep(currentStep);
+      animateResultScreen();
+      return;
+    }
+    if (currentStep > 0) {
+      currentStep--;
+      showStep(currentStep);
+      saveDraft();
+    }
+  }
+
+  function proceedToFullForm() {
+    currentStep = CADASTRO_STEPS[0];
+    showStep(currentStep);
+    saveDraft();
+  }
+
+  function restartTriagem() {
+    // Reset dos sliders
+    document.querySelectorAll('.slider').forEach(s => {
+      s.value = 5;
+      const q = s.closest('.slider-question');
+      q.querySelector('[data-value-display]').textContent = '5';
+    });
+    Object.keys(fuzzyAnswers).forEach(k => {
+      fuzzyAnswers[k] = [5, 5, 5, 5];
+    });
+    currentStep = TRIAGEM_STEPS[0];
+    showStep(currentStep);
+  }
+
+  // ============================================
+  // RESULT SCREEN ANIMATION
+  // ============================================
+  function animateResultScreen() {
+    const result = calcFuzzyIndex();
+    const classification = classifyFuzzy(result.indice_fuzzy);
+
+    const gauge = document.getElementById('gaugeFg');
+    const gaugeNumber = document.getElementById('gaugeNumber');
+    const resultTitle = document.getElementById('resultTitle');
+    const resultWord = document.getElementById('resultWord');
+    const resultMessage = document.getElementById('resultMessage');
+    const resultEyebrow = document.getElementById('resultEyebrow');
+
+    // Gauge circle: circumference = 2πr = 2 * π * 120 ≈ 753.98
+    const circumference = 2 * Math.PI * 120;
+    gauge.style.strokeDasharray = circumference;
+    gauge.style.strokeDashoffset = circumference;
+    gauge.style.stroke = classification.color;
+
+    // Dimension bars: reset
+    document.querySelectorAll('.dimension-bar-fill').forEach(bar => {
+      bar.style.width = '0%';
+    });
+    document.querySelectorAll('[data-dim-value]').forEach(el => {
+      el.textContent = '0.0';
+    });
+
+    // Animate after delay
+    setTimeout(() => {
+      const offset = circumference - (circumference * result.indice_fuzzy);
+      gauge.style.strokeDashoffset = offset;
+
+      // Mostrar texto em vez de número
+      const nivelTexto = result.indice_fuzzy <= 0.3 ? 'Baixo' : (result.indice_fuzzy <= 0.7 ? 'Médio' : 'Alto');
+      setTimeout(() => {
+        gaugeNumber.textContent = nivelTexto;
+        gaugeNumber.style.color = classification.color;
+      }, 800);
+
+      // Animate dimension bars
+      ['P','I','A','S','R'].forEach(dim => {
+        const fill = document.querySelector(`[data-dim="${dim}"].dimension-bar-fill`);
+        const valEl = document.querySelector(`[data-dim-value="${dim}"]`);
+        const val = result[dim];
+        if (fill) fill.style.width = `${(val / 10) * 100}%`;
+
+        // Counter animation for dimension
+        const dStart = performance.now();
+        function dTick(now) {
+          const t = Math.min((now - dStart) / duration, 1);
+          const eased = 1 - Math.pow(1 - t, 3);
+          valEl.textContent = (eased * val).toFixed(1);
+          if (t < 1) requestAnimationFrame(dTick);
+        }
+        requestAnimationFrame(dTick);
+      });
+    }, 300);
+
+    // Ajustar texto conforme classificação
+    resultEyebrow.textContent = `Resultado da triagem · ${classification.label}`;
+    resultEyebrow.style.color = classification.color;
+
+    const proceedBtn = document.getElementById('resultActionsProceed');
+    const blockedBtn = document.getElementById('resultActionsBlocked');
+
+    if (classification.faixa === 'verde') {
+      resultWord.textContent = 'alta aderência';
+      resultWord.style.color = classification.color;
+      resultTitle.innerHTML = `Sua experiência tem <span class="accent" style="color:${classification.color}">alta aderência</span><br>às tecnologias sociais.`;
+      resultMessage.textContent = 'Com base nas respostas da triagem, sua iniciativa demonstra forte alinhamento com os parâmetros que caracterizam uma tecnologia social. Você está habilitado a prosseguir com o cadastro completo da experiência.';
+      proceedBtn.style.display = 'block';
+      blockedBtn.style.display = 'none';
+      triagemBlocked = false;
+    } else if (classification.faixa === 'amarelo') {
+      resultTitle.innerHTML = `Sua experiência está em <span class="accent" style="color:${classification.color}">transição</span><br>para tecnologia social.`;
+      resultMessage.textContent = 'Sua iniciativa apresenta características importantes de tecnologia social, mas ainda há dimensões em desenvolvimento. Você está habilitado a prosseguir com o cadastro — a equipe de moderação poderá oferecer observações construtivas sobre como fortalecer a experiência.';
+      proceedBtn.style.display = 'block';
+      blockedBtn.style.display = 'none';
+      triagemBlocked = false;
+    } else {
+      resultTitle.innerHTML = `Sua experiência ainda não atende<br>os <span class="accent" style="color:${classification.color}">parâmetros mínimos</span>.`;
+      resultMessage.textContent = 'O Laboratório de Inovação Social Aberto adota parâmetros qualitativos e quantitativos para garantir que as experiências do catálogo sejam efetivamente tecnologias sociais. Agradecemos profundamente seu interesse e sua dedicação.';
+      proceedBtn.style.display = 'none';
+      blockedBtn.style.display = 'block';
+      triagemBlocked = true;
+    }
+  }
+
+  // ============================================
+  // SLIDER BINDING
+  // ============================================
+  document.querySelectorAll('.slider-question').forEach(q => {
+    const dim = q.dataset.dim;
+    const qCode = q.dataset.q;
+    const slider = q.querySelector('.slider');
+    const display = q.querySelector('[data-value-display]');
+
+    slider.addEventListener('input', () => {
+      const val = parseFloat(slider.value);
+      display.textContent = val % 1 === 0 ? val.toFixed(0) : val.toFixed(1);
+
+      // Atualizar estado fuzzy
+      const idx = parseInt(qCode.slice(1)) - 1;
+      fuzzyAnswers[dim][idx] = val;
+      saveDraft();
+    });
+  });
+
+  // ============================================
+  // CHAR COUNTER PARA TEXTAREAS
+  // ============================================
+  (function() {
+    const MAX_CHARS = 3000;
+    const WARNING = 2500;
+
+    document.querySelectorAll('.field-textarea').forEach(textarea => {
+      textarea.setAttribute('maxlength', MAX_CHARS);
+
+      const counter = document.createElement('div');
+      counter.className = 'char-counter';
+      counter.textContent = `0 / ${MAX_CHARS}`;
+      textarea.parentElement.insertBefore(counter, textarea.nextSibling);
+
+      function updateCounter() {
+        const len = textarea.value.length;
+        counter.textContent = `${len.toLocaleString('pt-BR')} / ${MAX_CHARS.toLocaleString('pt-BR')}`;
+        counter.classList.remove('warning', 'danger');
+        if (len >= MAX_CHARS) counter.classList.add('danger');
+        else if (len >= WARNING) counter.classList.add('warning');
+      }
+
+      textarea.addEventListener('input', updateCounter);
+      updateCounter();
+    });
+  })();
+
+  // ============================================
+  // PILLS / ODS / FORPROEX
+  // ============================================
+  document.querySelectorAll('.pill').forEach(pill => {
+    pill.addEventListener('click', () => {
+      pill.classList.toggle('selected');
+      saveDraft();
+    });
+  });
+
+  document.querySelectorAll('.ods-card').forEach(card => {
+    card.addEventListener('click', () => {
+      card.classList.toggle('selected');
+      saveDraft();
+    });
+  });
+
+  document.querySelectorAll('.forproex-card').forEach(card => {
+    card.addEventListener('click', () => {
+      card.classList.toggle('selected');
+      saveDraft();
+    });
+  });
+
+  // ============================================
+  // DRAFT (localStorage)
+  // ============================================
+  let saveTimeout;
+  function saveDraft() {
+    clearTimeout(saveTimeout);
+    saveTimeout = setTimeout(() => {
+      const draft = {
+        currentStep,
+        fuzzyAnswers,
+        timestamp: Date.now()
+      };
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(draft));
+        showDraftIndicator();
+      } catch(e) {}
+    }, 800);
+  }
+
+  function clearDraft() {
+    try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
+  }
+
+  function showDraftIndicator() {
+    const ind = document.getElementById('draftIndicator');
+    ind.classList.add('visible');
+    clearTimeout(ind._timer);
+    ind._timer = setTimeout(() => ind.classList.remove('visible'), 2000);
+  }
+
+  document.querySelectorAll('input, textarea, select').forEach(el => {
+    el.addEventListener('input', saveDraft);
+    el.addEventListener('change', saveDraft);
+  });
+
+  // ============================================
+  // INIT
+  // ============================================
+  renderProgress();
+</script>
+
+</body>
+</html>

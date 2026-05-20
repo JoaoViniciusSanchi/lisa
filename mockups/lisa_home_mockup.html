@@ -1,0 +1,1230 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LISA — Laboratório de Inovação Social Aberto · UFF</title>
+
+<!-- Tailwind via CDN -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- Inter via Google Fonts (oficial da marca) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;800;900&family=Inter+Tight:wght@200;300;400;500;700;900&display=swap" rel="stylesheet">
+
+<!-- GSAP + ScrollTrigger -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+<style>
+  :root {
+    /* Fundos - cinza escuro neutro */
+    --bg-base: #0E0E10;
+    --bg-elevated: #16161A;
+    --bg-card: #1A1A1F;
+
+    /* Accent - paleta petrol oficial LISA, agora usada como detalhe */
+    --petrol-deep: #0B2A33;
+    --petrol-mid: #143B47;
+    --petrol-light: #1F5160;
+
+    /* Texto */
+    --warm-white: #F4EFE6;
+    --pure-white: #FFFFFF;
+
+    /* Highlights */
+    --accent: #2EA39B;
+    --accent-glow: #3FBDB4;
+
+    /* Linhas */
+    --line: rgba(244, 239, 230, 0.07);
+    --line-strong: rgba(244, 239, 230, 0.16);
+  }
+
+  * {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: var(--bg-base);
+    color: var(--warm-white);
+    overflow-x: hidden;
+  }
+
+  .font-display {
+    font-family: 'Inter Tight', 'Inter', sans-serif;
+    letter-spacing: -0.04em;
+  }
+
+  .eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--accent-glow);
+  }
+
+  .section-num {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    color: rgba(244, 239, 230, 0.4);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Glass morphism — fundo elevado com leve toque petrol */
+  .glass {
+    background: linear-gradient(135deg, rgba(31, 81, 96, 0.12) 0%, rgba(22, 22, 26, 0.85) 100%);
+    backdrop-filter: blur(20px) saturate(140%);
+    -webkit-backdrop-filter: blur(20px) saturate(140%);
+    border: 1px solid var(--line);
+    box-shadow:
+      inset 0 1px 0 rgba(244, 239, 230, 0.04),
+      0 30px 60px -20px rgba(0, 0, 0, 0.5);
+  }
+
+  .glass-strong {
+    background: linear-gradient(135deg, rgba(31, 81, 96, 0.18) 0%, rgba(26, 26, 31, 0.92) 100%);
+    backdrop-filter: blur(28px) saturate(150%);
+    -webkit-backdrop-filter: blur(28px) saturate(150%);
+    border: 1px solid var(--line-strong);
+  }
+
+  /* Linhas finas decorativas */
+  .hairline {
+    height: 1px;
+    background: var(--line);
+    width: 100%;
+  }
+
+  .hairline-vertical {
+    width: 1px;
+    background: var(--line);
+    height: 100%;
+  }
+
+  /* Botões — sem cantos arredondados, fiel ao briefing */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 18px 32px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    border: 1px solid transparent;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: var(--bg-base);
+  }
+
+  .btn-primary:hover {
+    background: var(--accent-glow);
+    box-shadow: 0 0 40px rgba(46, 163, 155, 0.4);
+    transform: translateY(-2px);
+  }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--warm-white);
+    border-color: var(--line-strong);
+  }
+
+  .btn-secondary:hover {
+    border-color: var(--accent-glow);
+    color: var(--accent-glow);
+    transform: translateY(-2px);
+  }
+
+  .btn-small {
+    padding: 12px 24px;
+    font-size: 12px;
+  }
+
+  /* Logo "L" estilizado */
+  .logo-mark {
+    width: 36px;
+    height: 36px;
+    border: 1.5px solid var(--warm-white);
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-start;
+    padding: 6px;
+    position: relative;
+  }
+
+  .logo-mark::before {
+    content: '';
+    width: 11px;
+    height: 18px;
+    border-left: 1.5px solid var(--warm-white);
+    border-bottom: 1.5px solid var(--warm-white);
+  }
+
+  /* Canvas do dot grid - posicionado fixo no hero */
+  #dot-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* Hero gradient overlay */
+  .hero-gradient {
+    background: radial-gradient(ellipse at center, transparent 0%, var(--bg-base) 80%);
+  }
+
+  /* Estatísticas - número grande */
+  .stat-number {
+    font-family: 'Inter Tight', sans-serif;
+    font-size: clamp(72px, 10vw, 144px);
+    font-weight: 200;
+    letter-spacing: -0.06em;
+    line-height: 0.9;
+    background: linear-gradient(180deg, var(--warm-white) 0%, rgba(244, 239, 230, 0.3) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Timeline horizontal - estrutura para scroll hijacking */
+  #timeline-wrapper {
+    position: relative;
+    /* altura calculada via JS baseada no conteúdo */
+  }
+
+  #timeline-pin {
+    position: relative;
+    height: 100vh;
+    overflow: hidden;
+    width: 100%;
+  }
+
+  .timeline-track {
+    display: flex;
+    height: 100%;
+    align-items: center;
+    padding: 0 8vw;
+    gap: 6vw;
+    will-change: transform;
+  }
+
+  .timeline-item {
+    flex-shrink: 0;
+    width: 380px;
+    position: relative;
+  }
+
+  .timeline-year {
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 96px;
+    font-weight: 200;
+    letter-spacing: -0.05em;
+    line-height: 1;
+    color: var(--accent-glow);
+  }
+
+  .timeline-line {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--line-strong);
+    transform: translateY(-50%);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .timeline-dot {
+    width: 12px;
+    height: 12px;
+    background: var(--accent);
+    border: 2px solid var(--bg-base);
+    box-shadow: 0 0 0 1px var(--accent-glow), 0 0 20px rgba(46, 163, 155, 0.6);
+    margin: 24px 0;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* Cards do catálogo */
+  .catalog-card {
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .catalog-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--accent-glow);
+  }
+
+  .catalog-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(46, 163, 155, 0.1), transparent);
+    transition: left 0.6s;
+  }
+
+  .catalog-card:hover::after {
+    left: 100%;
+  }
+
+  /* ODS color chips */
+  .ods-chip {
+    width: 24px;
+    height: 24px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 700;
+    color: white;
+  }
+
+  /* Decorative number for sections */
+  .deco-number {
+    font-family: 'Inter Tight', sans-serif;
+    font-size: clamp(160px, 20vw, 280px);
+    font-weight: 100;
+    line-height: 0.8;
+    color: var(--bg-elevated);
+    opacity: 0.6;
+    letter-spacing: -0.08em;
+  }
+
+  /* Header fixo */
+  header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    background: rgba(14, 14, 16, 0.75);
+    backdrop-filter: blur(20px) saturate(120%);
+    border-bottom: 1px solid var(--line);
+  }
+
+  /* Reveal animations */
+  .reveal-up {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 1s, transform 1s;
+  }
+
+  .reveal-up.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Scrollbar discreta */
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--bg-base);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--bg-elevated);
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--accent);
+  }
+
+  /* Reduce motion */
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+    #dot-canvas {
+      display: none;
+    }
+  }
+
+  /* Cantos retos absolutos - reset de todo arredondamento */
+  *, *::before, *::after {
+    border-radius: 0 !important;
+  }
+</style>
+</head>
+<body>
+
+<!-- ============================================ -->
+<!-- HEADER FIXO                                   -->
+<!-- ============================================ -->
+<header>
+  <div class="max-w-[1600px] mx-auto px-8 py-5 flex items-center justify-between">
+    <a href="#" class="flex items-center gap-3">
+      <div class="logo-mark"></div>
+      <div>
+        <div class="font-display text-xl font-medium tracking-tight">LISA</div>
+        <div class="text-[9px] uppercase tracking-widest text-[var(--warm-white)] opacity-50">Inovação Social Aberta</div>
+      </div>
+    </a>
+
+    <nav class="hidden md:flex items-center gap-10">
+      <a href="#catalogo" class="text-sm font-medium hover:text-[var(--accent-glow)] transition-colors">Catálogo</a>
+      <a href="#sobre" class="text-sm font-medium hover:text-[var(--accent-glow)] transition-colors">Sobre</a>
+      <a href="#contato" class="text-sm font-medium hover:text-[var(--accent-glow)] transition-colors">Contato</a>
+    </nav>
+
+    <div class="flex items-center gap-6">
+      <div class="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest">
+        <span class="text-[var(--accent-glow)]">PT</span>
+        <span class="opacity-30">/</span>
+        <span class="opacity-50 hover:opacity-100 cursor-pointer transition-opacity">EN</span>
+      </div>
+      <button class="btn btn-primary btn-small">
+        Conectar
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="5" y1="12" x2="19" y2="12"/>
+          <polyline points="12 5 19 12 12 19"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- ============================================ -->
+<!-- HERO                                          -->
+<!-- ============================================ -->
+<section class="relative min-h-screen flex items-center overflow-hidden pt-24">
+  <canvas id="dot-canvas"></canvas>
+  <div class="absolute inset-0 hero-gradient pointer-events-none z-[2]"></div>
+
+  <div class="relative z-10 max-w-[1600px] mx-auto px-8 w-full">
+    <div class="grid grid-cols-12 gap-8 items-center">
+
+      <!-- Coluna esquerda - texto principal -->
+      <div class="col-span-12 lg:col-span-8">
+        <div class="flex items-center gap-4 mb-12">
+          <div class="hairline w-16"></div>
+          <span class="eyebrow">Portal LISA · UFF · AGIR</span>
+        </div>
+
+        <h1 class="font-display font-extralight text-[clamp(48px,8vw,128px)] leading-[0.88] tracking-tight mb-10">
+          Tecnologias<br>
+          <span class="font-medium">sociais</span> que<br>
+          transformam<br>
+          <span class="italic font-thin text-[var(--accent-glow)]">o real.</span>
+        </h1>
+
+        <p class="text-lg md:text-xl max-w-2xl opacity-70 font-light leading-relaxed mb-12">
+          O Laboratório de Inovação Social Aberto reúne, documenta e conecta as iniciativas de inovação social desenvolvidas dentro e fora da Universidade Federal Fluminense.
+        </p>
+
+        <div class="flex flex-wrap gap-4">
+          <a href="#conectar" class="btn btn-primary">
+            Conectar uma Demanda
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="5" y1="12" x2="19" y2="12"/>
+              <polyline points="12 5 19 12 12 19"/>
+            </svg>
+          </a>
+          <a href="#catalogo" class="btn btn-secondary">
+            Explorar o Catálogo
+          </a>
+        </div>
+
+        <p class="text-sm opacity-50 max-w-xl mt-6 leading-relaxed">
+          Conecte sua demanda real com tecnologias sociais já desenvolvidas pela comunidade universitária da UFF.
+        </p>
+      </div>
+
+      <!-- Coluna direita - meta info -->
+      <div class="hidden lg:block col-span-4">
+        <div class="glass p-8 space-y-8">
+          <!-- Edital Atual - clicável quando ativo, leva ao cadastro -->
+          <a href="#cadastrar" class="block group cursor-pointer">
+            <div class="flex items-center justify-between mb-3">
+              <div class="eyebrow">Edital Atual</div>
+              <div class="flex items-center gap-2">
+                <div class="w-1.5 h-1.5 bg-[var(--accent-glow)] animate-pulse"></div>
+                <span class="text-[10px] uppercase tracking-widest text-[var(--accent-glow)] font-bold">Aberto</span>
+              </div>
+            </div>
+            <div class="font-display text-2xl font-light mb-1 group-hover:text-[var(--accent-glow)] transition-colors">Chamamento 2026</div>
+            <div class="text-sm opacity-60 mb-4">Submissões abertas até 30 de junho</div>
+            <div class="flex items-center gap-2 text-xs uppercase tracking-widest text-[var(--accent-glow)] font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
+              Cadastrar experiência
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <line x1="5" y1="12" x2="19" y2="12"/>
+                <polyline points="12 5 19 12 12 19"/>
+              </svg>
+            </div>
+          </a>
+
+          <div class="hairline"></div>
+
+          <div>
+            <div class="eyebrow mb-3">Última atualização</div>
+            <div class="font-display text-2xl font-light mb-1">12 de abril, 2026</div>
+            <div class="text-sm opacity-60">3 novas experiências aprovadas</div>
+          </div>
+
+          <div class="hairline"></div>
+
+          <div>
+            <div class="eyebrow mb-3">Status do Portal</div>
+            <div class="flex items-center gap-2">
+              <div class="w-2 h-2 bg-[var(--accent-glow)] animate-pulse"></div>
+              <div class="font-display text-lg font-light">Operacional</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Indicador de scroll -->
+    <div class="absolute bottom-12 left-8 flex items-center gap-4">
+      <div class="hairline w-12"></div>
+      <span class="text-[10px] uppercase tracking-widest opacity-50">Role para descobrir</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- 02 — APRESENTAÇÃO                             -->
+<!-- ============================================ -->
+<section class="relative py-32 border-t border-[var(--line)]">
+  <div class="max-w-[1600px] mx-auto px-8">
+
+    <div class="flex items-start gap-6 mb-20">
+      <span class="section-num">[ 02 ]</span>
+      <span class="eyebrow">Apresentação</span>
+    </div>
+
+    <div class="grid grid-cols-12 gap-8">
+      <!-- Texto principal -->
+      <div class="col-span-12 lg:col-span-7">
+        <h2 class="font-display text-[clamp(36px,5vw,72px)] font-extralight leading-[1.05] tracking-tight mb-12">
+          Conhecimento que <span class="italic font-thin text-[var(--accent-glow)]">nasce</span> da prática<br>
+          e <span class="font-medium">retorna</span> à comunidade.
+        </h2>
+
+        <div class="space-y-6 text-lg font-light leading-relaxed opacity-75 max-w-2xl">
+          <p>
+            Tecnologias sociais são produtos, métodos e processos desenvolvidos em interação com a comunidade, que respondem a demandas concretas e podem ser reaplicados em diferentes contextos.
+          </p>
+          <p>
+            O Portal LISA é o ponto de encontro entre quem desenvolve essas iniciativas e quem busca soluções inovadoras para problemas reais — fortalecendo a função social da universidade pública.
+          </p>
+        </div>
+      </div>
+
+      <!-- Cards de conceito -->
+      <div class="col-span-12 lg:col-span-5 space-y-px">
+        <div class="glass p-8">
+          <div class="flex items-start gap-4">
+            <span class="font-display text-3xl font-extralight text-[var(--accent-glow)]">01</span>
+            <div>
+              <h3 class="font-display text-xl font-medium mb-2">Demanda concreta</h3>
+              <p class="text-sm opacity-65 leading-relaxed">A iniciativa nasce de um problema real, identificado junto à comunidade beneficiada.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="glass p-8">
+          <div class="flex items-start gap-4">
+            <span class="font-display text-3xl font-extralight text-[var(--accent-glow)]">02</span>
+            <div>
+              <h3 class="font-display text-xl font-medium mb-2">Construção coletiva</h3>
+              <p class="text-sm opacity-65 leading-relaxed">A comunidade é coautora, não apenas usuária. O conhecimento se constrói junto.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="glass p-8">
+          <div class="flex items-start gap-4">
+            <span class="font-display text-3xl font-extralight text-[var(--accent-glow)]">03</span>
+            <div>
+              <h3 class="font-display text-xl font-medium mb-2">Reaplicabilidade</h3>
+              <p class="text-sm opacity-65 leading-relaxed">A solução pode ser adaptada — não copiada — para novos contextos e realidades.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- 03 — ESTATÍSTICAS VIVAS                       -->
+<!-- ============================================ -->
+<section class="relative py-32 border-t border-[var(--line)] overflow-hidden">
+  <!-- Número decorativo no fundo -->
+  <div class="absolute -right-20 top-1/2 -translate-y-1/2 deco-number pointer-events-none select-none">
+    03
+  </div>
+
+  <div class="relative max-w-[1600px] mx-auto px-8">
+    <div class="flex items-start gap-6 mb-20">
+      <span class="section-num">[ 03 ]</span>
+      <span class="eyebrow">O Portal em Números</span>
+    </div>
+
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-px">
+      <div class="glass p-10">
+        <div class="stat-number" data-count="127">0</div>
+        <div class="hairline my-6"></div>
+        <div class="text-sm uppercase tracking-widest opacity-60 font-medium">Experiências mapeadas</div>
+      </div>
+
+      <div class="glass p-10">
+        <div class="stat-number" data-count="9">0</div>
+        <div class="hairline my-6"></div>
+        <div class="text-sm uppercase tracking-widest opacity-60 font-medium">Grandes áreas CNPq</div>
+      </div>
+
+      <div class="glass p-10">
+        <div class="stat-number" data-count="17">0</div>
+        <div class="hairline my-6"></div>
+        <div class="text-sm uppercase tracking-widest opacity-60 font-medium">ODS contemplados</div>
+      </div>
+
+      <div class="glass p-10">
+        <div class="stat-number" data-count="5">0</div>
+        <div class="hairline my-6"></div>
+        <div class="text-sm uppercase tracking-widest opacity-60 font-medium">Campi envolvidos</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- 04 — TIMELINE HORIZONTAL (SCROLL HIJACKING)   -->
+<!-- ============================================ -->
+<section class="relative border-t border-[var(--line)]">
+  <div class="max-w-[1600px] mx-auto px-8 pt-32 pb-16">
+    <div class="flex items-start gap-6 mb-12">
+      <span class="section-num">[ 04 ]</span>
+      <span class="eyebrow">Trajetória</span>
+    </div>
+    <h2 class="font-display text-[clamp(36px,5vw,72px)] font-extralight leading-[1.05] tracking-tight mb-4">
+      Da fundação à <span class="italic font-thin text-[var(--accent-glow)]">inovação aberta.</span>
+    </h2>
+    <p class="text-lg opacity-60 font-light max-w-2xl">
+      Seis décadas de história, do nascimento da UFF ao lançamento do Portal LISA. Continue rolando para navegar pela linha do tempo.
+    </p>
+  </div>
+
+  <!-- Wrapper que define a altura total do scroll virtual -->
+  <div id="timeline-wrapper">
+    <!-- Container que será fixado na tela -->
+    <div id="timeline-pin">
+      <div class="timeline-line"></div>
+      <div class="timeline-track">
+
+      <div class="timeline-item">
+        <div class="timeline-year">1960</div>
+        <div class="timeline-dot"></div>
+        <div class="eyebrow mb-3">Fundação da UFF</div>
+        <p class="text-sm opacity-70 leading-relaxed">
+          Criação da universidade — originalmente UFERJ — pela Lei nº 3.848, unificando faculdades em Niterói.
+        </p>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-year">2009</div>
+        <div class="timeline-dot"></div>
+        <div class="eyebrow mb-3">Nasce a AGIR</div>
+        <p class="text-sm opacity-70 leading-relaxed">
+          Criação da Agência de Inovação, centralizando gestão de patentes, Incubadora de Empresas e o Escritório de Transferência de Conhecimento.
+        </p>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-year">2010</div>
+        <div class="timeline-dot"></div>
+        <div class="eyebrow mb-3">Marco teórico</div>
+        <p class="text-sm opacity-70 leading-relaxed">
+          Publicação da obra de Aelson Silva de Almeida fundamentando a relação entre extensão universitária e tecnologias sociais.
+        </p>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-year">2015</div>
+        <div class="timeline-dot"></div>
+        <div class="eyebrow mb-3">Setor de Tecnologia Social</div>
+        <p class="text-sm opacity-70 leading-relaxed">
+          Criação oficial do Setor de Tecnologia Social dentro da estrutura da AGIR, consolidando a frente de atuação.
+        </p>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-year">2017</div>
+        <div class="timeline-dot"></div>
+        <div class="eyebrow mb-3">Primeiro Catálogo</div>
+        <p class="text-sm opacity-70 leading-relaxed">
+          Lançamento da primeira edição do Catálogo de Tecnologias Sociais da UFF, registrando 32 experiências iniciais.
+        </p>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-year">2022</div>
+        <div class="timeline-dot"></div>
+        <div class="eyebrow mb-3">Expansão</div>
+        <p class="text-sm opacity-70 leading-relaxed">
+          Catálogo expandido para 95 tecnologias sociais, com ênfase em soluções para os desafios da pandemia.
+        </p>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-year">2025</div>
+        <div class="timeline-dot"></div>
+        <div class="eyebrow mb-3">Internacionalização</div>
+        <p class="text-sm opacity-70 leading-relaxed">
+          Internacionalização das tecnologias sociais com o lançamento do primeiro catálogo bilíngue em Português e Inglês.
+        </p>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-year">2026</div>
+        <div class="timeline-dot"></div>
+        <div class="eyebrow mb-3 text-[var(--accent-glow)]">Portal LISA</div>
+        <p class="text-sm opacity-70 leading-relaxed">
+          Lançamento do Laboratório de Inovação Social Aberto, focado em co-criação de conhecimento e inovação aberta.
+        </p>
+      </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- 05 — CATÁLOGO EM DESTAQUE                     -->
+<!-- ============================================ -->
+<section id="catalogo" class="relative py-32 border-t border-[var(--line)]">
+  <div class="max-w-[1600px] mx-auto px-8">
+
+    <div class="flex items-start gap-6 mb-12">
+      <span class="section-num">[ 05 ]</span>
+      <span class="eyebrow">Catálogo · Em destaque</span>
+    </div>
+
+    <div class="flex flex-wrap items-end justify-between gap-8 mb-16">
+      <h2 class="font-display text-[clamp(36px,5vw,72px)] font-extralight leading-[1.05] tracking-tight max-w-3xl">
+        Experiências que <span class="italic font-thin text-[var(--accent-glow)]">já transformam</span> realidades.
+      </h2>
+      <a href="#" class="btn btn-secondary">
+        Ver catálogo completo →
+      </a>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px">
+
+      <!-- Card 01 -->
+      <div class="catalog-card glass p-8">
+        <div class="flex items-start justify-between mb-6">
+          <span class="section-num">01 / 127</span>
+          <div class="flex gap-1">
+            <span class="ods-chip" style="background:#4C9F38">3</span>
+            <span class="ods-chip" style="background:#C5192D">4</span>
+          </div>
+        </div>
+        <div class="font-display text-xs uppercase tracking-widest text-[var(--accent-glow)] mb-3">Inovação e Saúde</div>
+        <h3 class="font-display text-2xl font-medium leading-tight mb-4">
+          Cozinha CuidAR: oficinas culinárias para saúde renal
+        </h3>
+        <p class="text-sm opacity-65 leading-relaxed mb-6">
+          Educação alimentar prática para pacientes com Doença Renal Crônica, integrando saberes científicos e populares.
+        </p>
+        <div class="hairline mb-4"></div>
+        <div class="flex justify-between items-center text-xs">
+          <span class="opacity-50">Faculdade de Nutrição</span>
+          <span class="text-[var(--accent-glow)] font-semibold">Niterói, RJ</span>
+        </div>
+      </div>
+
+      <!-- Card 02 -->
+      <div class="catalog-card glass p-8">
+        <div class="flex items-start justify-between mb-6">
+          <span class="section-num">02 / 127</span>
+          <div class="flex gap-1">
+            <span class="ods-chip" style="background:#FD9D24">11</span>
+            <span class="ods-chip" style="background:#56C02B">15</span>
+          </div>
+        </div>
+        <div class="font-display text-xs uppercase tracking-widest text-[var(--accent-glow)] mb-3">Memória Cultural</div>
+        <h3 class="font-display text-2xl font-medium leading-tight mb-4">
+          Quilombolas Digitais: arquivo vivo de tradições orais
+        </h3>
+        <p class="text-sm opacity-65 leading-relaxed mb-6">
+          Plataforma colaborativa para preservação de narrativas, cantos e saberes de comunidades quilombolas fluminenses.
+        </p>
+        <div class="hairline mb-4"></div>
+        <div class="flex justify-between items-center text-xs">
+          <span class="opacity-50">Inst. de História</span>
+          <span class="text-[var(--accent-glow)] font-semibold">Campos, RJ</span>
+        </div>
+      </div>
+
+      <!-- Card 03 -->
+      <div class="catalog-card glass p-8">
+        <div class="flex items-start justify-between mb-6">
+          <span class="section-num">03 / 127</span>
+          <div class="flex gap-1">
+            <span class="ods-chip" style="background:#A21942">8</span>
+            <span class="ods-chip" style="background:#DD1367">10</span>
+          </div>
+        </div>
+        <div class="font-display text-xs uppercase tracking-widest text-[var(--accent-glow)] mb-3">Geração de Renda</div>
+        <h3 class="font-display text-2xl font-medium leading-tight mb-4">
+          Costura Cooperativa: economia solidária no têxtil
+        </h3>
+        <p class="text-sm opacity-65 leading-relaxed mb-6">
+          Apoio à organização de cooperativas de costureiras com formação em gestão e acesso a mercados éticos.
+        </p>
+        <div class="hairline mb-4"></div>
+        <div class="flex justify-between items-center text-xs">
+          <span class="opacity-50">Adm. e Serviço Social</span>
+          <span class="text-[var(--accent-glow)] font-semibold">São Gonçalo, RJ</span>
+        </div>
+      </div>
+
+      <!-- Card 04 -->
+      <div class="catalog-card glass p-8">
+        <div class="flex items-start justify-between mb-6">
+          <span class="section-num">04 / 127</span>
+          <div class="flex gap-1">
+            <span class="ods-chip" style="background:#26BDE2">6</span>
+            <span class="ods-chip" style="background:#3F7E44">13</span>
+          </div>
+        </div>
+        <div class="font-display text-xs uppercase tracking-widest text-[var(--accent-glow)] mb-3">Meio Ambiente</div>
+        <h3 class="font-display text-2xl font-medium leading-tight mb-4">
+          Cisternas Rurais: captação de água para escolas
+        </h3>
+        <p class="text-sm opacity-65 leading-relaxed mb-6">
+          Projeto técnico-social para implementação de sistemas de captação pluvial em escolas de zonas rurais.
+        </p>
+        <div class="hairline mb-4"></div>
+        <div class="flex justify-between items-center text-xs">
+          <span class="opacity-50">Eng. Agrícola</span>
+          <span class="text-[var(--accent-glow)] font-semibold">Volta Redonda, RJ</span>
+        </div>
+      </div>
+
+      <!-- Card 05 -->
+      <div class="catalog-card glass p-8">
+        <div class="flex items-start justify-between mb-6">
+          <span class="section-num">05 / 127</span>
+          <div class="flex gap-1">
+            <span class="ods-chip" style="background:#C5192D">4</span>
+            <span class="ods-chip" style="background:#FF3A21">5</span>
+          </div>
+        </div>
+        <div class="font-display text-xs uppercase tracking-widest text-[var(--accent-glow)] mb-3">Educação</div>
+        <h3 class="font-display text-2xl font-medium leading-tight mb-4">
+          Meninas na Ciência: laboratório vivo
+        </h3>
+        <p class="text-sm opacity-65 leading-relaxed mb-6">
+          Programa de mentoria e oficinas STEM para meninas de escolas públicas do entorno da universidade.
+        </p>
+        <div class="hairline mb-4"></div>
+        <div class="flex justify-between items-center text-xs">
+          <span class="opacity-50">Inst. de Física</span>
+          <span class="text-[var(--accent-glow)] font-semibold">Niterói, RJ</span>
+        </div>
+      </div>
+
+      <!-- Card 06 -->
+      <div class="catalog-card glass p-8">
+        <div class="flex items-start justify-between mb-6">
+          <span class="section-num">06 / 127</span>
+          <div class="flex gap-1">
+            <span class="ods-chip" style="background:#00689D">16</span>
+            <span class="ods-chip" style="background:#19486A">17</span>
+          </div>
+        </div>
+        <div class="font-display text-xs uppercase tracking-widest text-[var(--accent-glow)] mb-3">Acesso à Justiça</div>
+        <h3 class="font-display text-2xl font-medium leading-tight mb-4">
+          Núcleo de Mediação Comunitária
+        </h3>
+        <p class="text-sm opacity-65 leading-relaxed mb-6">
+          Resolução pacífica de conflitos em comunidades com formação de mediadores locais e atendimento gratuito.
+        </p>
+        <div class="hairline mb-4"></div>
+        <div class="flex justify-between items-center text-xs">
+          <span class="opacity-50">Faculdade de Direito</span>
+          <span class="text-[var(--accent-glow)] font-semibold">Niterói, RJ</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- 06 — SOBRE UFF/AGIR                           -->
+<!-- ============================================ -->
+<section id="sobre" class="relative py-32 border-t border-[var(--line)]">
+  <div class="max-w-[1600px] mx-auto px-8">
+
+    <div class="flex items-start gap-6 mb-20">
+      <span class="section-num">[ 06 ]</span>
+      <span class="eyebrow">Quem Somos</span>
+    </div>
+
+    <div class="grid grid-cols-12 gap-8">
+      <div class="col-span-12 lg:col-span-8">
+        <h2 class="font-display text-[clamp(36px,5vw,72px)] font-extralight leading-[1.05] tracking-tight mb-12">
+          A universidade <span class="italic font-thin text-[var(--accent-glow)]">a serviço</span><br>
+          da transformação social.
+        </h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+          <div>
+            <div class="eyebrow mb-4">Coordenação</div>
+            <h3 class="font-display text-2xl font-medium mb-3">AGIR / PROPPI</h3>
+            <p class="text-sm opacity-70 leading-relaxed">
+              A Agência de Inovação da UFF, vinculada à Pró-Reitoria de Pesquisa, Pós-Graduação e Inovação, coordena o Portal LISA como parte de sua missão de promover a função social da universidade.
+            </p>
+          </div>
+
+          <div>
+            <div class="eyebrow mb-4">Missão do LISA</div>
+            <h3 class="font-display text-2xl font-medium mb-3">Inovação Aberta</h3>
+            <p class="text-sm opacity-70 leading-relaxed">
+              Conectar quem desenvolve tecnologias sociais com quem busca soluções, fortalecendo redes de conhecimento e ampliando o impacto das iniciativas universitárias.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-span-12 lg:col-span-4">
+        <div class="glass-strong p-10 space-y-6">
+          <div>
+            <div class="eyebrow mb-3">Coordenadora</div>
+            <div class="font-display text-xl font-medium">Profa. Dra. Elaine Sigette</div>
+            <div class="text-sm opacity-60 mt-1">AGIR / PROPPI / UFF</div>
+          </div>
+          <div class="hairline"></div>
+          <div>
+            <div class="eyebrow mb-3">Endereço</div>
+            <div class="text-sm opacity-80 leading-relaxed">
+              Rua Miguel de Frias, 9<br>
+              Icaraí, Niterói — RJ<br>
+              CEP 24220-900
+            </div>
+          </div>
+          <div class="hairline"></div>
+          <div>
+            <div class="eyebrow mb-3">Contato</div>
+            <a href="mailto:lisa@id.uff.br" class="text-sm text-[var(--accent-glow)] hover:underline">lisa@id.uff.br</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Logos institucionais (placeholder) -->
+    <div class="mt-24 pt-12 border-t border-[var(--line)]">
+      <div class="eyebrow mb-8">Instituições parceiras</div>
+      <div class="flex flex-wrap items-center gap-12 opacity-50">
+        <div class="font-display text-2xl font-light">UFF</div>
+        <div class="font-display text-2xl font-light">PROPPI</div>
+        <div class="font-display text-2xl font-light">AGIR</div>
+        <div class="font-display text-2xl font-light">FAPERJ</div>
+        <div class="font-display text-2xl font-light">CAPES</div>
+        <div class="font-display text-2xl font-light">CNPq</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- FOOTER                                        -->
+<!-- ============================================ -->
+<footer id="contato" class="relative border-t border-[var(--line)] py-20">
+  <div class="max-w-[1600px] mx-auto px-8">
+    <div class="grid grid-cols-12 gap-8 mb-16">
+      <div class="col-span-12 md:col-span-5">
+        <div class="flex items-center gap-3 mb-8">
+          <div class="logo-mark"></div>
+          <div>
+            <div class="font-display text-xl font-medium">LISA</div>
+            <div class="text-[9px] uppercase tracking-widest opacity-50">Inovação Social Aberta</div>
+          </div>
+        </div>
+        <p class="text-sm opacity-60 leading-relaxed max-w-md">
+          Portal de tecnologias sociais da Universidade Federal Fluminense. Uma iniciativa da Agência de Inovação (AGIR/PROPPI/UFF).
+        </p>
+      </div>
+
+      <div class="col-span-6 md:col-span-3">
+        <div class="eyebrow mb-6">Navegação</div>
+        <ul class="space-y-3 text-sm">
+          <li><a href="#" class="hover:text-[var(--accent-glow)] transition-colors">Conectar uma Demanda</a></li>
+          <li><a href="#" class="hover:text-[var(--accent-glow)] transition-colors">Catálogo</a></li>
+          <li><a href="#" class="hover:text-[var(--accent-glow)] transition-colors">Edital Atual</a></li>
+          <li><a href="#" class="hover:text-[var(--accent-glow)] transition-colors">Sobre o LISA</a></li>
+          <li><a href="#" class="hover:text-[var(--accent-glow)] transition-colors">Contato</a></li>
+        </ul>
+      </div>
+
+      <div class="col-span-6 md:col-span-2">
+        <div class="eyebrow mb-6">Redes</div>
+        <ul class="space-y-3 text-sm">
+          <li><a href="#" class="hover:text-[var(--accent-glow)] transition-colors">Instagram</a></li>
+          <li><a href="#" class="hover:text-[var(--accent-glow)] transition-colors">YouTube</a></li>
+          <li><a href="#" class="hover:text-[var(--accent-glow)] transition-colors">LinkedIn</a></li>
+        </ul>
+      </div>
+
+      <div class="col-span-12 md:col-span-2">
+        <div class="eyebrow mb-6">Idioma</div>
+        <div class="flex gap-3 text-sm">
+          <span class="text-[var(--accent-glow)] font-semibold">Português</span>
+          <span class="opacity-30">/</span>
+          <span class="opacity-60 hover:opacity-100 cursor-pointer">English</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="hairline mb-8"></div>
+
+    <div class="flex flex-wrap justify-between items-center gap-4 text-xs opacity-50">
+      <div>© 2026 Portal LISA · UFF · AGIR · Todos os direitos reservados</div>
+      <div>Versão MVP 1.0 · Desenvolvido em Niterói, RJ</div>
+    </div>
+  </div>
+</footer>
+
+<!-- ============================================ -->
+<!-- SCRIPTS                                       -->
+<!-- ============================================ -->
+<script>
+  // ============================================
+  // 1. DOT GRID INTERATIVO (Hero)
+  // ============================================
+  (function() {
+    const canvas = document.getElementById('dot-canvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const heroSection = canvas.parentElement;
+
+    let dots = [];
+    let mouse = { x: -1000, y: -1000 };
+    const SPACING = 30;
+    const REPEL_RADIUS = 150;
+    const REPEL_FORCE = 80;
+
+    function resize() {
+      canvas.width = heroSection.offsetWidth;
+      canvas.height = heroSection.offsetHeight;
+      buildDots();
+    }
+
+    function buildDots() {
+      dots = [];
+      const cols = Math.ceil(canvas.width / SPACING);
+      const rows = Math.ceil(canvas.height / SPACING);
+      for (let i = 0; i <= cols; i++) {
+        for (let j = 0; j <= rows; j++) {
+          const ox = i * SPACING;
+          const oy = j * SPACING;
+          dots.push({
+            ox, oy, x: ox, y: oy,
+            size: Math.random() * 0.8 + 0.6
+          });
+        }
+      }
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (const d of dots) {
+        const dx = d.ox - mouse.x;
+        const dy = d.oy - mouse.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+
+        if (dist < REPEL_RADIUS) {
+          const force = (REPEL_RADIUS - dist) / REPEL_RADIUS;
+          const angle = Math.atan2(dy, dx);
+          d.x = d.ox + Math.cos(angle) * force * REPEL_FORCE;
+          d.y = d.oy + Math.sin(angle) * force * REPEL_FORCE;
+        } else {
+          d.x += (d.ox - d.x) * 0.1;
+          d.y += (d.oy - d.y) * 0.1;
+        }
+
+        const opacity = dist < REPEL_RADIUS
+          ? 0.15 + ((REPEL_RADIUS - dist) / REPEL_RADIUS) * 0.6
+          : 0.15;
+
+        ctx.beginPath();
+        ctx.arc(d.x, d.y, d.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(63, 189, 180, ${opacity})`;
+        ctx.fill();
+      }
+      requestAnimationFrame(animate);
+    }
+
+    window.addEventListener('mousemove', (e) => {
+      const rect = heroSection.getBoundingClientRect();
+      mouse.x = e.clientX - rect.left;
+      mouse.y = e.clientY - rect.top;
+    });
+
+    window.addEventListener('mouseleave', () => {
+      mouse.x = -1000;
+      mouse.y = -1000;
+    });
+
+    window.addEventListener('resize', resize);
+    resize();
+    animate();
+  })();
+
+  // ============================================
+  // 2. TIMELINE HORIZONTAL (Scroll Hijacking)
+  // ============================================
+  gsap.registerPlugin(ScrollTrigger);
+
+  function setupTimeline() {
+    const wrapper = document.querySelector('#timeline-wrapper');
+    const pin = document.querySelector('#timeline-pin');
+    const track = document.querySelector('.timeline-track');
+
+    if (!wrapper || !pin || !track) return;
+
+    // Calcula a distância horizontal total que o track precisa percorrer
+    const trackWidth = track.scrollWidth;
+    const viewportWidth = window.innerWidth;
+    const horizontalDistance = trackWidth - viewportWidth;
+
+    if (horizontalDistance <= 0) return;
+
+    // Define a altura do wrapper como (1 viewport para o pin + distância horizontal extra)
+    // Isso cria o "espaço" de scroll vertical que será convertido em horizontal
+    wrapper.style.height = `${window.innerHeight + horizontalDistance}px`;
+
+    // Cria o tween com pin
+    gsap.to(track, {
+      x: -horizontalDistance,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: pin,
+        start: 'top top',
+        end: () => `+=${horizontalDistance}`,
+        pin: true,
+        pinSpacing: false, // wrapper já tem altura suficiente
+        scrub: 0.5,
+        anticipatePin: 1,
+        invalidateOnRefresh: true
+      }
+    });
+
+    // CRÍTICO: depois de mudar a altura do wrapper, todos os outros
+    // ScrollTriggers (contadores, reveals) precisam recalcular suas posições
+    ScrollTrigger.refresh();
+  }
+
+  // Aguarda fontes e layout estabilizarem antes de calcular
+  if (document.readyState === 'complete') {
+    setupTimeline();
+  } else {
+    window.addEventListener('load', setupTimeline);
+  }
+
+  // Recalcula no resize
+  let resizeTimer;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      ScrollTrigger.getAll().forEach(t => t.kill());
+      setupTimeline();
+    }, 250);
+  });
+
+  // ============================================
+  // 3. ANIMAÇÃO DE CONTAGEM DAS ESTATÍSTICAS
+  // (IntersectionObserver nativo - independente do GSAP
+  //  para evitar conflitos com o pinning do timeline)
+  // ============================================
+  (function() {
+    const statNumbers = document.querySelectorAll('.stat-number');
+    if (!statNumbers.length) return;
+
+    function animateCount(el) {
+      const target = parseInt(el.getAttribute('data-count'), 10);
+      if (isNaN(target)) return;
+
+      const duration = 2000; // ms
+      const startTime = performance.now();
+
+      function tick(now) {
+        const elapsed = now - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        // ease-out cúbico
+        const eased = 1 - Math.pow(1 - progress, 3);
+        const current = Math.floor(eased * target);
+        el.textContent = current;
+
+        if (progress < 1) {
+          requestAnimationFrame(tick);
+        } else {
+          el.textContent = target;
+        }
+      }
+
+      requestAnimationFrame(tick);
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          animateCount(entry.target);
+          observer.unobserve(entry.target); // anima só uma vez
+        }
+      });
+    }, {
+      threshold: 0.3,
+      rootMargin: '0px 0px -10% 0px'
+    });
+
+    statNumbers.forEach(el => observer.observe(el));
+  })();
+
+  // ============================================
+  // 4. REVEAL ANIMATIONS (entrada suave de seções)
+  // ============================================
+  document.querySelectorAll('section').forEach(section => {
+    gsap.from(section.querySelectorAll('.section-num, .eyebrow'), {
+      opacity: 0,
+      x: -20,
+      duration: 0.8,
+      stagger: 0.1,
+      scrollTrigger: {
+        trigger: section,
+        start: 'top 80%',
+        once: true
+      }
+    });
+  });
+</script>
+
+</body>
+</html>

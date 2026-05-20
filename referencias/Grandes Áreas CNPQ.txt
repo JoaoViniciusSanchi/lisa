@@ -1,0 +1,15 @@
+As grandes áreas do conhecimento do CNPq, fundamentais para a classificação de projetos e pesquisadores (Plataforma Lattes), são compostas por nove áreas principais: Ciências Exatas e da Terra, Ciências Biológicas, Engenharias, Ciências da Saúde, Ciências Agrárias, Ciências Sociais Aplicadas, Ciências Humanas, Linguística, Letras e Artes, e Outros. 
+As 9 Grandes Áreas do CNPq (conforme Tabela de Áreas do Conhecimento): 
+Ciências Exatas e da Terra: Matemática, Probabilidade e Estatística, Ciência da Computação, Astronomia, Física, Química, Geociências, Oceanografia.
+Ciências Biológicas: Parasitologia, Microbiologia, Imunologia, Farmacologia, Biofísica, Bioquímica, Fisiologia, Morfologia.
+Engenharias: Engenharia Civil, de Minas, de Materiais e Metalúrgica, Elétrica, Mecânica.
+Ciências da Saúde: Medicina, Odontologia, Farmácia, Enfermagem, Nutrição, Saúde Coletiva.
+Ciências Agrárias: Agronomia, Recursos Florestais e Engenharia Florestal, Engenharia Agrícola, Zootecnia, Medicina Veterinária, Recursos Pesqueiros.
+Ciências Sociais Aplicadas: Direito, Administração, Economia, Arquitetura e Urbanismo, Planejamento Urbano e Regional.
+Ciências Humanas: Filosofia, Sociologia, Arqueologia, História, Geografia, Psicologia, Educação, Ciência Política.
+Lingüística, Letras e Artes: Teoria e Análise Lingüística, Letras, Artes.
+Outros: Inclui temas interdisciplinares ou que não se enquadram especificamente nas oito anteriores. 
+UFSM – Universidade Federal de Santa Maria
+UFSM – Universidade Federal de Santa Maria
+ +3
+Nota: Essa estrutura é baseada na árvore do conhecimento utilizada pelo CNPq em editais de bolsas e auxílios, disponível na Plataforma Lattes.

@@ -1,0 +1,60 @@
+TEXTO Acervo 3D acessível: manual prático e oficina para digitalização 3D de baixo custo
+Grupo: Valorização e Preservação da Memória Cultural
+ODS 4, 9 e 11
+Histórico
+A experiência "Acervo 3D acessível" foi concebida no início de 2024 para responder a um desafio central enfrentado por instituições culturais brasileiras: a grande dificuldade de documentar e preservar seus acervos tridimensionais. A maioria dos processos de digitalização 3D depende de equipamentos caros e técnicos especializados, o que se torna inviável para muitos museus, arquivos e bibliotecas com limitações orçamentárias. A iniciativa, inserida no Laboratório de Artefatos Físicos, Digitais e Algorítmicos (Lafda) da UFF, propõe uma solução acessível, desenvolvendo um manual prático e oficinas complementares que ensinam a criar réplicas digitais 3D de alta qualidade utilizando tecnologias do cotidiano, como celulares e softwares gratuitos.
+Metodologia e ações desenvolvidas
+A metodologia da experiência se materializa em dois produtos principais: um manual didático e oficinas de capacitação. A abordagem é estruturada de forma didática e prática, com orientações passo a passo para o processo de digitalização 3D via fotogrametria.
+A metodologia inclui:
+1. Definições básicas sobre digitalização, patrimônio e tecnologias utilizadas;
+2. Explicação dos equipamentos e softwares necessários (como celulares, iluminação, Polycam, Blender);
+3. Instruções para montagem do espaço de trabalho, captura das imagens e geração dos modelos;
+4. Orientações para processamento e pós-processamento dos modelos digitais;
+5. Sugestões de difusão digital dos modelos (ex: uso do Sketchfab);
+6. Adaptações e soluções para problemas práticos no processo de digitalização.
+Além do manual, são realizadas oficinas práticas, como a "Oficina de digitalização 3D com aplicativo de celular" (dezembro de 2024), onde a metodologia foi apresentada e testada.
+O feedback dos participantes, que incluiu profissionais do Museu Janete Costa de Arte Popular, foi coletado para aprimorar o material e servirá para uma futura segunda versão do manual.
+Impactos sociais e potencial de replicabilidade
+O "Acervo 3D Acessível" se consolida como uma tecnologia social por democratizar o acesso a técnicas de preservação digital do patrimônio cultural. Ao romper com a ideia de que apenas especialistas com equipamentos caros podem digitalizar acervos, a experiência promove o empoderamento técnico de instituições GLAM (Galerias, Bibliotecas, Arquivos e Museus) e agentes culturais locais.
+A proposta apresenta características fundamentais de uma tecnologia social:
+● Baixo Custo: A metodologia é viável com poucos recursos, utilizando celulares no lugar de scanners a laser e softwares gratuitos, adaptando-se à realidade de instituições com orçamentos reduzidos.
+● Participação Comunitária: A experiência é aprimorada a partir do feedback direto do público-alvo, garantindo que a solução seja pertinente e eficaz para suas necessidades reais.
+● Potencial de Replicabilidade: O manual com licença Creative Commons e as oficinas de capacitação garantem que o conhecimento possa ser facilmente compartilhado, adaptado e replicado em diferentes regiões e contextos culturais, ampliando seu alcance.
+O impacto social da iniciativa está em ampliar o acesso da sociedade ao patrimônio cultural, permitindo que acervos sejam preservados digitalmente e difundidos online, rompendo barreiras geográficas e econômicas. Finalmente, a experiência culminou na formalização da parceria interinstitucional com o Museu Janete Costa de Arte Popular cujo plano de trabalho pactuado prevê a digitalização 3D de uma amostra do acervo do museu, seguindo as diretrizes do manual, e, ao mesmo tempo, a transferência de tecnologia e o registro das adaptações, soluções práticas e aprendizados gerados no contexto real do uso da metodologia, em colaboração com a equipe técnica do museu.
+Summary
+The “Accessible 3D Collection” project was launched in early 2024 to address a major challenge faced by Brazilian cultural institutions: the difficulty of documenting and preserving
+three-dimensional collections. Traditional 3D digitization methods depend on costly equipment and specialized technicians, often inaccessible to museums, archives, and libraries with limited budgets. Developed at the Laboratory of Physical, Digital, and Algorithmic Artifacts (Lafda) at UFF, the initiative offers an affordable alternative through a practical manual and complementary workshops that teach how to create high-quality 3D digital replicas using smartphones and free software.
+The methodology combines a didactic manual—covering basic definitions, necessary tools, step-by-step photogrammetry instructions, post-processing, and digital dissemination strategies—with hands-on training workshops. A pilot workshop held in December 2024 tested the methodology with cultural professionals, including staff from the Janete Costa Museum of Popular Art, whose feedback informed improvements and will guide future versions of the manual.
+As a low-cost, participatory, and replicable social technology, the project empowers GLAM institutions and local cultural agents by democratizing access to digital preservation tools. Its Creative Commons-licensed manual ensures adaptability to diverse contexts, while workshops strengthen technical autonomy. The broader social impact lies in expanding public access to cultural heritage by enabling digital preservation and online dissemination, breaking down geographic and economic barriers.
+COORDENADORA
+Júlia Rabetti Giannella
+juliagiannella@id.uff.br
+Departamento de Design e Tecnologia - Escola de Engenharia - UFF, Niterói
+EQUIPE
+Cassiane Patzlaff
+Heitor Miguel Chaves Dias
+Eduarda Antunes Saretta
+Marcele Queiroz Monteiro
+Luana Machado
+Nathan de Freitas Tajes
+Simone Reis
+Versão em inglês
+History
+The “Accessible 3D Collection” experience was conceived in early 2024 to address a central challenge faced by Brazilian cultural institutions: the difficulty of documenting and preserving their three-dimensional collections. Most 3D digitization processes rely on expensive equipment and specialized technicians, which is unfeasible for many museums, archives, and libraries with limited budgets. The initiative, developed within the Laboratory of Physical, Digital, and Algorithmic Artifacts (Lafda) at UFF, proposes an accessible solution by creating a practical manual and complementary workshops that teach how to produce high-quality 3D digital replicas using everyday technologies, such as smartphones and free software.
+Methodology and Developed Actions
+The methodology of the experience is materialized in two main outputs: a didactic manual and training workshops. The approach is structured in a practical, step-by-step format for the 3D digitization process via photogrammetry.
+The methodology includes:
+● Basic definitions of digitization, heritage, and applied technologies;
+● Explanation of required equipment and software (e.g., smartphones, lighting, Polycam, Blender);
+● Instructions for setting up the workspace, capturing images, and generating models;
+● Guidelines for processing and post-processing digital models;
+● Suggestions for digital dissemination of models (e.g., use of Sketchfab);
+● Adaptations and solutions for practical issues encountered during digitization.
+In addition to the manual, practical workshops are held, such as the “3D Digitization with Mobile App Workshop”(December 2024), where the methodology was presented and tested. Feedback from participants - including professionals from the Janete Costa Museum of Popular Art - was collected to improve the material and will inform a second version of the manual.
+Social Impacts and Replicability Potential
+The “Accessible 3D Collection” has established itself as a social technology by democratizing access to cultural heritage preservation techniques. By breaking the notion that only specialists with expensive equipment can digitize collections, the initiative empowers GLAM institutions (Galleries, Libraries, Archives, and Museums) and local cultural agents with technical autonomy.
+The proposal demonstrates the key features of a social technology:
+● Low Cost: The methodology is feasible with minimal resources, using smartphones instead of laser scanners and free software, making it adaptable to institutions with reduced budgets.
+● Community Participation: The experience is improved through direct feedback from its target audience, ensuring that the solution remains relevant and effective for real needs.
+● Replicability Potential: With a Creative Commons-licensed manual and training workshops, the knowledge can be easily shared, adapted, and replicated in different regions and cultural contexts, broadening its reach.
+The initiative’s social impact lies in expanding society’s access to cultural heritage by enabling collections to be digitally preserved and disseminated online, overcoming geographic and economic barriers.
