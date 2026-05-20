@@ -25,7 +25,8 @@
       "Bash(git restore *)",
       "Bash(git ls-remote *)",
       "Bash(git check-ignore *)",
-      "Bash(git verify-blob *)"
+      "Bash(git verify-blob *)",
+      "Bash(vercel deploy *)"
     ],
     "additionalDirectories": [
       "d:\\jv\\Documents\\UFF 2025\\Bolsa Agir\\Tecnologia Social\\Portal LISA\\portal-lisa-app\\.git"
