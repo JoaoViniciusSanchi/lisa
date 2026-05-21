@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 
+// Força rebuild do Vercel com variáveis de ambiente atualizadas
 const MAX_RETRIES = 5;
 const RETRY_DELAY_MS = 2000;
 const BACKOFF_MULTIPLIER = 1.5;
