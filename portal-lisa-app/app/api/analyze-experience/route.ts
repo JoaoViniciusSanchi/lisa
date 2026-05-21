@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 
 const MODEL_NAME = 'gemini-3.5-flash';
-const DEPLOY_TRIGGER = 1;
 const MAX_RETRIES = 5;
 const RETRY_DELAY_MS = 2000;
 const BACKOFF_MULTIPLIER = 1.5;

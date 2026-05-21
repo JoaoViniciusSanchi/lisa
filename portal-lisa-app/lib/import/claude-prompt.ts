@@ -3,6 +3,7 @@ import type { DocxExtracted, FieldMapping, CsvRow, ExperienciaImport, ClaudeAnal
 import { calcFuzzyIndex } from '@/lib/fuzzy/engine';
 import { DEFAULT_FUZZY_CONFIG, DIMENSIONS } from '@/lib/fuzzy/types';
 import type { FuzzyAnswers, DimensionKey } from '@/lib/fuzzy/types';
+import { generateSlug } from '@/lib/utils/slug';
 
 // =============================================================
 // Busca taxonomias do banco para incluir no prompt
@@ -361,7 +362,7 @@ export async function analyzeExperience(params: {
   return {
     titulo: parsed.titulo ?? '',
     resumo: parsed.resumo ?? '',
-    slug: '',
+    slug: generateSlug(parsed.titulo ?? ''),
     emailContato: parsed.email_contato ?? '',
     dataInicio: parsed.data_inicio,
     dataFim: parsed.data_fim,
