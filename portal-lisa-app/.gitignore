@@ -32,6 +32,8 @@ yarn-error.log*
 .env
 .env.local
 .env*.local
+.env.production
+.env.development
 
 # vercel
 .vercel
@@ -50,3 +52,5 @@ next-env.d.ts
 # logs e backups de desenvolvimento
 build.log
 *.orig
+
+.vercel
