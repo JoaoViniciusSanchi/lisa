@@ -13,7 +13,7 @@ async function callGeminiWithRetry(apiKey: string, prompt: string, attempt = 1):
   try {
     const { GoogleGenerativeAI } = await import('@google/generative-ai');
     const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
     const result = await model.generateContent(prompt);
     const text = result.response.text().trim().replace(/^```json\n?/, '').replace(/\n?```$/, '');
     return text;
