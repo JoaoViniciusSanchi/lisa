@@ -3,7 +3,8 @@
 
 import { useState, useTransition } from 'react';
 import { FuzzyBadge, DimBar } from './FuzzyBadge';
-import { approveExperiencia, rejectExperiencia, updateIsInternaAction } from '@/lib/admin/actions';
+import { approveWithEmail, rejectWithEmail } from '@/lib/admin/email-actions';
+import { updateIsInternaAction } from '@/lib/admin/actions';
 
 interface DrawerProps {
   details: {
@@ -122,9 +123,9 @@ export function ExperienciaDrawer({ details, onClose, showActions = true }: Draw
     startTransition(async () => {
       let result: { ok: boolean };
       if (acao === 'aprovar') {
-        result = await approveExperiencia(experienciaId, isPerene, motivo);
+        result = await approveWithEmail(experienciaId, isPerene, motivo);
       } else {
-        result = await rejectExperiencia(experienciaId, motivo);
+        result = await rejectWithEmail(experienciaId, motivo);
       }
       if (result.ok) {
         setFeedback(acao === 'aprovar' ? 'Aprovada com sucesso.' : 'Rejeitada com sucesso.');
