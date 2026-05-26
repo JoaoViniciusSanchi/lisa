@@ -40,8 +40,8 @@ ehthumbs.db
 Thumbs.db
 
 # Supabase local
-supabase/migrations/
 .supabase/
+# Nota: supabase/migrations/ NÃO está ignorada — migrations manuais devem ser versionadas
 
 # Logs
 npm-debug.log*
