@@ -4,6 +4,7 @@ import { useState, useTransition } from 'react';
 import { TraducaoItem } from './TraducaoItem';
 import { TraducaoDrawer } from './TraducaoDrawer';
 import { getTraducaoDetalheAction } from '@/lib/admin/actions';
+import { enviarValidacaoTraducao } from '@/lib/admin/email-actions';
 
 interface TraducaoRow {
   traducao_id: string;
@@ -33,12 +34,38 @@ export default function TraducoesClient({ traducoes }: { traducoes: TraducaoRow[
   const [openId, setOpenId] = useState<string | null>(null);
   const [details, setDetails] = useState<Awaited<ReturnType<typeof getTraducaoDetalheAction>> | null>(null);
   const [isPending, startTransition] = useTransition();
+  const [validacaoStatus, setValidacaoStatus] = useState<Record<string, string>>({});
 
   function handleOpen(id: string) {
     setOpenId(id);
     startTransition(async () => {
       const d = await getTraducaoDetalheAction(id);
       setDetails(d);
+    });
+  }
+
+  function handleEnviarValidacao(item: TraducaoRow) {
+    // Precisamos do experiencia_id — está no drawer; buscamos da action de detalhe
+    startTransition(async () => {
+      try {
+        const det = await getTraducaoDetalheAction(item.traducao_id);
+        if (!det?.experiencia?.id) {
+          setValidacaoStatus((prev) => ({ ...prev, [item.traducao_id]: '✗ Experiência não encontrada' }));
+          return;
+        }
+        await enviarValidacaoTraducao(det.experiencia.id as string);
+        setValidacaoStatus((prev) => ({ ...prev, [item.traducao_id]: '✓ E-mail enviado!' }));
+        setTimeout(() => {
+          setValidacaoStatus((prev) => {
+            const next = { ...prev };
+            delete next[item.traducao_id];
+            return next;
+          });
+        }, 5000);
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : 'erro';
+        setValidacaoStatus((prev) => ({ ...prev, [item.traducao_id]: `✗ ${msg}` }));
+      }
     });
   }
 
@@ -67,7 +94,27 @@ export default function TraducoesClient({ traducoes }: { traducoes: TraducaoRow[
             </div>
             <div className="space-y-2">
               {groups[status].map((item) => (
-                <TraducaoItem key={item.traducao_id} item={item} onOpen={handleOpen} />
+                <div key={item.traducao_id} className="relative">
+                  <TraducaoItem item={item} onOpen={handleOpen} />
+                  {/* Botão de enviar validação — visível apenas para rascunho_api_gerado */}
+                  {item.status_global === 'rascunho_api_gerado' && (
+                    <div className="absolute top-2 right-2">
+                      {validacaoStatus[item.traducao_id] ? (
+                        <span className={`text-[11px] ${validacaoStatus[item.traducao_id].startsWith('✓') ? 'text-green-400' : 'text-danger'}`}>
+                          {validacaoStatus[item.traducao_id]}
+                        </span>
+                      ) : (
+                        <button
+                          onClick={() => handleEnviarValidacao(item)}
+                          disabled={isPending}
+                          className="text-[11px] bg-accent/10 border border-accent/30 text-accent px-3 py-1 hover:bg-accent/20 transition-colors disabled:opacity-40"
+                        >
+                          📧 Enviar validação
+                        </button>
+                      )}
+                    </div>
+                  )}
+                </div>
               ))}
             </div>
           </div>

@@ -11,6 +11,7 @@ import {
 } from 'react';
 import {
   INITIAL_STATE,
+  STEPS,
   reducer,
   type Action,
   type CadastroState
@@ -29,13 +30,35 @@ interface FormContextValue {
 
 const FormContext = createContext<FormContextValue | null>(null);
 
-export function FormProvider({ children }: { children: ReactNode }) {
-  const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
+interface FormProviderProps {
+  children: ReactNode;
+  /** Dados iniciais para pré-preencher o formulário (modo edição). */
+  initialData?: Partial<CadastroState>;
+  /** 'cadastro' (default) ou 'edicao' (link mágico). */
+  modo?: 'cadastro' | 'edicao';
+}
+
+export function FormProvider({ children, initialData, modo = 'cadastro' }: FormProviderProps) {
+  const isEdicao = modo === 'edicao';
+
+  // Estado inicial: se modo edição, parte do initialData; senão, INITIAL_STATE
+  const baseState: CadastroState = isEdicao
+    ? {
+        ...INITIAL_STATE,
+        ...initialData,
+        // Em modo edição, começar na primeira etapa de cadastro
+        currentStep: STEPS.IDENTIFICACAO,
+        modo: 'edicao'
+      }
+    : INITIAL_STATE;
+
+  const [state, dispatch] = useReducer(reducer, baseState);
   const hydratedRef = useRef(false);
   const draftSavedAtRef = useRef<number | null>(null);
 
-  // Hidratação do localStorage no mount (evita SSR mismatch)
+  // Hidratação do localStorage no mount — apenas no modo cadastro
   useEffect(() => {
+    if (isEdicao) return; // Não lê localStorage em modo edição
     if (hydratedRef.current) return;
     hydratedRef.current = true;
     try {
@@ -44,7 +67,6 @@ export function FormProvider({ children }: { children: ReactNode }) {
         const parsed = JSON.parse(raw);
         if (parsed && typeof parsed === 'object') {
           // `arquivos` (File) não serializa — sempre começa vazio.
-          // Se vier algo persistido por engano (versões antigas), descarta.
           delete parsed.arquivos;
           dispatch({ type: 'HYDRATE', state: parsed });
         }
@@ -52,24 +74,22 @@ export function FormProvider({ children }: { children: ReactNode }) {
     } catch (e) {
       console.warn('[FormProvider] falha ao hidratar localStorage:', e);
     }
-  }, []);
+  }, [isEdicao]);
 
-  // Auto-save com debounce 600ms
+  // Auto-save com debounce 600ms — desabilitado em modo edição
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => {
+    if (isEdicao) return; // Não salva localStorage em modo edição
     if (!hydratedRef.current) return;
-    // Não salvar se já foi submetido com sucesso
-    if (state.protocolo) return;
+    if (state.protocolo) return; // Não salvar após submit bem-sucedido
 
     if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
     saveTimerRef.current = setTimeout(() => {
       try {
-        // Remove campos que não serializam ou que são transient.
         const { arquivos: _arquivos, ...rest } = state;
         const toSave = { ...rest, submitting: false, submitError: null };
         localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
         draftSavedAtRef.current = Date.now();
-        // Trigger UI re-render via custom event (DraftIndicator escuta)
         window.dispatchEvent(new CustomEvent('lisa-draft-saved'));
       } catch (e) {
         console.warn('[FormProvider] falha ao salvar localStorage:', e);
@@ -79,15 +99,16 @@ export function FormProvider({ children }: { children: ReactNode }) {
     return () => {
       if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
     };
-  }, [state]);
+  }, [state, isEdicao]);
 
   const clearDraft = useCallback(() => {
+    if (isEdicao) return;
     try {
       localStorage.removeItem(STORAGE_KEY);
     } catch (e) {
       console.warn('[FormProvider] falha ao limpar localStorage:', e);
     }
-  }, []);
+  }, [isEdicao]);
 
   return (
     <FormContext.Provider

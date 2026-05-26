@@ -123,7 +123,8 @@ Qualquer divergência visual precisa ser justificada.
 /admin-lisa-xyz/traducoes  → Traduções pendentes
 /admin-lisa-xyz/config     → Configurações do sistema
 
-/atualizar/[token]         → Link mágico para coordenadores (sem login)
+/atualizar/[token]         → Link mágico para coordenadores — atualizar dados e texto EN (sem login)
+/validar/[token]           → Link mágico para coordenadores — aprovar tradução EN (sem login)
 ```
 
 **i18n:** MVP bilíngue PT/EN. Roteamento com `[locale]` (`/pt/catalogo`, `/en/catalogo`).  
@@ -146,12 +147,21 @@ Qualquer divergência visual precisa ser justificada.
 - Convites de atualização com token (link mágico)
 - Migração das ~110 experiências existentes (estagiária)
 
+### MVP estendido (em desenvolvimento)
+
+- Gestão do período do edital (datas, `ano_catalogo`, `selecionada_catalogo`, banner público)
+- Catálogo público real com filtros (`/catalogo`, `/catalogo/[slug]`)
+- Exportação PDF bilíngue (PT e EN) de experiências para a gráfica do catálogo impresso anual
+- E-mails agendados automáticos (`lembrete_atualizacao`, `notificacao_inativacao`)
+
+### Implementado além do MVP inicial ✅
+
+- Base de especialistas: tabela `pesquisador_expert` + CRUD no painel admin (pronta para matchmaking v2)
+
 ### v2 (fora do MVP — não implementar sem discussão)
 
-- Chatbot de matchmaking semântico com IA (embeddings + pgvector)
+- Chatbot de matchmaking semântico com IA (Gemini + pgvector)
 - Base de demandantes completa
-- Base de especialistas
-- Export PDF do catálogo (modo "InDesign no navegador")
 - Blog institucional
 - Newsletter automática
 - Hierarquia CNPq de 4 níveis completa (MVP só níveis 1 e 2)
@@ -183,18 +193,19 @@ Matchmaking é a função-coração do portal, mas a implementação com IA é v
 
 ## E-mails Transacionais
 
-Implementar via **Resend** em Edge Functions do Supabase. Templates ficam em `configuracao_sistema` (categoria `templates_email`) — editáveis pelo painel admin sem redeploy.
+Implementado via **Resend** em `lib/email/` (client, send, defaults, render). Templates em `configuracao_sistema` — editáveis pelo painel admin (`/admin-lisa-xyz/emails`) sem redeploy. Domínio: `@its-uff.com.br`.
 
 **Tipos (enum `email_tipo`):**
 - `confirmacao_submissao` — para o coordenador após enviar
 - `notificacao_admin` — para admins quando há nova submissão
 - `aprovacao` — para o coordenador quando experiência é aprovada
 - `rejeicao` — para o coordenador quando experiência é rejeitada
-- `solicitacao_atualizacao` — "ainda está ativa?"
-- `lembrete_atualizacao` — segundo aviso
-- `notificacao_inativacao` — quando experiência vira inativa
+- `solicitacao_atualizacao` — "ainda está ativa?" (com link mágico `/atualizar/[token]`)
+- `lembrete_atualizacao` — segundo aviso (template pronto; disparo automático a implementar)
+- `notificacao_inativacao` — quando experiência vira inativa (template pronto; automação a implementar)
+- `validacao_traducao` — link mágico para o coordenador revisar/aprovar o texto em inglês
 
-Todo disparo registrado em `disparo_email` para auditoria.
+Todo disparo registrado em `disparo_email` para auditoria (status, Resend ID, erro).
 
 ---
 
@@ -202,9 +213,11 @@ Todo disparo registrado em `disparo_email` para auditoria.
 
 1. Coordenador submete em PT → `experiencia_traducao` com `idioma='pt'`, `is_original=true`
 2. Admin revisa PT → `status_por_campo` atualizado
-3. Edge Function chama DeepL com 4 campos editoriais (historico, metodologia, resultados_impactos, desafios_perspectivas)
+3. API `/api/regerar-traducao` chama DeepL com 5 campos (titulo, historico, metodologia, resultados_impactos, desafios_perspectivas)
 4. DeepL retorna → nova linha com `idioma='en'`, rascunho em JSONB, `status_global='rascunho_api_gerado'`
-5. Estagiária revisa → `em_primeira_revisao` → `primeira_revisao_concluida`
+4b. Admin envia e-mail `validacao_traducao` → coordenador recebe link mágico `/validar/[token]`
+4c. Coordenador **aprova** (→ `publicavel`) OU acessa `/atualizar/[token]` para editar campos EN manualmente
+5. Revisão admin → `em_primeira_revisao` → `primeira_revisao_concluida`
 6. Segunda revisão → `em_segunda_revisao` → `publicavel`
 7. Publicação → `publicada`, aparece no catálogo EN
 
@@ -308,6 +321,25 @@ em_moderacao
 ```
 
 Toda mudança de status gera linha imutável em `historico_status`.
+
+---
+
+## Ciclo do Edital Anual
+
+A UFF publica anualmente um catálogo impresso bilíngue de tecnologias sociais internas. O portal automatiza esse processo:
+
+1. **Ano todo:** experiências se cadastram normalmente; `is_interna = true` marca as vinculadas à UFF
+2. **Período do edital:** banner visível no portal; formulário aceita submissões para o catálogo do ano
+3. **Moderação:** motor fuzzy pré-classifica; coordenadora avalia e aprova/reprova
+4. **Tradução:** DeepL gera rascunho EN → revisão admin → validação pelo coordenador
+5. **Exportação:** sistema gera PDF bilíngue de cada experiência aprovada para a gráfica
+6. **Catálogo impresso:** gráfica usa os PDFs como base para diagramação final
+
+Campos no banco relacionados ao edital:
+- `is_interna` (boolean em `experiencia`) — **já implementado**
+- `ano_catalogo` (integer em `experiencia`) — a implementar
+- `selecionada_catalogo` (boolean em `experiencia`) — a implementar
+- `edital_atual_ativo` e `edital_atual_nome` em `configuracao_sistema` — **já implementado**
 
 ---
 

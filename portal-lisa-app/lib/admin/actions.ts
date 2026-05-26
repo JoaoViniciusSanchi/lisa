@@ -1,5 +1,8 @@
 import { createBrowserSupabase } from '@/lib/supabase/client';
 
+// Nota: funções que enviam e-mail foram movidas para lib/admin/email-actions.ts
+// (Server Actions) para evitar importação de módulos server-only em Client Components.
+
 // ─── Helpers ─────────────────────────────────────────────────
 
 async function getCurrentAdminId(): Promise<string> {
@@ -77,6 +80,10 @@ export async function approveExperiencia(
   await insertHistoricoStatus(sb, experienciaId, atual?.status, novoStatus, motivo, adminId);
   await logAction(adminId, 'aprovou_experiencia', experienciaId, { motivo, novo_status: novoStatus });
 
+  // Nota: para disparar e-mail de aprovação + tradução DeepL,
+  // o chamador deve invocar approveWithEmail() de lib/admin/server-approve.ts
+  // ou o painel pode chamar separadamente as Server Actions de e-mail.
+
   return { ok: true };
 }
 
@@ -98,15 +105,7 @@ export async function rejectExperiencia(experienciaId: string, motivo: string) {
   await insertHistoricoStatus(sb, experienciaId, atual?.status, 'rejeitada', motivo, adminId);
   await logAction(adminId, 'rejeitou_experiencia', experienciaId, { motivo });
 
-  // Registrar e-mail de rejeição na fila
-  if (atual?.email_contato) {
-    await sb.from('disparo_email').insert({
-      experiencia_id: experienciaId,
-      tipo: 'rejeicao',
-      destinatario: atual.email_contato,
-      status: 'pendente'
-    });
-  }
+  // Nota: e-mail de rejeição é disparado por rejectWithEmail() em server-approve.ts
 
   return { ok: true };
 }
@@ -203,8 +202,6 @@ export async function saveConfigValue(chave: string, valor: unknown) {
 }
 
 // ─── Leitura para client components ──────────────────────────
-// Funções de leitura expostas como Server Actions para que client components
-// possam chamá-las sem importar módulos server-only diretamente.
 
 export async function getExperienciaDetailsAction(id: string) {
   const sb = createBrowserSupabase();

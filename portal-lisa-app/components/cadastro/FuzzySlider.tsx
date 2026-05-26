@@ -25,21 +25,14 @@ export function FuzzySlider({
     onChange(parseFloat(e.target.value));
   };
 
-  const formatted = value % 1 === 0 ? value.toFixed(0) : value.toFixed(1);
-
   return (
     <div className="py-8 border-b border-line last:border-b-0">
-      <div className="flex items-start justify-between gap-6 mb-7">
-        <div>
-          <div className="font-display text-[11px] font-semibold tracking-[0.15em] text-accent-glow opacity-60 mb-1.5">
-            {code}
-          </div>
-          <div className="font-display text-xl font-light leading-[1.35] text-warm-white max-w-[600px]">
-            {question}
-          </div>
+      <div className="mb-7">
+        <div className="font-display text-[11px] font-semibold tracking-[0.15em] text-accent-glow opacity-60 mb-1.5">
+          {code}
         </div>
-        <div className="font-display text-3xl font-extralight text-accent-glow tracking-[-0.04em] tabular-nums min-w-[56px] text-right">
-          {formatted}
+        <div className="font-display text-xl font-light leading-[1.35] text-warm-white max-w-[600px]">
+          {question}
         </div>
       </div>
 

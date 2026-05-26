@@ -22,6 +22,7 @@ export const STEPS = {
   FORPROEX: 12,           // Etapa 06 (era 05)
   OUTRAS_CLASS: 13,       // Etapa 07 (era 06, sem base teórica)
   RESULTADOS_MATERIAIS: 14, // Etapa 08 (fusão de Resultados + Materiais)
+  TEXTO_INGLES: 16,       // Etapa extra — apenas no modo edição (validação de tradução EN)
   SUCCESS: 15
 } as const;
 
@@ -120,8 +121,21 @@ export interface ArquivosData {
   secundaria2: File | null;
 }
 
+export interface ExperienciaENData {
+  titulo: string;
+  historico: string;
+  metodologia: string;
+  resultadosImpactos: string;
+  desafiosPerspectivas: string;
+}
+
 export interface CadastroState {
   currentStep: number;
+
+  // Modo de operação: 'cadastro' (novo) | 'edicao' (link mágico)
+  modo: 'cadastro' | 'edicao';
+  // Token do convite — preenchido apenas em modo edição
+  conviteToken: string | null;
 
   // Triagem
   fuzzyAnswers: FuzzyAnswers;
@@ -141,6 +155,9 @@ export interface CadastroState {
   arquivos: ArquivosData;
   termoAceito: boolean;
 
+  // Campos em inglês — visíveis apenas no modo edição (TextoIngleStep)
+  experienciaEN: ExperienciaENData;
+
   // Submit state
   submitting: boolean;
   protocolo: string | null;
@@ -157,6 +174,8 @@ export const INITIAL_FUZZY_ANSWERS: FuzzyAnswers = {
 
 export const INITIAL_STATE: CadastroState = {
   currentStep: STEPS.WELCOME,
+  modo: 'cadastro',
+  conviteToken: null,
   fuzzyAnswers: INITIAL_FUZZY_ANSWERS,
   justificativas: {},
   triagemResult: null,
@@ -216,6 +235,13 @@ export const INITIAL_STATE: CadastroState = {
     secundaria2: null
   },
   termoAceito: false,
+  experienciaEN: {
+    titulo: '',
+    historico: '',
+    metodologia: '',
+    resultadosImpactos: '',
+    desafiosPerspectivas: ''
+  },
   submitting: false,
   protocolo: null,
   submitError: null
@@ -242,6 +268,7 @@ export type Action =
       field: string;
       value: string;
     }
+  | { type: 'SET_FIELD_EN'; field: keyof ExperienciaENData; value: string }
   | {
       type: 'TOGGLE_CLASSIFICATION';
       key:
@@ -267,6 +294,7 @@ export type Action =
   | { type: 'SET_PROTOCOL'; protocolo: string }
   | { type: 'SET_SUBMIT_ERROR'; error: string | null }
   | { type: 'HYDRATE'; state: Partial<CadastroState> }
+  | { type: 'SET_EXPERIENCIA_EN'; data: Partial<ExperienciaENData> }
   | { type: 'RESET' };
 
 export function reducer(state: CadastroState, action: Action): CadastroState {
@@ -399,6 +427,18 @@ export function reducer(state: CadastroState, action: Action): CadastroState {
 
     case 'HYDRATE':
       return { ...state, ...action.state };
+
+    case 'SET_FIELD_EN':
+      return {
+        ...state,
+        experienciaEN: { ...state.experienciaEN, [action.field]: action.value }
+      };
+
+    case 'SET_EXPERIENCIA_EN':
+      return {
+        ...state,
+        experienciaEN: { ...state.experienciaEN, ...action.data }
+      };
 
     case 'RESET':
       return INITIAL_STATE;

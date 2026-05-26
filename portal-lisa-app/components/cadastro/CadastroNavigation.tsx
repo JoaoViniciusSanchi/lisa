@@ -3,6 +3,7 @@
 import { Button } from '@/components/ui/Button';
 import { ArrowRight, ArrowLeft } from '@/components/ui/icons';
 import { submitCadastroWithFiles } from '@/lib/actions/submit-cadastro';
+import { updateExperienciaFromToken } from '@/lib/actions/update-experiencia';
 import { useCadastroForm } from './FormProvider';
 import {
   STEPS,
@@ -11,25 +12,44 @@ import {
   type CadastroState
 } from './state';
 
+// Passos do fluxo de edição (sem triagem/welcome/result)
+const EDICAO_STEPS = [...CADASTRO_STEPS, STEPS.TEXTO_INGLES];
+
 export function CadastroNavigation() {
   const { state, dispatch, clearDraft } = useCadastroForm();
   const step = state.currentStep;
+  const isEdicao = state.modo === 'edicao';
 
   const isTriagem = TRIAGEM_STEPS.includes(step as never);
-  const isCadastro = CADASTRO_STEPS.includes(step as never);
+  const isCadastro = isEdicao
+    ? EDICAO_STEPS.includes(step as never)
+    : CADASTRO_STEPS.includes(step as never);
+
+  const activeSteps = isEdicao ? EDICAO_STEPS : CADASTRO_STEPS;
+  const isLastStep = isEdicao
+    ? step === STEPS.TEXTO_INGLES
+    : step === STEPS.RESULTADOS_MATERIAIS;
+  const isFirstStep = isEdicao
+    ? step === STEPS.IDENTIFICACAO
+    : step === STEPS.IDENTIFICACAO;
 
   // Esconde nav em welcome, result e success
-  if (step === STEPS.WELCOME || step === STEPS.RESULT || step === STEPS.SUCCESS) {
+  if (
+    step === STEPS.WELCOME ||
+    step === STEPS.RESULT ||
+    step === STEPS.SUCCESS
+  ) {
     return null;
   }
 
   const isLastTriagem = step === STEPS.TRIAGEM_R;
-  const isLastCadastro = step === STEPS.RESULTADOS_MATERIAIS;
 
   const meta = isTriagem
     ? `Triagem · ${TRIAGEM_STEPS.indexOf(step as never) + 1} de 5`
     : isCadastro
-      ? `Cadastro · ${CADASTRO_STEPS.indexOf(step as never) + 1} de 8`
+      ? isEdicao
+        ? `Edição · ${EDICAO_STEPS.indexOf(step as never) + 1} de ${EDICAO_STEPS.length}`
+        : `Cadastro · ${CADASTRO_STEPS.indexOf(step as never) + 1} de 8`
       : '';
 
   function handleNext() {
@@ -37,14 +57,30 @@ export function CadastroNavigation() {
       dispatch({ type: 'SET_STEP', step: STEPS.RESULT });
       return;
     }
-    if (isLastCadastro) {
+    if (isLastStep) {
       handleSubmit();
       return;
     }
-    dispatch({ type: 'SET_STEP', step: step + 1 });
+    // Próximo step considerando o fluxo correto
+    if (isEdicao) {
+      const idx = EDICAO_STEPS.indexOf(step as never);
+      if (idx >= 0 && idx < EDICAO_STEPS.length - 1) {
+        dispatch({ type: 'SET_STEP', step: EDICAO_STEPS[idx + 1] });
+      }
+    } else {
+      dispatch({ type: 'SET_STEP', step: step + 1 });
+    }
   }
 
   function handlePrev() {
+    if (isEdicao) {
+      const idx = EDICAO_STEPS.indexOf(step as never);
+      if (idx > 0) {
+        dispatch({ type: 'SET_STEP', step: EDICAO_STEPS[idx - 1] });
+      }
+      return;
+    }
+    // Modo cadastro
     if (step === STEPS.IDENTIFICACAO) {
       dispatch({ type: 'SET_STEP', step: STEPS.RESULT });
       return;
@@ -55,6 +91,14 @@ export function CadastroNavigation() {
   }
 
   async function handleSubmit() {
+    if (isEdicao) {
+      await handleSubmitEdicao();
+    } else {
+      await handleSubmitCadastro();
+    }
+  }
+
+  async function handleSubmitCadastro() {
     if (!state.termoAceito) {
       dispatch({
         type: 'SET_SUBMIT_ERROR',
@@ -63,9 +107,6 @@ export function CadastroNavigation() {
       return;
     }
 
-    // Validação client-side de campos obrigatórios. Se faltar algo,
-    // listamos os nomes dos campos e pulamos para a primeira etapa
-    // que tem pendência — assim o coordenador vê o que precisa preencher.
     const missing = collectMissingRequired(state);
     if (missing.length > 0) {
       const list = missing.map((m) => `"${m.label}"`).join(', ');
@@ -111,6 +152,46 @@ export function CadastroNavigation() {
     }
   }
 
+  async function handleSubmitEdicao() {
+    if (!state.conviteToken) {
+      dispatch({ type: 'SET_SUBMIT_ERROR', error: 'Token de edição ausente.' });
+      return;
+    }
+
+    dispatch({ type: 'SET_SUBMITTING', submitting: true });
+    dispatch({ type: 'SET_SUBMIT_ERROR', error: null });
+
+    try {
+      const result = await updateExperienciaFromToken(state.conviteToken, {
+        identificacao: state.identificacao,
+        experiencia: state.experiencia,
+        resultados: state.resultados,
+        materiais: state.materiais,
+        experienciaEN: state.experienciaEN
+      });
+
+      if (result.ok) {
+        dispatch({ type: 'SET_PROTOCOL', protocolo: 'edicao-concluida' });
+        dispatch({ type: 'SET_STEP', step: STEPS.SUCCESS });
+      } else {
+        dispatch({ type: 'SET_SUBMIT_ERROR', error: result.error ?? 'Erro ao salvar edição.' });
+      }
+    } catch (e) {
+      dispatch({
+        type: 'SET_SUBMIT_ERROR',
+        error: e instanceof Error ? e.message : 'Erro desconhecido ao salvar'
+      });
+    } finally {
+      dispatch({ type: 'SET_SUBMITTING', submitting: false });
+    }
+  }
+
+  const nextLabel = isLastStep
+    ? isEdicao ? 'Salvar alterações' : 'Enviar cadastro'
+    : isLastTriagem
+      ? 'Ver resultado da triagem'
+      : 'Próximo';
+
   return (
     <div className="flex justify-between items-center mt-16 pt-10 border-t border-line">
       <Button variant="secondary" onClick={handlePrev}>
@@ -124,13 +205,7 @@ export function CadastroNavigation() {
 
       <div className="flex flex-col items-end gap-2">
         <Button onClick={handleNext} disabled={state.submitting}>
-          {state.submitting
-            ? 'Enviando...'
-            : isLastCadastro
-              ? 'Enviar cadastro'
-              : isLastTriagem
-                ? 'Ver resultado da triagem'
-                : 'Próximo'}
+          {state.submitting ? 'Salvando...' : nextLabel}
           {!state.submitting && <ArrowRight width={14} height={14} />}
         </Button>
         {state.submitError && (
@@ -144,8 +219,7 @@ export function CadastroNavigation() {
 }
 
 // =============================================================
-// Validação de obrigatórios — devolve lista com nome do campo e
-// a etapa onde ele aparece (para pular pra lá automaticamente).
+// Validação de obrigatórios
 // =============================================================
 
 interface MissingField {
@@ -156,47 +230,27 @@ interface MissingField {
 function collectMissingRequired(state: CadastroState): MissingField[] {
   const missing: MissingField[] = [];
 
-  // Identificação
   if (!state.identificacao.coordNome.trim()) {
-    missing.push({
-      label: 'Nome completo do coordenador(a)',
-      step: STEPS.IDENTIFICACAO
-    });
+    missing.push({ label: 'Nome completo do coordenador(a)', step: STEPS.IDENTIFICACAO });
   }
   if (!state.identificacao.coordEmail.trim()) {
-    missing.push({
-      label: 'E-mail institucional',
-      step: STEPS.IDENTIFICACAO
-    });
+    missing.push({ label: 'E-mail institucional', step: STEPS.IDENTIFICACAO });
   }
   if (!state.identificacao.coordVinculo) {
-    missing.push({
-      label: 'Vínculo com a UFF',
-      step: STEPS.IDENTIFICACAO
-    });
+    missing.push({ label: 'Vínculo com a UFF', step: STEPS.IDENTIFICACAO });
   }
-
-  // Experiência
   if (!state.experiencia.titulo.trim()) {
-    missing.push({
-      label: 'Título da experiência',
-      step: STEPS.EXPERIENCIA
-    });
+    missing.push({ label: 'Título da experiência', step: STEPS.EXPERIENCIA });
   }
-
-  // Macroarea principal obrigatória
   if (!state.classificacoes.macroareaPrincipalCodigo) {
-    missing.push({
-      label: 'Macroarea temática principal',
-      step: STEPS.MACROAREAS
-    });
+    missing.push({ label: 'Macroarea temática principal', step: STEPS.MACROAREAS });
   }
 
   return missing;
 }
 
 // =============================================================
-// Mapper: state → payload do server action
+// Mapper: state → payload
 // =============================================================
 
 function buildPayload(state: CadastroState) {
@@ -230,8 +284,7 @@ function buildPayload(state: CadastroState) {
       cnpqGrandeAreaCodigo: state.classificacoes.cnpqGrandeAreaNome || undefined,
       cnpqSubareaCodigos: state.classificacoes.cnpqSubareaCodigos,
       odsIds: state.classificacoes.odsIds,
-      categoriaEditorialNome:
-        state.classificacoes.categoriaEditorialNome || undefined,
+      categoriaEditorialNome: state.classificacoes.categoriaEditorialNome || undefined,
       finalidadeSocialCodigos: state.classificacoes.finalidadeSocialCodigos,
       forproexCodigos: state.classificacoes.forproexCodigos,
       publicoAlvoCodigos: state.classificacoes.publicoAlvoCodigos,
@@ -259,8 +312,7 @@ function buildPayload(state: CadastroState) {
     },
     termoAceito: state.termoAceito,
     meta: {
-      userAgent:
-        typeof navigator !== 'undefined' ? navigator.userAgent : undefined
+      userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : undefined
     }
   };
 }

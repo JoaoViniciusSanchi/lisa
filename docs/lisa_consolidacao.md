@@ -1,7 +1,7 @@
 # Portal LISA — Documento de Consolidação
 
 **Projeto:** Portal LISA (Laboratório de Inovação Social e Ambiental) — UFF/AGIR  
-**Coordenadora:** Profa. Dra. Thelma Machado (AGIR/PROPPI/UFF)  
+**Coordenadora:** Profa. Dra. Elaine Sigette (AGIR/PROPPI/UFF)  
 **Objetivo geral:** construir um portal de matchmaking entre demandas sociais e iniciativas de inovação, com foco inicial no catálogo de tecnologias sociais.  
 **Data desta consolidação:** abril/2026
 
@@ -88,11 +88,11 @@
 - **Estrutura: tabela `experiencia_traducao` separada por idioma**, suporta N idiomas no futuro sem alteração de schema.
 
 ### Scoring
-- **100% determinístico**, sem IA na fase de moderação.
-- **Perguntas booleanas em tabela configurável** (`pergunta_score`), permite ajustar pesos sem mexer no código.
-- **Snapshot de pesos** preservado em `resposta_score` para auditoria histórica.
-- **7 dimensões teóricas** baseadas no referencial Dagnino/ITS: participação_comunidade, demanda_social_concreta, construcao_conhecimento, reaplicabilidade, sustentabilidade, processo_democratico, sinais_institucionais.
-- **Faixas de moderação:** alta_aderencia (75-100), media_aderencia (50-74), visao_2 (30-49), baixa_aderencia (0-29).
+- **Lógica fuzzy (modelo EFITS v2.0, Mamdani)**, sem IA na fase de moderação. A decisão final de publicação é sempre humana.
+- **20 perguntas com sliders 0–10**, 5 dimensões com pesos fixos: Participação Comunitária P=0.30, Impacto Social I=0.25, Apropriação Tecnológica A=0.20, Sustentabilidade S=0.15, Replicabilidade R=0.10.
+- **Defuzzificação por média ponderada** → índice 0–1. Gate de triagem configurável via `configuracao_sistema.fuzzy_gate_triagem_min` (padrão: 0.3).
+- **Snapshot de avaliação** preservado em `avaliacao_fuzzy` com pertinências e ativações em JSONB para auditoria.
+- **Faixas cromáticas:** vermelho (0.0–0.3, bloqueia cadastro), amarelo (0.3–0.7, libera), verde (0.7–1.0, libera).
 
 ### Conteúdo editorial
 - **Estrutura espelha o catálogo real** (baseado em análise da página "Cozinha CuidAR"):
@@ -204,33 +204,34 @@ Table experiencia_ods { ... }
 
 ---
 
-## 7. O que ainda falta decidir/fazer
+## 7. Status de implementação (maio/2026)
 
-### Schema do banco
-- [ ] Ajustes finais da Rodada 2 (pendentes do usuário)
-- [ ] Rodada 3 (admin, logs de moderação, configurações do sistema, views úteis)
-- [ ] Diagrama DBML consolidado das 3 rodadas
-- [ ] Listagem das ~30 perguntas de pontuação com pesos finais
+### Concluído ✅
+- Formulário multi-step: triagem fuzzy (6 etapas) + cadastro completo (8 etapas) + confirmação com protocolo
+- Motor fuzzy EFITS v2.0 em TypeScript puro (servidor, sem libs externas)
+- Upload de imagens (Supabase Storage, 3 slots: capa + 2 secundárias)
+- Painel admin: experiências, traduções, e-mails, pesquisadores, configurações
+- 8 tipos de e-mail transacional via Resend (@its-uff.com.br), templates Markdown editáveis no admin
+- Fluxo de aprovação/rejeição com e-mail automático ao coordenador
+- Tradução automática DeepL PT→EN, integrada ao formulário e ao admin
+- Link mágico `/atualizar/[token]`: coordenador atualiza dados e revisa/edita tradução EN
+- Link mágico `/validar/[token]`: coordenador aprova ou solicita edição da tradução
+- Base de pesquisadores especialistas: tabela `pesquisador_expert` + CRUD no painel admin
+- Campo `is_interna` em `experiencia` para distinguir experiências UFF das externas
+- 12 migrations SQL versionadas em `supabase/migrations/`
 
-### Conteúdo
-- [ ] Coletar logo do portal
-- [ ] Coletar referências visuais (Behance, Freepik, modelo de onboard de formulário)
-- [ ] Coletar mais páginas do catálogo antigo
+### Em desenvolvimento 🔧
+1. **Gestão do período do edital** — datas de abertura/fechamento, campo `ano_catalogo`, campo `selecionada_catalogo`, banner público quando edital ativo
+2. **Catálogo público real** — `/catalogo` com dados reais do banco, filtros, busca, página individual `/catalogo/[slug]`
+3. **Exportação PDF bilíngue** — layout padronizado PT e EN por experiência (título, histórico, metodologia, resultados, equipe, fotos, ODS, área), para servir de base à gráfica do catálogo impresso anual
+4. **E-mails automáticos agendados** — `lembrete_atualizacao` e `notificacao_inativacao` via Supabase Edge Function + pg_cron
 
-### Frontend (a iniciar após fechar banco)
-- [ ] Mockup Home (catálogo + filtros + hero)
-- [ ] Mockup Formulário multi-step de cadastro
-- [ ] Mockup Página de experiência individual
-- [ ] Mockup Painel admin de moderação
-- [ ] Mockup Tela de login admin
-- [ ] Decisão final de paleta + tipografia
-- [ ] Componentes React reais para o projeto Next.js
-
-### Backend (após mockups)
-- [ ] Setup do projeto Next.js + Supabase
-- [ ] Migração do schema para o Supabase
-- [ ] Edge Functions para scoring, disparo de e-mail, integração DeepL
-- [ ] Migração das ~110 experiências existentes (estagiária)
+### Fora do escopo atual (v2+) 🔮
+- Chatbot de matchmaking com IA (Gemini)
+- Página `/conectar` funcional com IA
+- Newsletter automática
+- Blog institucional
+- Hierarquia CNPq de 4 níveis completa
 
 ---
 

@@ -6,6 +6,7 @@ import { loadFuzzyConfig } from '@/lib/fuzzy/config';
 import { DIMENSIONS, DIMENSION_DB_KEY } from '@/lib/fuzzy/types';
 import type { FuzzyAnswers } from '@/lib/fuzzy/types';
 import type { ExperienciaStatus } from '@/lib/supabase/types';
+import { sendEmail } from '@/lib/email/send';
 
 // =============================================================
 // PAYLOAD do cadastro completo
@@ -540,6 +541,45 @@ export async function submitCadastro(
       motivo: 'Cadastro submetido pelo coordenador',
       alterado_por: 'sistema'
     });
+
+    // ----- Disparar e-mails transacionais (síncrono, não bloqueia rollback) -----
+    // Erros de e-mail são logados mas não cancelam o submit
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? '';
+    const adminDestino = process.env.EMAIL_ADMIN_DESTINO ?? '';
+
+    const emailVarsCoord = {
+      coordenador_nome: payload.identificacao.coordNome,
+      coordenador_email: payload.identificacao.coordEmail,
+      experiencia_titulo: payload.experiencia.titulo,
+      protocolo
+    };
+
+    try {
+      await sendEmail({
+        tipo: 'confirmacao_submissao',
+        destinatario: payload.identificacao.coordEmail,
+        experienciaId,
+        vars: emailVarsCoord
+      });
+    } catch (emailErr) {
+      console.warn('[submitCadastro] falha ao enviar confirmacao_submissao:', emailErr);
+    }
+
+    if (adminDestino) {
+      try {
+        await sendEmail({
+          tipo: 'notificacao_admin',
+          destinatario: adminDestino,
+          experienciaId,
+          vars: {
+            ...emailVarsCoord,
+            admin_url: `${siteUrl}/admin-lisa-xyz/fila`
+          }
+        });
+      } catch (emailErr) {
+        console.warn('[submitCadastro] falha ao enviar notificacao_admin:', emailErr);
+      }
+    }
 
     return { success: true, protocolo, experienciaId };
   } catch (e) {

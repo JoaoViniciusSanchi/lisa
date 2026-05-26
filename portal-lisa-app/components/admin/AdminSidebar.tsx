@@ -31,6 +31,7 @@ const NAV: NavItem[] = [
   },
   { href: '/admin-lisa-xyz/pesquisadores', label: 'Pesquisadores', icon: '◍' },
   { href: '/admin-lisa-xyz/traducoes', label: 'Traduções', icon: '◎' },
+  { href: '/admin-lisa-xyz/emails', label: 'E-mails', icon: '✉' },
   { href: '/admin-lisa-xyz/importar', label: 'Importar Experiência', icon: '⇧' },
   { href: '/admin-lisa-xyz/config', label: 'Configurações', icon: '◇' },
 ];

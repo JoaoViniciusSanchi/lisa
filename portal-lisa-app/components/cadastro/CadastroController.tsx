@@ -25,22 +25,29 @@ import { ForproexStep } from './steps/ForproexStep';
 import { OutrasClassificacoesStep } from './steps/OutrasClassificacoesStep';
 import { ResultadosMateriaisStep } from './steps/ResultadosMateriaisStep';
 import { SuccessStep } from './steps/SuccessStep';
+import { TextoIngleStep } from './steps/TextoIngleStep';
+
+// Passos extras para modo edição
+const EDICAO_STEPS = [...CADASTRO_STEPS, STEPS.TEXTO_INGLES];
 
 /**
  * Controller que renderiza o step atual baseado em state.currentStep.
  * Faz scroll-to-top ao trocar de step.
+ * Em modo edição, pula WelcomeStep, TriagemStep e ResultStep.
  */
 export function CadastroController() {
   const { state } = useCadastroForm();
   const step = state.currentStep;
+  const isEdicao = state.modo === 'edicao';
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [step]);
 
+  const activeSteps = isEdicao ? EDICAO_STEPS : CADASTRO_STEPS;
   const isProgressPhase =
     TRIAGEM_STEPS.includes(step as never) ||
-    CADASTRO_STEPS.includes(step as never);
+    activeSteps.includes(step as never);
 
   return (
     <>
@@ -53,6 +60,11 @@ export function CadastroController() {
         }`}
       >
         <div className="max-w-[900px] mx-auto">
+          {isEdicao && (
+            <div className="mb-6 bg-accent/10 border border-accent/30 px-5 py-3 text-[13px] text-accent">
+              ✏️ Você está editando os dados da sua experiência via link de convite.
+            </div>
+          )}
           <div className="animate-[fadeInUp_0.5s_cubic-bezier(0.4,0,0.2,1)]">
             {renderStep(step)}
           </div>
@@ -60,7 +72,7 @@ export function CadastroController() {
         </div>
       </div>
 
-      <DraftIndicator />
+      {!isEdicao && <DraftIndicator />}
     </>
   );
 }
@@ -80,6 +92,7 @@ function renderStep(step: number) {
   if (step === STEPS.FORPROEX) return <ForproexStep />;
   if (step === STEPS.OUTRAS_CLASS) return <OutrasClassificacoesStep />;
   if (step === STEPS.RESULTADOS_MATERIAIS) return <ResultadosMateriaisStep />;
+  if (step === STEPS.TEXTO_INGLES) return <TextoIngleStep />;
   if (step === STEPS.SUCCESS) return <SuccessStep />;
   return <WelcomeStep />;
 }
