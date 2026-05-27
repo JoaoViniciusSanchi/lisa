@@ -24,7 +24,10 @@ function initialState(): WizardState {
     fieldMapping: {},
     experiences: [],
     analysisProgress: { current: 0, total: 0, currentTitle: '' },
-    generatedSql: ''
+    generatedSql: '',
+    // Configuração global do lote (definida no UploadStep)
+    catalogoTs: false,
+    editalOrigem: ''
   };
 }
 
@@ -44,12 +47,20 @@ export default function ImportarPage() {
 
   // ---- Handlers de cada passo ----
 
-  function onUploadComplete(csvRows: CsvRow[], csvHeaders: string[], docxFiles: File[]) {
+  function onUploadComplete(
+    csvRows: CsvRow[],
+    csvHeaders: string[],
+    docxFiles: File[],
+    catalogoTs: boolean,
+    editalOrigem: string
+  ) {
     setState((s) => ({
       ...s,
       csvRows,
       csvHeaders,
       docxFiles,
+      catalogoTs,
+      editalOrigem,
       step: docxFiles.length > 0 ? 'matching' : 'mapping'
     }));
   }
@@ -192,6 +203,8 @@ export default function ImportarPage() {
             onComplete={onAnalysisComplete}
             onProgress={onAnalysisProgress}
             onBack={() => setStep('mapping')}
+            catalogoTs={state.catalogoTs}
+            editalOrigem={state.editalOrigem}
           />
         )}
 

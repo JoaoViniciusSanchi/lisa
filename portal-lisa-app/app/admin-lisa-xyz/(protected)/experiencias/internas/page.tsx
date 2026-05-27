@@ -17,6 +17,7 @@ export default function ExperienciasInternasPage() {
       sb.from('experiencia')
         .select(`
           id, titulo, campus_uff, status, aprovada_em, data_inicio,
+          catalogo_ts, edital_origem,
           experiencia_pessoa(
             papel,
             pessoa(nome_completo, departamento, vinculo)

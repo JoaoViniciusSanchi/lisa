@@ -398,6 +398,9 @@ export async function analyzeExperience(params: {
     fuzzyAnswers,
     justificativas: parsed.justificativas ?? {},
     fuzzyResult,
+    // Campos de catálogo — serão sobrescritos pelo AnalysisStep com os valores globais do lote
+    catalogoTs: false,
+    editalOrigem: null,
     _meta: {
       csvRowIndex: params.csvRowIndex,
       docxSource: params.docxSource,

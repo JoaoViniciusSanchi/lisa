@@ -40,6 +40,10 @@ interface Experiencia {
   status: string;
   aprovada_em: string | null;
   data_inicio: string | null;
+  /** true = compõe o Catálogo de Tecnologias Sociais */
+  catalogo_ts: boolean | null;
+  /** Nome do edital durante o qual foi cadastrada */
+  edital_origem: string | null;
   experiencia_pessoa: ExperienciaPessoa[] | null;
   experiencia_cnpq: ExperienciaCnpq[] | null;
 }
@@ -268,6 +272,9 @@ export default function ExperienciasTableClient({ experiencias }: Props) {
                 >
                   Status{getSortIndicator('status')}
                 </th>
+                <th className="px-4 py-3 text-left font-medium text-warm-white/70 whitespace-nowrap">
+                  Catálogo TS
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -309,6 +316,20 @@ export default function ExperienciasTableClient({ experiencias }: Props) {
                       <span className={`text-[11px] uppercase tracking-widest font-medium px-2 py-1 border inline-block ${getStatusStyle(exp.status).badge}`}>
                         {statusLabel}
                       </span>
+                    </td>
+                    <td className="px-4 py-3">
+                      {exp.catalogo_ts ? (
+                        <span
+                          className="text-[11px] uppercase tracking-widest font-medium px-2 py-1 border border-fuzzy-green/50 text-fuzzy-green bg-fuzzy-green/10 inline-block whitespace-nowrap"
+                          title={exp.edital_origem ? `Edital: ${exp.edital_origem}` : undefined}
+                        >
+                          Catálogo TS
+                        </span>
+                      ) : (
+                        <span className="text-[11px] uppercase tracking-widest font-medium px-2 py-1 border border-line/40 text-warm-white/30 inline-block whitespace-nowrap">
+                          Só LISA
+                        </span>
+                      )}
                     </td>
                   </tr>
                 );

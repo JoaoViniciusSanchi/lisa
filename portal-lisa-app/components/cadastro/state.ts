@@ -129,6 +129,14 @@ export interface ExperienciaENData {
   desafiosPerspectivas: string;
 }
 
+/**
+ * Tipo de origem da submissão:
+ * - 'interna_edital': cadastrada durante um edital ativo → is_interna=true, catalogo_ts=true
+ * - 'interna': cadastrada fora do edital, vínculo UFF → is_interna=true, catalogo_ts=false
+ * - 'externa': sem vínculo UFF → is_interna=false, catalogo_ts=false
+ */
+export type TipoOrigem = 'interna_edital' | 'interna' | 'externa';
+
 export interface CadastroState {
   currentStep: number;
 
@@ -136,6 +144,9 @@ export interface CadastroState {
   modo: 'cadastro' | 'edicao';
   // Token do convite — preenchido apenas em modo edição
   conviteToken: string | null;
+
+  // Tipo de origem da submissão — definido pela página antes do formulário
+  tipoOrigem: TipoOrigem;
 
   // Triagem
   fuzzyAnswers: FuzzyAnswers;
@@ -176,6 +187,7 @@ export const INITIAL_STATE: CadastroState = {
   currentStep: STEPS.WELCOME,
   modo: 'cadastro',
   conviteToken: null,
+  tipoOrigem: 'interna', // padrão; sobrescrito pela página antes de renderizar
   fuzzyAnswers: INITIAL_FUZZY_ANSWERS,
   justificativas: {},
   triagemResult: null,

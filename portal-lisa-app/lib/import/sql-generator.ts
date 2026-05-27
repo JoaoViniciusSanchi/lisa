@@ -92,7 +92,8 @@ function generateExperienciaBlock(exp: ExperienciaImport, seqIndex: number, star
   lines.push('  INSERT INTO experiencia (');
   lines.push('    id, titulo, slug, resumo, data_inicio, data_fim, is_perene, status,');
   lines.push('    campus_uff, municipio, uf, categoria_editorial_id, email_contato,');
-  lines.push('    indice_fuzzy, faixa_fuzzy_atual, score_calculado_em');
+  lines.push('    indice_fuzzy, faixa_fuzzy_atual, score_calculado_em,');
+  lines.push('    is_interna, catalogo_ts, edital_origem');
   lines.push('  ) VALUES (');
   lines.push(`    v_exp_id,`);
   lines.push(`    ${sqlStr(exp.titulo)},`);
@@ -113,7 +114,12 @@ function generateExperienciaBlock(exp: ExperienciaImport, seqIndex: number, star
   lines.push(`    ${sqlStr(exp.emailContato)},`);
   lines.push(`    ${sqlNum(exp.fuzzyResult.indice_fuzzy)},`);
   lines.push(`    '${exp.fuzzyResult.faixa}',`);
-  lines.push(`    '${nowIso}'`);
+  lines.push(`    '${nowIso}',`);
+  // Campos de catálogo: is_interna sempre true para importações (são experiências da UFF),
+  // catalogo_ts e edital_origem dependem da configuração do lote.
+  lines.push(`    true,`);
+  lines.push(`    ${sqlBool(exp.catalogoTs ?? false)},`);
+  lines.push(`    ${sqlStr(exp.editalOrigem ?? null)}`);
   lines.push('  );');
   lines.push('');
 

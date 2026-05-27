@@ -24,11 +24,17 @@ const config: Config = {
         danger: 'var(--danger)',
         line: 'var(--line)',
         'line-strong': 'var(--line-strong)',
-        'line-brighter': 'var(--line-brighter)'
+        'line-brighter': 'var(--line-brighter)',
+        // Paleta Tecnologia Social (AGIR/UFF) — usada no formulário /cadastrar-ts
+        'ts-deep': '#041726',
+        'ts-mid': '#062D4D',
+        'ts-accent': '#0C71C3',
+        'ts-accent-hover': '#0F8AE5'
       },
       fontFamily: {
         sans: ['var(--font-inter)', 'system-ui', 'sans-serif'],
-        display: ['var(--font-inter-tight)', 'var(--font-inter)', 'sans-serif']
+        display: ['var(--font-inter-tight)', 'var(--font-inter)', 'sans-serif'],
+        nunito: ['var(--font-nunito)', 'system-ui', 'sans-serif']
       },
       letterSpacing: {
         eyebrow: '0.18em',

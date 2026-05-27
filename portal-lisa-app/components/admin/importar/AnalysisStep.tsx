@@ -32,6 +32,10 @@ interface Props {
   onComplete: (experiences: ExperienciaImport[], errors?: AnalysisError[]) => void;
   onProgress: (p: { current: number; total: number; currentTitle: string }) => void;
   onBack: () => void;
+  /** Se true, todas as experiências deste lote pertencem ao Catálogo TS. */
+  catalogoTs?: boolean;
+  /** Nome do edital de origem (ex: "Chamamento 2026"). Usado quando catalogoTs=true. */
+  editalOrigem?: string;
 }
 
 export default function AnalysisStep({
@@ -41,8 +45,19 @@ export default function AnalysisStep({
   progress,
   onComplete,
   onProgress,
-  onBack
+  onBack,
+  catalogoTs = false,
+  editalOrigem = ''
 }: Props) {
+  // Aplica os campos de catálogo globais às experiências e chama onComplete
+  function completeWithCatalogo(exps: ExperienciaImport[], errs?: AnalysisError[]) {
+    const enriched = exps.map((e) => ({
+      ...e,
+      catalogoTs,
+      editalOrigem: catalogoTs ? editalOrigem : null
+    }));
+    onComplete(enriched, errs);
+  }
   const started = useRef(false);
   const results = useRef<ExperienciaImport[]>([]);
   const errorsRef = useRef<AnalysisError[]>([]);
@@ -150,7 +165,7 @@ export default function AnalysisStep({
     }
 
     onProgress({ current: total, total, currentTitle: 'Concluído' });
-    onComplete(results.current, errorsRef.current);
+    completeWithCatalogo(results.current, errorsRef.current);
   }
 
   const pct = progress.total > 0 ? Math.round((progress.current / progress.total) * 100) : 0;
@@ -263,7 +278,7 @@ export default function AnalysisStep({
       {done && results.current.length > 0 && (
         <button
           type="button"
-          onClick={() => onComplete(results.current)}
+          onClick={() => completeWithCatalogo(results.current)}
           className="px-8 py-2.5 text-[13px] bg-accent text-bg-base font-semibold rounded hover:bg-accent/90 transition-colors"
         >
           Revisar {results.current.length} resultado{results.current.length !== 1 ? 's' : ''} →

@@ -69,6 +69,14 @@ export interface CadastroPayload {
   meta: {
     ipOrigem?: string;
     userAgent?: string;
+    /**
+     * Tipo de origem da submissão — definido pela página (server-side) antes do form.
+     * O servidor CONFIRMA o estado do edital independentemente deste valor.
+     * - 'interna_edital': edital ativo → is_interna=true, catalogo_ts=true
+     * - 'interna': edital inativo, vínculo UFF → is_interna=true, catalogo_ts=false
+     * - 'externa': sem vínculo UFF → is_interna=false, catalogo_ts=false
+     */
+    tipoOrigem?: 'interna_edital' | 'interna' | 'externa';
   };
 }
 
@@ -192,6 +200,45 @@ export async function submitCadastro(
   // 2. Determinar status da experiência baseado no input do form
   const status = mapStatusExperiencia(payload.experiencia.statusExperiencia);
 
+  // 2b. Verificar estado do edital no servidor (não confiar no valor do cliente)
+  let editalEstaAtivo = false;
+  let editalNomeAtual: string | null = null;
+  try {
+    const [ativoRes, nomeRes] = await Promise.all([
+      supabase
+        .from('configuracao_sistema')
+        .select('valor')
+        .eq('chave', 'edital_atual_ativo')
+        .single(),
+      supabase
+        .from('configuracao_sistema')
+        .select('valor')
+        .eq('chave', 'edital_atual_nome')
+        .single()
+    ]);
+    if (typeof ativoRes.data?.valor === 'boolean') editalEstaAtivo = ativoRes.data.valor;
+    if (typeof nomeRes.data?.valor === 'string') editalNomeAtual = nomeRes.data.valor;
+  } catch {
+    // Falha silenciosa — assume edital inativo
+  }
+
+  // Determinar is_interna, catalogo_ts e edital_origem com base na realidade do servidor
+  let isInterna: boolean;
+  let catalogoTs: boolean;
+  let editalOrigem: string | null = null;
+
+  if (editalEstaAtivo) {
+    // Edital ativo: sempre interna, sempre compõe catálogo TS
+    isInterna = true;
+    catalogoTs = true;
+    editalOrigem = editalNomeAtual;
+  } else {
+    // Edital inativo: usa o tipo escolhido pelo usuário
+    const tipoOrigem = payload.meta.tipoOrigem ?? 'interna';
+    isInterna = tipoOrigem !== 'externa';
+    catalogoTs = false;
+  }
+
   // 3. Mapear cnpq_subareas, ODS, etc. para IDs
   // (lookup via codigo/nome, evita expor IDs no client)
   // cleanupId: tracking pra rollback no catch (CASCADE limpa children)
@@ -227,7 +274,11 @@ export async function submitCadastro(
         indice_fuzzy: fuzzyResult.indice_fuzzy,
         faixa_fuzzy_atual: fuzzyResult.faixa,
         score_calculado_em: new Date().toISOString(),
-        email_contato: payload.identificacao.coordEmail
+        email_contato: payload.identificacao.coordEmail,
+        // Campos determinados pelo servidor com base no estado do edital
+        is_interna: isInterna,
+        catalogo_ts: catalogoTs,
+        edital_origem: editalOrigem
       })
       .select('id')
       .single();

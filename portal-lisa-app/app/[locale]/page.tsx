@@ -2,6 +2,9 @@ import { useTranslations } from 'next-intl';
 import { generateLocaleStaticParams } from '@/lib/i18n/static-params';
 import { Header } from '@/components/ui/Header';
 import { Hero } from '@/components/home/Hero';
+
+// Estado do edital é dinâmico — sempre buscado do banco em tempo real
+export const dynamic = 'force-dynamic';
 import { Apresentacao } from '@/components/home/Apresentacao';
 import { Estatisticas } from '@/components/home/Estatisticas';
 import { Timeline } from '@/components/home/Timeline';

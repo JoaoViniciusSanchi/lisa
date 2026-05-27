@@ -14,7 +14,8 @@ import {
   STEPS,
   reducer,
   type Action,
-  type CadastroState
+  type CadastroState,
+  type TipoOrigem
 } from './state';
 
 const STORAGE_KEY = 'lisa_cadastro_draft_v1';
@@ -36,12 +37,24 @@ interface FormProviderProps {
   initialData?: Partial<CadastroState>;
   /** 'cadastro' (default) ou 'edicao' (link mágico). */
   modo?: 'cadastro' | 'edicao';
+  /**
+   * Tipo de origem da submissão — definido pela página antes do formulário.
+   * - 'interna_edital': edital ativo → catalogo_ts=true
+   * - 'interna': fora do edital, vínculo UFF
+   * - 'externa': sem vínculo UFF
+   */
+  tipoOrigem?: TipoOrigem;
 }
 
-export function FormProvider({ children, initialData, modo = 'cadastro' }: FormProviderProps) {
+export function FormProvider({
+  children,
+  initialData,
+  modo = 'cadastro',
+  tipoOrigem = 'interna'
+}: FormProviderProps) {
   const isEdicao = modo === 'edicao';
 
-  // Estado inicial: se modo edição, parte do initialData; senão, INITIAL_STATE
+  // Estado inicial: considera modo e tipoOrigem
   const baseState: CadastroState = isEdicao
     ? {
         ...INITIAL_STATE,
@@ -50,7 +63,10 @@ export function FormProvider({ children, initialData, modo = 'cadastro' }: FormP
         currentStep: STEPS.IDENTIFICACAO,
         modo: 'edicao'
       }
-    : INITIAL_STATE;
+    : {
+        ...INITIAL_STATE,
+        tipoOrigem
+      };
 
   const [state, dispatch] = useReducer(reducer, baseState);
   const hydratedRef = useRef(false);

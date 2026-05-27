@@ -3,6 +3,51 @@
 import { useState, useTransition } from 'react';
 import { saveConfigValue } from '@/lib/admin/actions';
 
+// =============================================================
+// Toggle especial para a chave edital_atual_ativo
+// Exibe botão "EDITAL ABERTO" / "EDITAL FECHADO" em vez do select
+// =============================================================
+function EditalAtivoToggle({ value }: { value: boolean }) {
+  const [current, setCurrent] = useState(value);
+  const [isPending, startTransition] = useTransition();
+
+  function handleToggle() {
+    const next = !current;
+    startTransition(async () => {
+      await saveConfigValue('edital_atual_ativo', next);
+      setCurrent(next);
+    });
+  }
+
+  return (
+    <div className="flex items-center gap-4 mt-2">
+      <button
+        onClick={handleToggle}
+        disabled={isPending}
+        className={[
+          'flex items-center gap-2 px-5 py-2 text-[11px] uppercase tracking-[0.18em] font-bold transition-all disabled:opacity-50',
+          current
+            ? 'bg-fuzzy-green text-bg-base hover:opacity-90'
+            : 'bg-line-strong text-warm-white/50 hover:border-accent hover:text-accent border border-line-strong',
+        ].join(' ')}
+      >
+        <span
+          className={[
+            'w-2 h-2 rounded-full',
+            current ? 'bg-bg-base animate-pulse' : 'bg-warm-white/30',
+          ].join(' ')}
+        />
+        {isPending ? 'Salvando...' : current ? 'Edital Aberto' : 'Edital Fechado'}
+      </button>
+      <span className="text-[11px] text-warm-white/40">
+        {current
+          ? 'Homepage exibe o edital ativo com prazo de submissão'
+          : 'Homepage exibe CTA de cadastro sem edital aberto'}
+      </span>
+    </div>
+  );
+}
+
 const CATEGORIA_LABELS: Record<string, string> = {
   conteudo_publico: 'Conteúdo Público',
   templates_email: 'Templates de E-mail',
@@ -25,6 +70,21 @@ function ConfigRow({ item }: { item: ConfigItem }) {
   const [localValue, setLocalValue] = useState('');
   const [isPending, startTransition] = useTransition();
   const [saved, setSaved] = useState(false);
+
+  // Caso especial: edital_atual_ativo usa toggle dedicado
+  if (item.chave === 'edital_atual_ativo') {
+    return (
+      <div className="py-4 border-b border-line/50 last:border-0">
+        <div className="flex items-center gap-3 mb-1">
+          <code className="text-[12px] font-mono text-accent">{item.chave}</code>
+        </div>
+        {item.descricao && (
+          <div className="text-[12px] text-warm-white/40 mb-1">{item.descricao}</div>
+        )}
+        <EditalAtivoToggle value={item.valor as boolean} />
+      </div>
+    );
+  }
 
   const rawValue = item.valor;
   const displayValue =

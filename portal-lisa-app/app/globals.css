@@ -147,6 +147,54 @@
     0 4px 20px rgba(0, 0, 0, 0.4);
 }
 
+/* === Variante TS do fuzzy slider — usado em /cadastrar-ts ===
+   Mantém o gradiente vermelho/amarelo/verde (semântica do score),
+   mas o thumb e o halo usam a paleta TS (#0C71C3). */
+.fuzzy-slider-ts {
+  background: linear-gradient(
+    to right,
+    var(--fuzzy-red) 0%,
+    var(--fuzzy-red) 30%,
+    var(--fuzzy-yellow) 30%,
+    var(--fuzzy-yellow) 70%,
+    var(--fuzzy-green) 70%,
+    var(--fuzzy-green) 100%
+  );
+}
+
+.fuzzy-slider-ts::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  background: #ffffff;
+  border: 3px solid #0C71C3;
+  cursor: grab;
+  box-shadow:
+    0 0 0 6px rgba(12, 113, 195, 0.18),
+    0 4px 20px rgba(0, 0, 0, 0.4);
+  transition: transform 0.2s;
+}
+
+.fuzzy-slider-ts::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+}
+
+.fuzzy-slider-ts::-webkit-slider-thumb:active {
+  cursor: grabbing;
+}
+
+.fuzzy-slider-ts::-moz-range-thumb {
+  width: 24px;
+  height: 24px;
+  background: #ffffff;
+  border: 3px solid #0C71C3;
+  cursor: grab;
+  box-shadow:
+    0 0 0 6px rgba(12, 113, 195, 0.18),
+    0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
 /* Step transition usado pelo CadastroController */
 @keyframes fadeInUp {
   from {

@@ -156,6 +156,21 @@ export interface ExperienciaImport {
   justificativas: Partial<Record<DimensionKey, string>>;
   fuzzyResult: FuzzyResult;
 
+  /**
+   * Indica se esta experiência faz parte do Catálogo de Tecnologias Sociais.
+   * Definido globalmente no início do wizard de importação.
+   * true = compõe catálogo TS (foi cadastrada durante um edital)
+   * false = apenas catálogo interno LISA
+   */
+  catalogoTs: boolean;
+
+  /**
+   * Nome do edital ao qual esta importação está vinculada.
+   * Só relevante quando catalogoTs = true.
+   * Ex: "Chamamento 2026"
+   */
+  editalOrigem?: string | null;
+
   // Metadados de revisão
   _meta: {
     csvRowIndex: number;
@@ -274,4 +289,13 @@ export interface WizardState {
   experiences: ExperienciaImport[];
   analysisProgress: { current: number; total: number; currentTitle: string };
   generatedSql: string;
+
+  /**
+   * Configuração global do lote:
+   * Se esta importação pertence ao Catálogo de Tecnologias Sociais.
+   * Aplica-se a todas as experiências do lote.
+   */
+  catalogoTs: boolean;
+  /** Nome do edital ao qual este lote está vinculado (ex: "Chamamento 2026"). */
+  editalOrigem: string;
 }

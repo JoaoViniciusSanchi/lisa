@@ -5,13 +5,23 @@ import Papa from 'papaparse';
 import type { CsvRow } from '@/lib/import/types';
 
 interface Props {
-  onComplete: (csvRows: CsvRow[], csvHeaders: string[], docxFiles: File[]) => void;
+  onComplete: (
+    csvRows: CsvRow[],
+    csvHeaders: string[],
+    docxFiles: File[],
+    catalogoTs: boolean,
+    editalOrigem: string
+  ) => void;
 }
 
 export default function UploadStep({ onComplete }: Props) {
   const [subStep, setSubStep] = useState<'docx' | 'csv'>('docx');
   const [docxFiles, setDocxFiles] = useState<File[]>([]);
   const [csvStatus, setCsvStatus] = useState<'idle' | 'loading' | 'done'>('idle');
+
+  // Configuração global do lote
+  const [catalogoTs, setCatalogoTs] = useState(false);
+  const [editalOrigem, setEditalOrigem] = useState('');
 
   const csvRef = useRef<HTMLInputElement>(null);
   const docxRef = useRef<HTMLInputElement>(null);
@@ -32,7 +42,7 @@ export default function UploadStep({ onComplete }: Props) {
       skipEmptyLines: true,
       complete(results) {
         setCsvStatus('done');
-        onComplete(results.data, results.meta.fields ?? [], docxFiles);
+        onComplete(results.data, results.meta.fields ?? [], docxFiles, catalogoTs, editalOrigem);
       }
     });
   }
@@ -57,6 +67,68 @@ export default function UploadStep({ onComplete }: Props) {
           1b. Planilha CSV
         </span>
       </div>
+
+      {/* ---- CONFIGURAÇÃO GLOBAL DO LOTE ---- */}
+      {subStep === 'docx' && (
+        <div className="border border-accent/20 bg-accent/5 p-5 space-y-4">
+          <div>
+            <div className="text-[10px] uppercase tracking-[0.18em] text-accent mb-1">
+              Configuração do Lote
+            </div>
+            <h2 className="text-[15px] font-semibold text-warm-white mb-1">
+              Este lote pertence ao Catálogo de Tecnologias Sociais?
+            </h2>
+            <p className="text-[12px] text-warm-white/50">
+              Ative se estas experiências foram selecionadas durante um edital de chamamento e
+              devem compor o Catálogo TS. Deixe inativo para importações do catálogo interno LISA.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <button
+              type="button"
+              onClick={() => setCatalogoTs(!catalogoTs)}
+              className={[
+                'flex items-center gap-2 px-4 py-2 text-[11px] uppercase tracking-[0.18em] font-bold transition-all',
+                catalogoTs
+                  ? 'bg-fuzzy-green text-bg-base hover:opacity-90'
+                  : 'bg-line-strong text-warm-white/50 hover:border-accent hover:text-accent border border-line-strong',
+              ].join(' ')}
+            >
+              <span
+                className={[
+                  'w-2 h-2 rounded-full',
+                  catalogoTs ? 'bg-bg-base animate-pulse' : 'bg-warm-white/30',
+                ].join(' ')}
+              />
+              {catalogoTs ? 'Catálogo TS — Ativo' : 'Só Catálogo LISA'}
+            </button>
+            <span className="text-[11px] text-warm-white/40">
+              {catalogoTs
+                ? 'Todas as experiências deste lote serão marcadas como Catálogo TS'
+                : 'Nenhuma experiência deste lote compõe o Catálogo TS'}
+            </span>
+          </div>
+
+          {catalogoTs && (
+            <div>
+              <label className="block text-[12px] text-warm-white/60 mb-1">
+                Nome do edital <span className="text-accent">*</span>
+              </label>
+              <input
+                type="text"
+                value={editalOrigem}
+                onChange={(e) => setEditalOrigem(e.target.value)}
+                placeholder="Ex: Chamamento 2026"
+                className="bg-bg-base border border-accent/40 text-warm-white text-[13px] px-3 py-2 outline-none w-full max-w-xs focus:border-accent transition-colors"
+              />
+              <p className="text-[11px] text-warm-white/30 mt-1">
+                Será gravado como origem do edital em todas as experiências do lote.
+              </p>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* ---- SUB-STEP: DOCX ---- */}
       {subStep === 'docx' && (
@@ -118,13 +190,20 @@ export default function UploadStep({ onComplete }: Props) {
             <button
               type="button"
               onClick={() => setSubStep('csv')}
-              className="px-6 py-2.5 text-[13px] bg-accent text-bg-base font-semibold rounded hover:bg-accent/90 transition-colors"
+              disabled={catalogoTs && !editalOrigem.trim()}
+              className="px-6 py-2.5 text-[13px] bg-accent text-bg-base font-semibold rounded hover:bg-accent/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              title={catalogoTs && !editalOrigem.trim() ? 'Informe o nome do edital antes de continuar' : undefined}
             >
               {docxFiles.length > 0
                 ? `Avançar com ${docxFiles.length} arquivo${docxFiles.length !== 1 ? 's' : ''} →`
                 : 'Continuar sem .docx →'}
             </button>
           </div>
+          {catalogoTs && !editalOrigem.trim() && (
+            <p className="text-[12px] text-yellow-400/70">
+              ⚠ Informe o nome do edital para continuar com o Catálogo TS ativado.
+            </p>
+          )}
         </div>
       )}
 
@@ -140,6 +219,18 @@ export default function UploadStep({ onComplete }: Props) {
               incluindo perguntas do formulário e seus campos de justificativa — para alimentar a
               análise da IA.
             </p>
+            {/* Resumo da configuração do lote */}
+            <div className="mt-3 flex items-center gap-2">
+              {catalogoTs ? (
+                <span className="text-[11px] uppercase tracking-widest font-medium px-2 py-0.5 border border-fuzzy-green/50 text-fuzzy-green bg-fuzzy-green/10 inline-block">
+                  Catálogo TS · {editalOrigem}
+                </span>
+              ) : (
+                <span className="text-[11px] uppercase tracking-widest font-medium px-2 py-0.5 border border-line/40 text-warm-white/30 inline-block">
+                  Só Catálogo LISA
+                </span>
+              )}
+            </div>
           </div>
 
           <div className="border border-line rounded-lg p-6 space-y-3">
